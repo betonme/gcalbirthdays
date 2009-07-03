@@ -14,6 +14,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* VERSION NUMBER: 
+ * 1.00
+ */
  
 /* INSTRUCTION: 
  * This is a command line application. 
