@@ -210,14 +210,14 @@ public class GCalBirthdays {
 							if ( event.getRecurrence().getValue().contains( sdf.format(date) )) {
 							//if ( event.getRecurrence().getValue().contains( recurData.substring(0, 25) )) {
 								// same date - nothing todo
-								//DEBUG: 
+								//DEBUG: System.out.println("\tcontact and event have same date: " + contact.getName().getFullName().getValue() + " " + event.getTitle().getPlainText() );
 								System.out.println("\tcontact and event have same date: " + contact.getName().getFullName().getValue() + " " + event.getTitle().getPlainText() );
 								exists = true;
 							}
 							else {
 								// date not correct - update date
-								//DEBUG: 
-								System.out.println("\tcontact and event have not the same date: " + contact.getName().getFullName().getValue() + " " + contact.getBirthday().getWhen() + " " + event.getTitle().getPlainText() /* + " " + event.getRecurrence().getValue() */ );
+								//DEBUG: System.out.println("\tcontact and event have not the same date: " + contact.getName().getFullName().getValue() + " " + contact.getBirthday().getWhen() + " " + event.getTitle().getPlainText() /* + " " + event.getRecurrence().getValue() */ );
+								System.out.println("\tcontact and event have not the same date: " + contact.getName().getFullName().getValue() + " " + contact.getBirthday().getWhen() );
 								update = true;
 								entry = event;
 							}
@@ -237,17 +237,13 @@ public class GCalBirthdays {
 					    entry.setRecurrence(recur);
 
 					    entry.getReminder().add(reminder);
-					    //entry.update();
-
 
 						batchid++;
 						BatchUtils.setBatchId(entry, batchid.toString());
-						if ( update == true ) {
-							//DEBUG: 
+						if ( update == true ) { 
 							System.out.println("\tUpd contact: " + contact.getName().getFullName().getValue());
 							BatchUtils.setBatchOperationType(entry, BatchOperationType.UPDATE);
 						} else {
-							//DEBUG: 
 							System.out.println("\tAdd contact: " + contact.getName().getFullName().getValue());
 							BatchUtils.setBatchOperationType(entry, BatchOperationType.INSERT);	
 						}
