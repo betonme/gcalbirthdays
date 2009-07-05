@@ -60,12 +60,12 @@ function init() {
  var authButton = document.getElementById('auth_button');
 
  if (google.accounts.user.checkLogin(CALENDAR_FEED_URL)) {
-   document.getElementById('displayContacts').style.display = 'block';
+   //document.getElementById('displayContacts').style.display = 'block';
    authButton.value = 'Logout';
  } else {
    document.getElementById('loginNotice').style.display = 'block';
    authButton.value = 'Login';
-   getContacts();
+   //getContacts();
  }
 };
 
@@ -83,7 +83,7 @@ function loginOrLogout(){
    google.accounts.user.logout();
    init();
  } else {
-   google.accounts.user.login(EVENT_FEED_URL);
+   google.accounts.user.login(CALENDAR_FEED_URL);
  }
 }
 
