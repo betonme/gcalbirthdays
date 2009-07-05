@@ -24,6 +24,7 @@
 //google.load('gdata', '1.x');
 google.load("gdata", "1.x", {packages: ["contacts", "calendar"]});
 
+var EVENT_FEED_URL = 'http://www.google.com/calendar/feeds/default/private/full';
 
 var APP_NAME  = 'gCalBirthdays';
 
@@ -52,14 +53,14 @@ var calService;
 */
 function init() {
 
- var token = google.accounts.user.checkLogin(CALENDAR_FEED_URL);
+ var token = google.accounts.user.checkLogin(EVENT_FEED_URL);
 
- conService = new google.gdata.contacts.ContactsService(APP_NAME);
+ //conService = new google.gdata.contacts.ContactsService(APP_NAME);
  calService = new google.gdata.calendar.CalendarService(APP_NAME);
  
  var authButton = document.getElementById('auth_button');
 
- if (google.accounts.user.checkLogin(CALENDAR_FEED_URL)) {
+ if (google.accounts.user.checkLogin(EVENT_FEED_URL)) {
    //document.getElementById('displayContacts').style.display = 'block';
    authButton.value = 'Logout';
  } else {
@@ -78,18 +79,19 @@ google.setOnLoadCallback(init);
 * If the user is logged out to the app, it logs them in.
 */
 function loginOrLogout(){
- var token = google.accounts.user.checkLogin(CALENDAR_FEED_URL);
+ var token = google.accounts.user.checkLogin(EVENT_FEED_URL);
  if (token) {
    google.accounts.user.logout();
    init();
  } else {
-   google.accounts.user.login(CALENDAR_FEED_URL);
+   google.accounts.user.login(EVENT_FEED_URL);
  }
 }
 
 /**
  * Retrieves contacts from Google Contacts.
  */
+ /*
 function getContacts() {
   var conQuery = new google.gdata.contacts.ContactsQuery(CONTACTS_FEED_URL);
 
@@ -97,7 +99,7 @@ function getContacts() {
   
   conService.getEventsFeed(conQuery, handleContactsFeed, handleError);
 }
-
+*/
 /**
  * This function is called after the contacts query returns.
  * It parses through the entries.
@@ -105,6 +107,7 @@ function getContacts() {
  * and displays each contact in a table row.
  * @param {google.gdata.ContactsFeed} resultsFeedRoot The events feed
  */
+ /*
 function handleContactsFeed(resultsFeedRoot) {
   var conList = document.getElementById('displayContacts');
   conList.innerHTML = '';
@@ -133,7 +136,7 @@ function handleContactsFeed(resultsFeedRoot) {
   displayContactsTable.appendChild(displayContactsTbody);
   displayContactsContent.appendChild(displayContactsTable);
 }
-
+*/
 /**
  * This function is called if an error is encountered
  *  while retrieving a feed or adding an event.
