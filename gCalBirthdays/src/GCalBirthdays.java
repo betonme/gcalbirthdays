@@ -64,7 +64,7 @@ public class GCalBirthdays {
 	private static final String CALENDAR_COLOR   = "#A32929";    // red "#A32929", blue "#2952A3" and green "#0D7813"
 	
 	private static final String CONTACTS_FEED_URL  = "http://www.google.com/m8/feeds/contacts/default/full";
-	private static final String CALENDARS_FEED_URL = "http://www.google.com/calendar/feeds/default/owncalendars/full";
+	private static final String CALENDAR_FEED_URL = "http://www.google.com/calendar/feeds/default/owncalendars/full";
 
 	private static final String DATE_FORMAT_CONTACTS = "yyyy-MM-dd";
 	private static final String DATE_FORMAT_CALENDAR = "yyyyMMdd";
@@ -127,7 +127,7 @@ public class GCalBirthdays {
 			calService.setUserCredentials(userName, userPassword);
 
 			// The URL for the own calendars feed of the specified user
-			URL calUrl = new URL ( CALENDARS_FEED_URL );
+			URL calUrl = new URL ( CALENDAR_FEED_URL );
 
 			// Get Number of calendars	
 			Query calQuery = new Query(calUrl);
