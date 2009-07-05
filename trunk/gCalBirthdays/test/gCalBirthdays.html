@@ -3,17 +3,17 @@
 <title>gCalBirthdays</title>
 <script type='text/javascript' src='http://www.google.com/jsapi'></script>
 
-<!--
-TODO minimize roundtrips
-<script type="text/javascript" src="http://www.google.com/jsapi?autoload=%7Bmodules%3A%5B%7Bname%3Agdata%2Cversion%3A1.x%2Cpackages%3A%5Bblogger%2Ccontacts%5D%7D%5D%7D"></script>
-!-->
-
 <script type="text/javascript">
 
 /* Copyright (c) 2009 Frank Glaser
  * TODO
  */
 
+//TODO minimize roundtrips
+//<script type="text/javascript" src="http://www.google.com/jsapi?autoload=%7Bmodules%3A%5B%7Bname%3Agdata%2Cversion%3A1.x%2Cpackages%3A%5Bblogger%2Ccontacts%5D%7D%5D%7D"></script>
+
+
+  
 //load the Google data JS Client Library
 //google.load('gdata', '1.x');
 google.load("gdata", "1.x", {packages: ["contacts", "calendar"]});
@@ -56,10 +56,9 @@ function init() {
  
  var authButton = document.getElementById('auth_button');
 
- if (token) {
+ if (google.accounts.user.checkLogin(EVENT_FEED_URL)) {
    authButton.value = 'Logout';
  } else {
-   document.getElementById('loginNotice').style.display = 'block';
    authButton.value = 'Login';
  }
 };
