@@ -66,7 +66,7 @@ function init() {
  } else {
    document.getElementById('loginNotice').style.display = 'block';
    authButton.value = 'Login';
-   //getContacts();
+   getContacts();
  }
 };
 
@@ -91,7 +91,6 @@ function loginOrLogout(){
 /**
  * Retrieves contacts from Google Contacts.
  */
- /*
 function getContacts() {
   var conQuery = new google.gdata.contacts.ContactsQuery(CONTACTS_FEED_URL);
 
@@ -99,7 +98,7 @@ function getContacts() {
   
   conService.getEventsFeed(conQuery, handleContactsFeed, handleError);
 }
-*/
+
 /**
  * This function is called after the contacts query returns.
  * It parses through the entries.
@@ -107,7 +106,7 @@ function getContacts() {
  * and displays each contact in a table row.
  * @param {google.gdata.ContactsFeed} resultsFeedRoot The events feed
  */
- /*
+
 function handleContactsFeed(resultsFeedRoot) {
   var conList = document.getElementById('displayContacts');
   conList.innerHTML = '';
@@ -136,7 +135,7 @@ function handleContactsFeed(resultsFeedRoot) {
   displayContactsTable.appendChild(displayContactsTbody);
   displayContactsContent.appendChild(displayContactsTable);
 }
-*/
+
 /**
  * This function is called if an error is encountered
  *  while retrieving a feed or adding an event.
