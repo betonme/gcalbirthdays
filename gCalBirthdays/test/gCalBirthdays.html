@@ -55,18 +55,20 @@ function init() {
 
  var token = google.accounts.user.checkLogin(EVENT_FEED_URL);
 
- //conService = new google.gdata.contacts.ContactsService(APP_NAME);
+ conService = new google.gdata.contacts.ContactsService(APP_NAME);
  calService = new google.gdata.calendar.CalendarService(APP_NAME);
  
  var authButton = document.getElementById('auth_button');
 
  if (google.accounts.user.checkLogin(EVENT_FEED_URL)) {
+   // User is loged in
    //document.getElementById('displayContacts').style.display = 'block';
    authButton.value = 'Logout';
+   getContacts();
  } else {
+    // User is loged out
    document.getElementById('loginNotice').style.display = 'block';
    authButton.value = 'Login';
-   getContacts();
  }
 };
 
@@ -96,7 +98,7 @@ function getContacts() {
 
   //conQuery.setSortOrder('ascending');
   
-  conService.getEventsFeed(conQuery, handleContactsFeed, handleError);
+  conService.getContactFeed(conQuery, handleContactsFeed, handleError);
 }
 
 /**
