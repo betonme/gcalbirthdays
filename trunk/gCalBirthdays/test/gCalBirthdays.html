@@ -53,14 +53,14 @@ var calService;
 */
 function init() {
 
- var token = google.accounts.user.checkLogin(EVENT_FEED_URL);
+ var token = google.accounts.user.checkLogin(CONTACTS_FEED_URL);
 
  conService = new google.gdata.contacts.ContactsService(APP_NAME);
- calService = new google.gdata.calendar.CalendarService(APP_NAME);
+ //calService = new google.gdata.calendar.CalendarService(APP_NAME);
  
  var authButton = document.getElementById('auth_button');
 
- if (google.accounts.user.checkLogin(EVENT_FEED_URL)) {
+ if (google.accounts.user.checkLogin(CONTACTS_FEED_URL)) {
    // User is loged in
    //document.getElementById('displayContacts').style.display = 'block';
    authButton.value = 'Logout';
@@ -81,12 +81,12 @@ google.setOnLoadCallback(init);
 * If the user is logged out to the app, it logs them in.
 */
 function loginOrLogout(){
- var token = google.accounts.user.checkLogin(EVENT_FEED_URL);
+ var token = google.accounts.user.checkLogin(CONTACTS_FEED_URL);
  if (token) {
    google.accounts.user.logout();
    init();
  } else {
-   google.accounts.user.login(EVENT_FEED_URL);
+   google.accounts.user.login(CONTACTS_FEED_URL);
  }
 }
 
