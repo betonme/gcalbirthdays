@@ -13,10 +13,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* VERSION NUMBER: 
- * 1.00
- */
  
 /* INSTRUCTION: 
  * This is a command line application. 
@@ -60,6 +56,8 @@ public class GCalBirthdays {
 
 	private static final String APP_NAME  = "gCalBirthdays";
 
+	private static String APP_VERSION = "V1.01";
+	
 	private static final String CALENDAR_NAME    = "Birthdays";  //"Geburtstage";
 	private static final String CALENDAR_SUMMARY = "This calendar contains the birthdays of Your Google Contacts.";
 	private static final String CALENDAR_COLOR   = "#A32929";    // red "#A32929", blue "#2952A3" and green "#0D7813"
@@ -85,7 +83,8 @@ public class GCalBirthdays {
 	public static void main(String[] args) {
 		
 		try {
-
+			System.out.println("gCalBirthdays " + APP_VERSION);	
+			
 			if ( args.length < 2 ) {
 				System.out.println("Usage: gCalBirthdays username password");	
 				return;
