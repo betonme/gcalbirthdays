@@ -29,6 +29,7 @@
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -66,9 +67,10 @@ public class GCalBirthdays {
 	private static final String CONTACTS_FEED_URL  = "http://www.google.com/m8/feeds/contacts/default/full";
 	private static final String CALENDAR_FEED_URL = "http://www.google.com/calendar/feeds/default/owncalendars/full";
 
-	private static final String DATE_FORMAT_CONTACTS = "yyyy-MM-dd";
+	private static final String DATE_FORMAT_CONTACTS_YMD = "yyyy-MM-dd";
+	private static final String DATE_FORMAT_CONTACTS_MD  = "--MM-dd";
 	private static final String DATE_FORMAT_CALENDAR = "yyyyMMdd";
-	private static final String DATE_FORMAT_YEAR 	 = "yyyy";
+	private static final String DATE_FORMAT_YEAR 	 = "dd.MM.yyyy";
 	
 	private static final Integer REMINDER_DAYS = 14;
     
@@ -206,15 +208,21 @@ public class GCalBirthdays {
 			for (ContactEntry contact : conFeed.getEntries()) {
 
 				if ( (contact.hasName()) && (contact.hasBirthday()) ) {
-
+					
 					exists = false;
 					update = false;
 					
 					CalendarEventEntry entry = new CalendarEventEntry();
 					
-					SimpleDateFormat sdf = new SimpleDateFormat( DATE_FORMAT_CONTACTS );
-				    Date date = sdf.parse(contact.getBirthday().getWhen());
-				    sdf.applyPattern( DATE_FORMAT_CALENDAR );
+					SimpleDateFormat sdf = new SimpleDateFormat( DATE_FORMAT_CONTACTS_YMD );
+					Date date;
+					try {
+						date = sdf.parse(contact.getBirthday().getWhen());
+					} catch (ParseException e) {
+						sdf.applyPattern( DATE_FORMAT_CONTACTS_MD );
+						date = sdf.parse(contact.getBirthday().getWhen());
+					}
+					sdf.applyPattern( DATE_FORMAT_CALENDAR );
 					
 					for ( CalendarEventEntry event : eventFeed.getEntries() ) {
 
@@ -242,7 +250,7 @@ public class GCalBirthdays {
 						// no event for given contact - add event
 						sdf.applyPattern( DATE_FORMAT_YEAR );
 						entry.setTitle( new PlainTextConstruct( contact.getName().getFullName().getValue() + " " + sdf.format(date) ) );
-						entry.setContent( new PlainTextConstruct( "Birthday Celebration " + contact.getName().getFullName().getValue() + " (Born in " + sdf.format(date) + ")") );
+						entry.setContent( new PlainTextConstruct( "Birthday Celebration " + contact.getName().getFullName().getValue() + " (" + sdf.format(date) + ")") );
 					    sdf.applyPattern( DATE_FORMAT_CALENDAR );
 						String recurData = "DTSTART;VALUE=DATE:" + sdf.format(date) + "\n"
 					    				 + "DTEND;VALUE=DATE:" + sdf.format(date) + "\n"
