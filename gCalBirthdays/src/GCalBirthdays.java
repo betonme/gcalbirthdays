@@ -67,10 +67,11 @@ public class GCalBirthdays {
 	private static final String CONTACTS_FEED_URL  = "http://www.google.com/m8/feeds/contacts/default/full";
 	private static final String CALENDAR_FEED_URL = "http://www.google.com/calendar/feeds/default/owncalendars/full";
 
-	private static final String DATE_FORMAT_CONTACTS_YMD = "yyyy-MM-dd";
-	private static final String DATE_FORMAT_CONTACTS_MD  = "--MM-dd";
-	private static final String DATE_FORMAT_CALENDAR = "yyyyMMdd";
-	private static final String DATE_FORMAT_YEAR 	 = "dd.MM.yyyy";
+	private static final String DATE_FORMAT_GCON_PARSE_YMD = "yyyy-MM-dd";
+	private static final String DATE_FORMAT_GCON_PARSE_MD  = "--MM-dd";
+	private static final String DATE_FORMAT_GCAL_SET_EVENT = "yyyyMMdd";   // If year is not specified 1970 will be set
+	private static final String DATE_FORMAT_GCAL_TEXT_DMY  = "dd.MM.yyyy";
+	private static final String DATE_FORMAT_GCAL_TEXT_DM   = "dd.MM.";
 	
 	private static final Integer REMINDER_DAYS = 14;
     
@@ -214,22 +215,25 @@ public class GCalBirthdays {
 					
 					CalendarEventEntry entry = new CalendarEventEntry();
 					
-					SimpleDateFormat sdf = new SimpleDateFormat( DATE_FORMAT_CONTACTS_YMD );
+					SimpleDateFormat sdf = new SimpleDateFormat( DATE_FORMAT_GCON_PARSE_YMD );
 					Date date;
+					String datePattern;
 					try {
+						sdf.applyPattern( DATE_FORMAT_GCON_PARSE_YMD );
 						date = sdf.parse(contact.getBirthday().getWhen());
+						datePattern = DATE_FORMAT_GCAL_TEXT_DMY;
 					} catch (ParseException e) {
-						sdf.applyPattern( DATE_FORMAT_CONTACTS_MD );
+						sdf.applyPattern( DATE_FORMAT_GCON_PARSE_MD );
 						date = sdf.parse(contact.getBirthday().getWhen());
-					}
-					sdf.applyPattern( DATE_FORMAT_CALENDAR );
+						datePattern = DATE_FORMAT_GCAL_TEXT_DM;
+					}					
 					
 					for ( CalendarEventEntry event : eventFeed.getEntries() ) {
 
 						if ( event.getTitle().getPlainText().contains( contact.getName().getFullName().getValue() ) ) {
 							// found event for given contact
 							// check date
-
+							sdf.applyPattern( DATE_FORMAT_GCAL_SET_EVENT );
 							if ( event.getRecurrence().getValue().contains( sdf.format(date) )) {
 							//if ( event.getRecurrence().getValue().contains( recurData.substring(0, 25) )) {
 								// same date - nothing todo
@@ -248,10 +252,10 @@ public class GCalBirthdays {
 					}
 					if ( exists == false ) {
 						// no event for given contact - add event
-						sdf.applyPattern( DATE_FORMAT_YEAR );
+						sdf.applyPattern( datePattern );
 						entry.setTitle( new PlainTextConstruct( contact.getName().getFullName().getValue() + " " + sdf.format(date) ) );
 						entry.setContent( new PlainTextConstruct( "Birthday Celebration " + contact.getName().getFullName().getValue() + " (" + sdf.format(date) + ")") );
-					    sdf.applyPattern( DATE_FORMAT_CALENDAR );
+					    sdf.applyPattern( DATE_FORMAT_GCAL_SET_EVENT );
 						String recurData = "DTSTART;VALUE=DATE:" + sdf.format(date) + "\n"
 					    				 + "DTEND;VALUE=DATE:" + sdf.format(date) + "\n"
 					    				 + "RRULE:FREQ=YEARLY";
