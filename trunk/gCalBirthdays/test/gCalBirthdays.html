@@ -1,194 +1,417 @@
 <html>
-<head>
-<title>gCalBirthdays</title>
-<script type="text/javascript" src="http://www.google.com/jsapi"></script>
-<script type="text/javascript">
+    <head>
+        <title>gCalBirthdays</title>
+        <script type="text/javascript" src="http://www.google.com/jsapi">
+        </script>
+        <script type="text/javascript">
+            
+            /* Copyright (c) 2009 Frank Glaser
+             * TODO
+             */
+            // http://code.google.com/p/gcalbirthdays/source/browse/trunk/gCalBirthdays/test/gCalBirthdays.html
+            // http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/test/gCalBirthdays.html
+            
+            /* Copyright (c) 2007 Google Inc.
+             *
+             */
+            //load the Google data JS Client Library
+            //google.load('gdata', '1.x');
+            google.load("gdata", "1.x", {packages: ["contacts", "calendar"]});
+                        
+            var APP_NAME = 'gCalBirthdays';
+            
+            var CALENDAR_NAME = 'Birthdays'; //"Geburtstage";
+            var CALENDAR_SUMMARY = 'This calendar contains the birthdays of Your Google Contacts.';
+            var CALENDAR_COLOR = '#A32929'; // red "#A32929", blue "#2952A3" and green "#0D7813"
+            var CONTACTS_FEED_AUTH = 'http://www.google.com/m8/feeds/';
+            var CONTACTS_FEED_URL = 'http://www.google.com/m8/feeds/contacts/default/full';
+            var CALENDAR_FEED_AUTH = 'http://www.google.com/calendar/feeds/';
+            var CALENDAR_FEED_URL = 'http://www.google.com/calendar/feeds/default/owncalendars/full';
+			//var CALENDAR_FEED_URL = 'http://www.google.com/calendar/feeds/default/allcalendars/full';
+            
+            var DATE_FORMAT_CONTACTS = 'yyyy-MM-dd';
+            var DATE_FORMAT_CALENDAR = 'yyyyMMdd';
+            var DATE_FORMAT_YEAR = 'yyyy';
+            
+            var REMINDER_DAYS = 14;
+            
+            var MAX_RESULT = 10;
+            
+            var conService;
+            var calService;
 
-/* Copyright (c) 2009 Frank Glaser
- * TODO
- */
-
-
-
-// http://code.google.com/p/gdata-javascript-client/source/browse/trunk/samples/calendar/birthday_manager/birthday_manager.html
-// http://gdata-javascript-client.googlecode.com/svn/trunk/samples/calendar/birthday_manager/birthday_manager.html
-		
-// http://code.google.com/p/gcalbirthdays/source/browse/trunk/gCalBirthdays/test/gCalBirthdays.html
-// http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/test/gCalBirthdays.html
-
-/* Copyright (c) 2007 Google Inc.
- *
- */
-
-//load the Google data JS Client Library
-//google.load('gdata', '1.x');
-google.load("gdata", "1.x", {packages: ["contacts", "calendar"]});
-
-//var EVENT_FEED_URL = 'http://www.google.com/calendar/feeds/default/private/full';
-
-var APP_NAME  = 'gCalBirthdays';
-
-var CALENDAR_NAME    = 'Birthdays';  //"Geburtstage";
-var CALENDAR_SUMMARY = 'This calendar contains the birthdays of Your Google Contacts.';
-var CALENDAR_COLOR   = '#A32929';    // red "#A32929", blue "#2952A3" and green "#0D7813"
-
-var CONTACTS_FEED_AUTH = 'http://www.google.com/m8/feeds/';
-var CONTACTS_FEED_URL  = 'http://www.google.com/m8/feeds/contacts/default/full';
-var CALENDAR_FEED_URL  = 'http://www.google.com/calendar/feeds/default/owncalendars/full';
-
-var DATE_FORMAT_CONTACTS = 'yyyy-MM-dd';
-var DATE_FORMAT_CALENDAR = 'yyyyMMdd';
-var DATE_FORMAT_YEAR 	 = 'yyyy';
-
-var REMINDER_DAYS = 14;
-
-//This variables are used for retrieving and adding contacts/events
-var conService;
-var calService;
-
-/**
-* This function checks if the user is logged in, 
-* and changes the login button and displayed sections accordingly.
-* It also initializes the calendarService variable
-* and calls a function to fill in the form based on the URL.
-*/
-function init() {
-
- var token = google.accounts.user.checkLogin(CONTACTS_FEED_AUTH);
-
- conService = new google.gdata.contacts.ContactsService(APP_NAME);
- //calService = new google.gdata.calendar.CalendarService(APP_NAME);
- 
- var authButton = document.getElementById('auth_button');
-
- if (google.accounts.user.checkLogin(CONTACTS_FEED_AUTH)) {
-   // User is loged in
-   //document.getElementById('displayContacts').style.display = 'block';
-   authButton.value = 'Logout';
-   getContacts();
- } else {
-    // User is loged out
-   document.getElementById('loginNotice').style.display = 'block';
-   authButton.value = 'Login';
- }
-};
-
-//Tells the google JS lib to call the init function once loaded
-google.setOnLoadCallback(init);
-
-/**
-* This function is triggered by the login/logout button.
-* If the user is logged in to the app, it logs them out.
-* If the user is logged out to the app, it logs them in.
-*/
-function loginOrLogout(){
- var token = google.accounts.user.checkLogin(CONTACTS_FEED_AUTH);
- if (token) {
-   google.accounts.user.logout();
-   init();
- } else {
-   google.accounts.user.login(CONTACTS_FEED_AUTH);
- }
-}
-
-/**
- * Retrieves contacts from Google Contacts.
- */
-function getContacts() {
-  var conQuery = new google.gdata.contacts.ContactQuery(CONTACTS_FEED_URL);
-
-  //conQuery.setSortOrder('ascending');
+			var batchURL;
+			var eventURL;
+			      
+			contactList = new Array();		
+			eventList = new Array();
+					     
+            /**
+             * This function checks if the user is logged in,
+             * and changes the login button and displayed sections accordingly.
+             * It also initializes the calendarService variable
+             * and calls a function to fill in the form based on the URL.
+             */
+            function init(){
+                var token = google.accounts.user.checkLogin(CONTACTS_FEED_AUTH);
+                             
+                var authButton = document.getElementById('auth_button');
+                
+                if (google.accounts.user.checkLogin(CONTACTS_FEED_AUTH)) {
+                    // User is loged in
+                    document.getElementById('htmlTable').style.display = 'block';
+                    authButton.value = 'Logout';
+					main();
+                }
+                else {
+                    // User is loged out
+                    document.getElementById('loginNotice').style.display = 'block';
+                    authButton.value = 'Login';
+					var htmlTableHeader = document.getElementById('htmlTableHeaderID');
+					htmlTableHeader.innerHTML = '';
+					var htmlTableContent = document.getElementById('htmlTableContentID');
+                	htmlTableContent.innerHTML = '';
+                }
+            };
+            
+            //Tells the google JS lib to call the init function once loaded
+            google.setOnLoadCallback(init);
+            
+            /**
+             * This function is triggered by the login/logout button.
+             * If the user is logged in to the app, it logs them out.
+             * If the user is logged out to the app, it logs them in.
+             */
+            function loginOrLogout(){
+                var token = google.accounts.user.checkLogin(CONTACTS_FEED_AUTH);
+                if (token) {
+                    google.accounts.user.logout();
+                }
+                else {
+					//TODO 2 Login Buttons Contacts Calendars
+                    google.accounts.user.login(CONTACTS_FEED_AUTH);
+                    google.accounts.user.login(CALENDAR_FEED_AUTH);
+                }
+				init();				
+            }
+            
+			function main(){
+				conService = new google.gdata.contacts.ContactsService(APP_NAME);
+                calService = new google.gdata.calendar.CalendarService(APP_NAME); 
   
-  conService.getContactFeed(conQuery, handleContactsFeed, handleError);
-}
+				getContacts( CONTACTS_FEED_URL );
+                //getCalendars( CALENDAR_FEED_URL ); // is executed by getContacts()
+				//getEvents( eventURL );  			 // is executed by getCalendars()
+			}
+			
+			function getContacts(conURL){ 
+				conService.getContactFeed(conURL, handleContactsFeed, handleError);
+			}
 
-/**
- * This function is called after the contacts query returns.
- * It parses through the entries.
- * It grabs the necessary information from the extended properties,
- * and displays each contact in a table row.
- * @param {google.gdata.ContactsFeed} resultsFeedRoot The events feed
- */
+            function handleContactsFeed(conFeedRoot){
+                conFeed = conFeedRoot.feed;
+                contacts = conFeed.getEntries();
+                
+                for (var i = 0; i < contacts.length; i++) {
+                	contactList.push(contacts[i]);
+                }
+                
+				var nextLink = conFeed.getNextLink();
+		        if ( nextLink ) {
+					var nextURL = conFeed.getNextLink().href;
+					//getContacts( nextURL );	
+				}
+				//else {
+					displayContacts();
+					getCalendars( CALENDAR_FEED_URL );
+				//}
+            }
+            
+			function displayContacts() {
+				var htmlTableContent = document.getElementById('htmlTableContentID');
+                
+                var table = document.createElement('table');
+                var tbody = document.createElement('tbody');
+                
+				for (var i = 0; i < contactList.length; i++) {
+                    var conTitle = contactList[i].getTitle().getText();;
+                    
+					//var conTitle = contactList[i].getExtendedProperties();
+					
+					//var conTitle = contact[i].getBirthday();
+                    //var conTitle = conFeed.getTitle().getText();
+                    
+                    //get User which is logged in
+                    //var conTitle = conFeed.getAuthors();
+                    //conTitle[0].getName().getValue(); // User Name
+                    //conTitle[0].getEmail().getValue(); // User Mail
+                    
+                    var row = document.createElement('tr');
+                    var cell = document.createElement('td');
+                    cell.appendChild(document.createTextNode("contact: "+conTitle));
+                    row.appendChild(cell);
+                    tbody.appendChild(row);
+                }
+				table.appendChild(tbody);
+                htmlTableContent.appendChild(table);
+			}
+			    
+            function getCalendars(calURL){
+				calService.getOwnCalendarsFeed(calURL, handleCalendarsFeed, handleError);
+            }
+            
+            function handleCalendarsFeed(calFeedRoot){
+				calFeed = calFeedRoot.feed;
+                calendars = calFeed.getEntries();
 
-function handleContactsFeed(resultsFeedRoot) {
-  var conList = document.getElementById('displayContacts');
-  conList.innerHTML = '';
+				var calEntry;                
+                for (var i = 0; i < calendars.length; i++) {
+                    var calTitle = calendars[i].getTitle().getText();
+                    if (-1 != calTitle.search(CALENDAR_NAME)) {
+                        // Found CalendarEntry
+ 						calEntry = calendars[i];
+						//alert ('found calendar');
+                    }
+                }
+							
+				if ( null == calEntry ) {
+					// Create calendar
+					createCalendar();	
+					
+					// Get Calendars again
+					getCalendars( calURL );
+                }
+				else {
+					// Get Calendar URL
+					eventURL = calEntry.getLink().href;
+					getEvents( calEntry.getLink().href );	
+				}
+            }
 
-  conFeed = resultsFeedRoot.feed;
-  contacts = conFeed.getEntries();
-  var displayContactsTable = document.createElement('table');
-  var displayContactsTbody = document.createElement('tbody');
-  for (var i = 0; i < contacts.length; i++) {
-    //contact.getName().getFullName().getValue()
-	var conTitle = contacts[i].getTitle().getText();
-        
-    //if (eventTitle.match('Birthday Reminder')) {
-    var conRow = document.createElement('tr');
+            function createCalendar(){
+				// Create calendar only once
+				// Check to see if the counter has been initialized
+    			if ( 'undefined' == typeof createCalendar.counter ) {
+        			// It has not... perform the initilization
+        			createCalendar.counter = 1;
+					
+					// Create an instance of CalendarEntry, representing the new calendar
+	                var calEntry = new google.gdata.calendar.CalendarEntry();
+	                
+	                // Set the calendar title
+	                calEntry.setTitle(google.gdata.Text.create(CALENDAR_NAME));
+	                
+	                // Set the calendar summary
+	                var summary = new google.gdata.Text();
+	                summary.setText(CALENDAR_SUMMARY);
+	                calEntry.setSummary(summary);
+	                
+	                // Set the calendar timezone
+	                //var timeZone = new google.gdata.calendar.TimeZoneProperty();
+	                //timeZone.setValue('America/Los_Angeles');
+	                //calEntry.setTimeZone(timeZone);
+	                
+	                // Set the calendar location
+	                //var where = new google.gdata.Where();
+	                //where.setLabel('Mountain View, CA');
+	                //where.setValueString('Mountain View, CA');
+	                //calEntry.addLocation(where);
+	                
+					// Set the color that represent this calendar in the Google Calendar UI
+	                var color = new google.gdata.calendar.ColorProperty();
+	                color.setValue(CALENDAR_COLOR);
+	                calEntry.setColor(color);
+	                
+	                // Set the calendar to be visible in the Google Calendar UI
+	                var hidden = new google.gdata.calendar.HiddenProperty();
+	                hidden.setValue(false);
+	                calEntry.setHidden(hidden);
+	                
+					// Set the calendar to be selected in the Google Calendar UI
+	                var selected = new google.gdata.calendar.SelectedProperty();
+	                selected.setValue(true);
+	                calEntry.setSelected(selected);
+	                
+	                // The callback method that will be called after a successful
+	                // insertion from insertEntry()
+	                var calCallback = function(result){
+	                    alert('birthday calendar created!');
+	                }
+	                
+	                // Submit the request using the calendar service object
+	                calService.insertEntry(CALENDAR_FEED_URL, calEntry, calCallback, handleError, google.gdata.calendar.CalendarEntry);
+    			}
+			}           
 
-    var name = conTitle;
- 
-    var nameCell = document.createElement('td');
-    nameCell.appendChild(document.createTextNode(name));
+            function getEvents( eventURL ) {
+			  calService.getEventsFeed(eventURL, handleEventsFeed, handleError);
+            }
+            
+			function handleEventsFeed(eventFeedRoot){
+                eventFeed = eventFeedRoot.feed;
+                events = eventFeed.getEntries();
+                
+				batchURL = eventFeed.getFeedBatchLink().href;
+				
+                for (var i = 0; i < events.length; i++) {
+                    eventList.push(events[i]);
+				}
+                
+				var nextLink = eventFeed.getNextLink();
+		        if ( nextLink ) {
+					var nextURL = eventFeed.getNextLink().href;
+					getEvents( nextURL );	
+				}	
+				else {
+					displayEvents();
+					checkEvents();
+				}			
+            }
 
-    conRow.appendChild(nameCell);
-      
-    displayContactsTbody.appendChild(conRow);
-  }
-  
-  displayContactsTable.appendChild(displayContactsTbody);
-  displayContactsContent.appendChild(displayContactsTable);
-}
+			function displayEvents() {
+				var htmlTableContent = document.getElementById('htmlTableContentID');
+                
+                var table = document.createElement('table');
+                var tbody = document.createElement('tbody');
+                
+				for (var i = 0; i < eventList.length; i++) {
+                    var eventTitle = eventList[i].getTitle().getText();;
+                    
+                    var row = document.createElement('tr');
+                    var cell = document.createElement('td');
+                    cell.appendChild(document.createTextNode("event: "+eventTitle));
+                    row.appendChild(cell);
+                    tbody.appendChild(row);
+                }
+				table.appendChild(tbody);
+                htmlTableContent.appendChild(table);
+			}
+				
+			function checkEvents() {
+				//eventList
+				//contactList	
+				//addEvent();
+				getHttpRequest();
+				
+//					for ( CalendarEventEntry event : eventFeed.getEntries() ) {
+//						if (event.getTitle().getPlainText().contains(contact.getName().getFullName().getValue())) {
+//							// found event for given contact
+//							// check date
+//							sdf.applyPattern(DATE_FORMAT_GCAL_SET_EVENT);
+//							if (event.getRecurrence().getValue().contains(sdf.format(date))) {
+//								//if ( event.getRecurrence().getValue().contains( recurData.substring(0, 25) )) {
+//								// same date - nothing todo
+//								//DEBUG: System.out.println("\tcontact and event have same date: " + contact.getName().getFullName().getValue() + " " + event.getTitle().getPlainText() );
+//								System.out.println("\tcontact and event have same date: " + contact.getName().getFullName().getValue() + " " + event.getTitle().getPlainText());
+//								exists = true;
+//							}
+//							else {
+//								// date not correct - update date
+//								//DEBUG: System.out.println("\tcontact and event have not the same date: " + contact.getName().getFullName().getValue() + " " + contact.getBirthday().getWhen() + " " + event.getTitle().getPlainText() /* + " " + event.getRecurrence().getValue() */ );
+//								System.out.println("\tcontact and event have not the same date: " + contact.getName().getFullName().getValue() + " " + contact.getBirthday().getWhen());
+//								update = true;
+//								entry = event;
+//							}
+//						}
+//					}				
+			}	
+				       
+			function getHttpRequest() {
+			   
+			    var xmlhttp = null;
+			    // Mozilla
+			    if (window.XMLHttpRequest) {
+			        xmlhttp = new XMLHttpRequest();
+			    }
+			    // IE
+			    else if (window.ActiveXObject) {
+			        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+			    }
+			   
+			    xmlhttp.open("GET", 'www.google.com', false); // false synchron
+			    xmlhttp.onreadystatechange = function() {
+			        if(xmlhttp.readyState != 4) {
+			            alert ('load');
+						//$('ergebnis').innerHTML = 'Seite wird geladen ...';
+			        }
+			        if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+			            alert ('ready');
+						//$('ergebnis').innerHTML = xmlhttp.responseText;
+						//var htmlTableContent = document.getElementById('htmlTableContentID');
+						//htmlTableContent.innerHTML = xmlhttp.responseText;
+			        }
+			    }
+			    xmlhttp.send(null);
+				//alert ('end');
+				// Page not found: gCalBirthdays/test/www.google.com
+				var htmlTableContent = document.getElementById('htmlTableContentID');
+				htmlTableContent.innerHTML = xmlhttp.responseText;
+			} 
 
-/**
- * This function is called if an error is encountered
- *  while retrieving a feed or adding an event.
- */
-function handleError(e) {
-  alert(e.cause ? e.cause.statusText : e.message);
-};
+			function addEvent() {
+				// Create a recurring event
+				
+				// Set up the recurring details using an ical string (RFC 2445 http://www.ietf.org/rfc/rfc2445.txt)
+				var recurrence = new google.gdata.Recurrence();
+				var icalBreak = '\r\n'; //'\n'
+				var recurrenceString = 'DTSTART;VALUE=DATE:20090713' + icalBreak +
+				    				   'DTEND;VALUE=DATE:20090713' + icalBreak +
+				    				   'RRULE:FREQ=YEARLY';
+				recurrence.setValue(recurrenceString);
+				
+				// Create a Reminder object that will be attached to the When object
+				var reminder = new google.gdata.Reminder();
+				reminder.setDays(REMINDER_DAYS);				
+				reminder.setMethod(google.gdata.Reminder.METHOD_ALERT);
+				
+				// Create an instance of CalendarEventEntry representing the new event
+				var entry = new google.gdata.calendar.CalendarEventEntry();
+				entry.setTitle(google.gdata.Text.create('JS-Client: insert recurring event'));
+				entry.setContent(google.gdata.Text.create('JS-Client: content'));
+				entry.setRecurrence(recurrence);
+				entry.addReminder(reminder);
 
+				// This callback method that will be called after a successful insertion from insertEntry()
+				var callback = function(result) {
+				  alert ('entry added');
+				}
+				
+				// Submit the request using the calendar service object
+				//batchURL
+				calService.insertEntry(eventURL, entry, callback, handleError, google.gdata.calendar.CalendarEventEntry);
 
-
-
-//]]>
-</script>
-
-</head>
-
-<body>
-
-<div class="indent">
-Welcome to gCalBirthdays, an app that transfer Your Google Contacts birthdays to Your Google Calendar.
-</div>
-<p>
-
-<div id="loginNotice" class="indent" style="color:#cc0000; font-weight:bold; display:none">
-  Because this is a third-party app that uses your Google account authentication, you'll need to grant access to it by clicking the "Login" button. 
-</div>
-
-<div class="indent">
-<input id="auth_button" type="button" value="Authenticate" onclick="loginOrLogout()"/>
-</div>
-
-<div id="addBirthday" class="indent" style="display:none">
-	<div id="addEventHeader" style="font-weight: bold; border-bottom:1px solid grey;">Add Birthday:</div>
-    <table>
-      <tr>
-        <td>Name:</td>
-        <td><input id="name" type="text" style="width:100%"></td>
-      </tr>
-      <tr>
-        <td>Birthdate:</td>
-        <td><input id="birthdate" type="text" value="2007-08-16" style="width:100%"/></td>
-      </tr>
-    </table>
-</div>
-
-<div id="displayContacts" class="indent" style="display:none">
-<div id="displayContactsHeader" style="font-weight: bold; border-bottom:1px solid grey;">Display Contacts:</div>
-<div id="displayContactsContent"></div>
-</div>
-
-</body>
-
-</html>
+			}     
+            /**
+             * This function is called if an error is encountered
+             *  while retrieving a feed or adding an event.
+             */
+            function handleError(e){
+                alert(e.cause ? e.cause.statusText : e.message);
+            };
+            
+            //]]>
+        </script>
+    </head>
+    <body>
+        <img src="http://127.0.0.1:8000/gCalBirthdays/test/gCalBirthdays.jpg" alt="gCalBirthdays Logo"/>
+        <p>
+            <div class="indent">
+                Welcome to gCalBirthdays, an app that transfer Your Google Contacts birthdays to Your Google Calendar.
+            </div>
+            <p>
+                <div id="loginNotice" class="indent" style="color:#cc0000; font-weight:bold; display:none">
+                    Because this is a third-party app that uses your Google account authentication, you'll need to grant access to it by clicking the "Login" button. 
+                </div>
+                <p>
+                    <div class="indent">
+                        <input id="auth_button" type="button" value="Authenticate" onclick="loginOrLogout()"/>
+                    </div>
+                    <div id="htmlTable" class="indent" style="display:none">
+                        <div id="htmlTableHeaderID" style="font-weight: bold; border-bottom:1px solid grey;">
+                            Display Contacts:
+                        </div>
+                        <div id="htmlTableContentID">
+                        </div>
+                    </div>
+                    </body>
+                </html>
