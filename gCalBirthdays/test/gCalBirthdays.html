@@ -88,7 +88,7 @@
                     google.accounts.user.logout();
                 }
                 else {
-					//TODO 2 Login Buttons Contacts Calendars
+					//TODO 2 Login Buttons Contacts Calendars - Why 2 Logins required ???
                     google.accounts.user.login(CONTACTS_FEED_AUTH);
                     google.accounts.user.login(CALENDAR_FEED_AUTH);
                 }
@@ -389,11 +389,14 @@
                 alert(e.cause ? e.cause.statusText : e.message);
             };
             
+			//local
+			//<img src="http://127.0.0.1:8000/gCalBirthdays/test/gCalBirthdays.jpg" alt="gCalBirthdays Logo"/>
+			
             //]]>
         </script>
     </head>
     <body>
-        <img src="http://127.0.0.1:8000/gCalBirthdays/test/gCalBirthdays.jpg" alt="gCalBirthdays Logo"/>
+        <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/test/gCalBirthdays.jpg" alt="gCalBirthdays Logo"/>
         <p>
             <div class="indent">
                 Welcome to gCalBirthdays, an app that transfer Your Google Contacts birthdays to Your Google Calendar.
