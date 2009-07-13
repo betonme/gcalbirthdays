@@ -23,9 +23,8 @@
             var CALENDAR_NAME = 'Birthdays'; //"Geburtstage";
             var CALENDAR_SUMMARY = 'This calendar contains the birthdays of Your Google Contacts.';
             var CALENDAR_COLOR = '#A32929'; // red "#A32929", blue "#2952A3" and green "#0D7813"
-            var CONTACTS_FEED_AUTH = 'http://www.google.com/m8/feeds/';
+            var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
             var CONTACTS_FEED_URL = 'http://www.google.com/m8/feeds/contacts/default/full';
-            var CALENDAR_FEED_AUTH = 'http://www.google.com/calendar/feeds/';
             var CALENDAR_FEED_URL = 'http://www.google.com/calendar/feeds/default/owncalendars/full';
 			//var CALENDAR_FEED_URL = 'http://www.google.com/calendar/feeds/default/allcalendars/full';
             
@@ -53,36 +52,20 @@
              * and calls a function to fill in the form based on the URL.
              */
             function init(){
-                
-                             
-                var authButtonContacts = document.getElementById('auth_button_contacts');
-                var authButtonCalendar = document.getElementById('auth_button_calendar');
+                var authButton = document.getElementById('auth_button');
 				
-                if (google.accounts.user.checkLogin(CONTACTS_FEED_AUTH)) {
+                var token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
+                if (token) {
                     // User is loged in
-					var token = google.accounts.user.checkLogin(CONTACTS_FEED_AUTH);
-                    authButtonContacts.value = 'Logout';
-                }
-				else {
-					authButtonContacts.value = 'Login';
-					document.getElementById('loginNotice').style.display = 'block';
-				}
-				if (google.accounts.user.checkLogin(CALENDAR_FEED_AUTH)) {
-                    // User is loged in
-					var token = google.accounts.user.checkLogin(CALENDAR_FEED_AUTH);
-                    authButtonCalendar.value = 'Logout';
-                }
-				else {
-					authButtonCalendar.value = 'Login';
-					document.getElementById('loginNotice').style.display = 'block';
-				}
-				
-                if ((google.accounts.user.checkLogin(CONTACTS_FEED_AUTH)) && (google.accounts.user.checkLogin(CALENDAR_FEED_AUTH))) {
+                    authButton.value = 'Logout';
 					document.getElementById('htmlTable').style.display = 'block';
 					main();
-				}
+                }
 				else {
-                    // User is loged out
+					// User is loged out
+					authButton.value = 'Login';
+					document.getElementById('loginNotice').style.display = 'block';
+
 					var htmlTableHeader = document.getElementById('htmlTableHeaderID');
 					htmlTableHeader.innerHTML = '';
 					var htmlTableContent = document.getElementById('htmlTableContentID');
@@ -98,31 +81,15 @@
              * If the user is logged in to the app, it logs them out.
              * If the user is logged out to the app, it logs them in.
              */
-            function loginOrLogoutContacts(){
-                var token = google.accounts.user.checkLogin(CONTACTS_FEED_AUTH);
+            function loginOrLogout(){
+                var token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
                 if (token) {
+					// User is loged in
                     google.accounts.user.logout();
                 }
                 else {
-					//TODO 2 Login Buttons Contacts Calendars - Why 2 Logins required ???
-                    token = google.accounts.user.login(CONTACTS_FEED_AUTH);
-                }
-				init();				
-            }
-
-            /**
-             * This function is triggered by the login/logout button.
-             * If the user is logged in to the app, it logs them out.
-             * If the user is logged out to the app, it logs them in.
-             */
-            function loginOrLogoutCalendar(){
-                var token = google.accounts.user.checkLogin(CALENDAR_FEED_AUTH);
-                if (token) {
-                    google.accounts.user.logout();
-                }
-                else {
-					//TODO 2 Login Buttons Contacts Calendars - Why 2 Logins required ???
-                    token = google.accounts.user.login(CALENDAR_FEED_AUTH);
+					// User is loged out
+                    token = google.accounts.user.login(GOOGLE_FEED_AUTH);
                 }
 				init();				
             }
@@ -424,14 +391,13 @@
 			//TODO Why opens a file download dialog 3 times ???
 			//local
 			//<img src="http://127.0.0.1:8000/gCalBirthdays/test/gCalBirthdays.jpg" alt="gCalBirthdays Logo"/>
-			//
+			//<img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/test/gCalBirthdays.jpg" alt="gCalBirthdays Logo"/>
 			
             //]]>
         </script>
     </head>
     <body>
     	<img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/test/gCalBirthdays.jpg" alt="gCalBirthdays Logo"/>
-        
         <p>
             <div class="indent">
                 Welcome to gCalBirthdays, an app that transfer Your Google Contacts birthdays to Your Google Calendar.
@@ -442,10 +408,7 @@
                 </div>
                 <p>
                     <div class="indent">
-                        <input id="auth_button_contacts" type="button" value="Authenticate" onclick="loginOrLogoutContacts()"/>
-                    </div>
-                    <div class="indent">
-                        <input id="auth_button_calendar" type="button" value="Authenticate" onclick="loginOrLogoutCalendar()"/>
+                        <input id="auth_button" type="button" value="Authenticate" onclick="loginOrLogout()"/>
                     </div>
 					<div id="htmlTable" class="indent" style="display:none">
                         <div id="htmlTableHeaderID" style="font-weight: bold; border-bottom:1px solid grey;">
