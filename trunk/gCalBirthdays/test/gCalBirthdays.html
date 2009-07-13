@@ -54,6 +54,9 @@
             function init(){
                 var authButton = document.getElementById('auth_button');
 				
+				conService = new google.gdata.contacts.ContactsService(APP_NAME);
+                calService = new google.gdata.calendar.CalendarService(APP_NAME); 
+				
                 var token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
                 if (token) {
                     // User is loged in
@@ -94,10 +97,7 @@
 				init();				
             }
 			            
-			function main(){
-				conService = new google.gdata.contacts.ContactsService(APP_NAME);
-                calService = new google.gdata.calendar.CalendarService(APP_NAME); 
-  
+			function main(){  
 				getContacts( CONTACTS_FEED_URL );
                 //getCalendars( CALENDAR_FEED_URL ); // is executed by getContacts()
 				//getEvents( eventURL );  			 // is executed by getCalendars()
