@@ -53,20 +53,36 @@
              * and calls a function to fill in the form based on the URL.
              */
             function init(){
-                var token = google.accounts.user.checkLogin(CONTACTS_FEED_AUTH);
-                             
-                var authButton = document.getElementById('auth_button');
                 
+                             
+                var authButtonContacts = document.getElementById('auth_button_contacts');
+                var authButtonCalendar = document.getElementById('auth_button_calendar');
+				
                 if (google.accounts.user.checkLogin(CONTACTS_FEED_AUTH)) {
                     // User is loged in
-                    document.getElementById('htmlTable').style.display = 'block';
-                    authButton.value = 'Logout';
-					main();
+					var token = google.accounts.user.checkLogin(CONTACTS_FEED_AUTH);
+                    authButtonContacts.value = 'Logout';
                 }
-                else {
+				else {
+					authButtonContacts.value = 'Login';
+					document.getElementById('loginNotice').style.display = 'block';
+				}
+				if (google.accounts.user.checkLogin(CALENDAR_FEED_AUTH)) {
+                    // User is loged in
+					var token = google.accounts.user.checkLogin(CALENDAR_FEED_AUTH);
+                    authButtonCalendar.value = 'Logout';
+                }
+				else {
+					authButtonCalendar.value = 'Login';
+					document.getElementById('loginNotice').style.display = 'block';
+				}
+				
+                if ((google.accounts.user.checkLogin(CONTACTS_FEED_AUTH)) && (google.accounts.user.checkLogin(CALENDAR_FEED_AUTH))) {
+					document.getElementById('htmlTable').style.display = 'block';
+					main();
+				}
+				else {
                     // User is loged out
-                    document.getElementById('loginNotice').style.display = 'block';
-                    authButton.value = 'Login';
 					var htmlTableHeader = document.getElementById('htmlTableHeaderID');
 					htmlTableHeader.innerHTML = '';
 					var htmlTableContent = document.getElementById('htmlTableContentID');
@@ -82,19 +98,35 @@
              * If the user is logged in to the app, it logs them out.
              * If the user is logged out to the app, it logs them in.
              */
-            function loginOrLogout(){
+            function loginOrLogoutContacts(){
                 var token = google.accounts.user.checkLogin(CONTACTS_FEED_AUTH);
                 if (token) {
                     google.accounts.user.logout();
                 }
                 else {
 					//TODO 2 Login Buttons Contacts Calendars - Why 2 Logins required ???
-                    google.accounts.user.login(CONTACTS_FEED_AUTH);
-                    google.accounts.user.login(CALENDAR_FEED_AUTH);
+                    token = google.accounts.user.login(CONTACTS_FEED_AUTH);
                 }
 				init();				
             }
-            
+
+            /**
+             * This function is triggered by the login/logout button.
+             * If the user is logged in to the app, it logs them out.
+             * If the user is logged out to the app, it logs them in.
+             */
+            function loginOrLogoutCalendar(){
+                var token = google.accounts.user.checkLogin(CALENDAR_FEED_AUTH);
+                if (token) {
+                    google.accounts.user.logout();
+                }
+                else {
+					//TODO 2 Login Buttons Contacts Calendars - Why 2 Logins required ???
+                    token = google.accounts.user.login(CALENDAR_FEED_AUTH);
+                }
+				init();				
+            }
+			            
 			function main(){
 				conService = new google.gdata.contacts.ContactsService(APP_NAME);
                 calService = new google.gdata.calendar.CalendarService(APP_NAME); 
@@ -392,12 +424,14 @@
 			//TODO Why opens a file download dialog 3 times ???
 			//local
 			//<img src="http://127.0.0.1:8000/gCalBirthdays/test/gCalBirthdays.jpg" alt="gCalBirthdays Logo"/>
+			//
 			
             //]]>
         </script>
     </head>
     <body>
-        <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/test/gCalBirthdays.jpg" alt="gCalBirthdays Logo"/>
+    	<img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/test/gCalBirthdays.jpg" alt="gCalBirthdays Logo"/>
+        
         <p>
             <div class="indent">
                 Welcome to gCalBirthdays, an app that transfer Your Google Contacts birthdays to Your Google Calendar.
@@ -408,9 +442,12 @@
                 </div>
                 <p>
                     <div class="indent">
-                        <input id="auth_button" type="button" value="Authenticate" onclick="loginOrLogout()"/>
+                        <input id="auth_button_contacts" type="button" value="Authenticate" onclick="loginOrLogoutContacts()"/>
                     </div>
-                    <div id="htmlTable" class="indent" style="display:none">
+                    <div class="indent">
+                        <input id="auth_button_calendar" type="button" value="Authenticate" onclick="loginOrLogoutCalendar()"/>
+                    </div>
+					<div id="htmlTable" class="indent" style="display:none">
                         <div id="htmlTableHeaderID" style="font-weight: bold; border-bottom:1px solid grey;">
                             Display Contacts:
                         </div>
