@@ -224,7 +224,8 @@ function removeOldResults() {
 
 		
 			function main(){  
-				//search (CONTACTS_FEED_URL);
+				search (CONTACTS_FEED_URL);
+				prompt('search_end');
 				getContacts( CONTACTS_FEED_URL );
 				
                 //getCalendars( CALENDAR_FEED_URL ); // is executed by getContacts()
@@ -248,7 +249,7 @@ prompt('end');
 				var nextLink = conFeed.getNextLink();
 		        if ( nextLink ) {
 					var nextURL = conFeed.getNextLink().href;
-					getContacts( nextURL );	
+					//getContacts( nextURL );	
 				}
 				else {
 					displayContacts();
