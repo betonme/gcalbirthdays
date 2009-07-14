@@ -54,6 +54,8 @@
 			var batchURL;
 			var eventURL;
 			      
+			var token;
+			
 			contactList = new Array();		
 			eventList = new Array();
 					     
@@ -69,7 +71,7 @@
 				conService = new google.gdata.contacts.ContactsService(APP_NAME);
                 calService = new google.gdata.calendar.CalendarService(APP_NAME); 
 				
-                var token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
+                token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
                 if (token) {
                     // User is loged in
                     authButton.value = 'Logout';
@@ -97,7 +99,7 @@
              * If the user is logged out to the app, it logs them in.
              */
             function loginOrLogout(){
-                var token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
+                token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
                 if (token) {
 					// User is loged in
                     google.accounts.user.logout();
@@ -109,27 +111,123 @@
 				init();				
             }
 			
-			
-			function listEvents(root) {
-			    var feed = root.feed;
-			    var entries = feed.entry || [];
-			    var html = ['<ul>'];
-			
-			    for (var i = 0; i < entries.length; ++i) {
-			      var entry = entries[i];
-			      var title = entry.title.$t;
-			      var start = (entry['gd$when']) ? entry['gd$when'][0].startTime : "";	
-			
-			      html.push('<li>', start, ' ', title, '</li>');
-			    }
-			
-			    html.push('</ul>');
-			    document.getElementById("agenda").innerHTML = html.join("");
-  			}
+//------------------------------------------------------------
+
+function listEntries(j) {
+  // Clear any information displayed under the "data" div.
+  alert ('listEntries');
+  removeOldResults()
+
+  // Transform the JSON results into an unordered list of links.
+  var ul = document.createElement("ul");
+  for (var i = 0; i < j.feed.entry.length; ++i) {
+    var entry = j.feed.entry[i];
+    var alturl;
+    for (var k = 0; k < entry.link.length; ++k) {
+      if (entry.link[k].rel == "alternate") {
+        alturl = entry.link[k].href; 
+        break;
+      }
+    }
+    var li = document.createElement("li");
+    var txt = document.createTextNode(entry.title.$t);
+
+    if (alturl !== undefined) {
+      var a = document.createElement("a");
+      a.href = alturl;
+
+      a.appendChild(txt);
+      li.appendChild(a);
+    } else {
+      li.appendChild(txt);
+    }
+
+    ul.appendChild(li);
+  }
+  document.getElementById("data").appendChild(ul);
+}
+
+/**
+ * Adds a JSON script element which queries Google Base and calls the 
+ * call-back function.
+ *
+ * @param {DOM object} query The form element containing the input parameters
+ *     "bq" and "feed".
+ */
+function search(url) {
+  // Delete any previous Google Base JSON queries.
+  removeOldJSONScriptNodes();
+  // Clear any old data to prepare to display the Loading... message.
+  removeOldResults()
+
+  // Show a "Loading..." indicator.
+  var div = document.getElementById('data');
+  var p = document.createElement('p');
+  p.appendChild(document.createTextNode('Loading...'));
+  div.appendChild(p);
+
+  // Add a script element with the src as the user's Google Base query. 
+  // JSON output is specified by including the alt=json-in-script argument
+  // and the callback funtion is also specified as a URI argument.
+  var scriptElement = document.createElement("script");
+  scriptElement.setAttribute("id", "jsonScript");
+
+  scriptElement.setAttribute("src", url + "&alt=json-in-script&callback=listEntries" + " HTTP/1.1" + '\n'
+			+ "Content-Type: application/x-www-form-urlencoded" + '\n'
+			+ 'Authorization: AuthSub token="' + token + '"' + '\n'
+			+ "User-Agent: Java/1.5.0_06" + '\n'
+			+ "Host: www.google.com" + '\n'
+			+ "Accept: text/html, text/javascript, image/gif, image/jpeg, *; q=.2, */*; q=.2" + '\n'
+			+ "Connection: keep-alive" + '\n'
+  			);
+
+//  scriptElement.setAttribute("src", "/m8/feeds/contacts/default/full&alt=json-in-script&callback=listEntries" + " HTTP/1.1" + '\n'
+//			+ "Content-Type: application/x-www-form-urlencoded" + '\n'
+//			+ 'Authorization: AuthSub token="' + token + '"' + '\n'
+//			+ "User-Agent: Java/1.5.0_06" + '\n'
+//			+ "Host: www.google.com" + '\n'
+//			+ "Accept: text/html, text/javascript, image/gif, image/jpeg, *; q=.2, */*; q=.2" 
+//			+ "Connection: keep-alive" + '\n'
+//  			);
+
+//  scriptElement.setAttribute("src", "http://www.google.com/m8/feeds/contacts/glaserfrank%40gmail.com/full&callback=listEntries");
+
+  scriptElement.setAttribute("type", "text/javascript");
+  //scriptElement.setAttribute("type", "text/css");
+  //scriptElement.setAttribute("type", "text/html")
+  document.documentElement.firstChild.appendChild(scriptElement);
+}
+
+/**
+ * Deletes any old script elements which have been created by previous calls
+ * to search().
+ */
+function removeOldJSONScriptNodes() {
+  var jsonScript = document.getElementById("jsonScript");
+  if (jsonScript) {
+    jsonScript.parentNode.removeChild(jsonScript);
+  }
+}
+
+/**
+ * Deletes pre-existing children of the data div from the page. The data div 
+ * may contain a "Loading..." message, or the results of a previous query. 
+ * This old data should be removed before displaying new data.
+ */
+function removeOldResults() {
+  var div = document.getElementById("data");
+  if (div.firstChild) {
+    div.removeChild(div.firstChild);
+  }
+}
+
+//------------------------------------------------------------
+
 
 		
 			function main(){  
-				//getContacts( CONTACTS_FEED_URL );
+				//search (CONTACTS_FEED_URL);
+				getContacts( CONTACTS_FEED_URL );
 				
                 //getCalendars( CALENDAR_FEED_URL ); // is executed by getContacts()
 				//getEvents( eventURL );  			 // is executed by getCalendars()
@@ -148,7 +246,7 @@
                 for (var i = 0; i < contacts.length; i++) {
                 	contactList.push(contacts[i]);
                 }
-
+prompt('end');
 				var nextLink = conFeed.getNextLink();
 		        if ( nextLink ) {
 					var nextURL = conFeed.getNextLink().href;
@@ -280,7 +378,7 @@
 			  calService.getEventsFeed(eventURL, handleEventsFeed, handleError);
             }
             
-			function handleEventsFeed(eventFeedRoot){
+			function handleEventsFeed(eventFeedRoot) {
                 eventFeed = eventFeedRoot.feed;
                 events = eventFeed.getEntries();
                 
@@ -400,18 +498,12 @@
 
     </head>
     <body>
-
-			<div id="agenda"></div>
-		<script src="http://www.google.com/calendar/feeds/developer-calendar@google.com/public/full?alt=json-in-script&callback=listEvents">
-		</script>
 		
     	<img src="gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
         <p>
-        	
             <div class="indent">
                 Welcome to gCalBirthdays, an app that transfer Your Google Contacts birthdays to Your Google Calendar.
             </div>
-
             <p>
                 <div id="loginNotice" class="indent" style="color:#cc0000; font-weight:bold; display:none">
                     Because this is a third-party app that uses your Google account authentication, you'll need to grant access to it by clicking the "Login" button. 
@@ -427,5 +519,6 @@
                         <div id="htmlTableContentID">
                         </div>
                     </div>
+			<div id="data"></div>
                     </body>
                 </html>
