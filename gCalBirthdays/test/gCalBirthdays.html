@@ -172,23 +172,27 @@ function search(url) {
   var scriptElement = document.createElement("script");
   scriptElement.setAttribute("id", "jsonScript");
 
-  scriptElement.setAttribute("src", url + "&alt=json-in-script&callback=listEntries" + " HTTP/1.1" + '\n'
-			+ "Content-Type: application/x-www-form-urlencoded" + '\n'
-			+ 'Authorization: AuthSub token="' + token + '"' + '\n'
-			+ "User-Agent: Java/1.5.0_06" + '\n'
-			+ "Host: www.google.com" + '\n'
-			+ "Accept: text/html, text/javascript, image/gif, image/jpeg, *; q=.2, */*; q=.2" + '\n'
-			+ "Connection: keep-alive" );
+  var srcurl1 =  (url + "?alt=json-in-script&callback=listEntries" + " HTTP/1.1 "
+			//+ "Content-Type: application/x-www-form-urlencoded " 
+			+ 'Authorization AuthSub token=' + token + " "
+			+ "User-Agent: Java/1.5.0_06 " 
+			+ "Host: www.google.com " 
+			+ "Accept: text/html, text/javascript, image/gif, image/jpeg, *; q=.2, */*; q=.2 " 
+			+ "Connection: keep-alive ");
+//alert (srcurl);
+//alert (decodeURIComponent('http://www.google.com/m8/feeds/contacts/default/full?xdh%3AAuthorization=AuthSub%20token%3D2%2FbbBnClm7aGnzxc9ryP2tMoPiAJ-trg6WyvhPNYlGy_A&xdh%3AContent-Length=0&xdh%3AX-HTTP-Method-Override=GET&xdh%3AX-If-No-Redirect=1&xdp%3Aalt=json-xd&xdp%3Abody=&xdp%3Auser-agent=gCalBirthdays%2520GData-JavaScript%252Fdev%25201247602271626-329&xdpe%3Adummy-uri=http%3A%2F%2Fgcalbirthdays.googlecode.com%2Fsvn%2Ftrunk%2FgCalBirthdays%2Ftest%2FgCalBirthdays.gif&xdpe%3Arequest-id=0'));
+//var srcurl = 'http://www.google.com/m8/feeds/contacts/default/full?xdh%3AAuthorization=AuthSub%20token%3D2%2'+token+'&xdh%3AContent-Length=0&xdh%3AX-HTTP-Method-Override=GET&xdh%3AX-If-No-Redirect=1&xdp%3Aalt=json-xd&xdp%3Abody=&xdp%3Auser-agent=gCalBirthdays%2520GData-JavaScript%252Fdev%25201247602271626-329&xdpe%3Adummy-uri=http%3A%2F%2Fgcalbirthdays.googlecode.com%2Fsvn%2Ftrunk%2FgCalBirthdays%2Ftest%2FgCalBirthdays.gif&xdpe%3Arequest-id=0';
 
-//  scriptElement.setAttribute("src", "/m8/feeds/contacts/default/full&alt=json-in-script&callback=listEntries" + " HTTP/1.1" + '\n'
-//			+ "Content-Type: application/x-www-form-urlencoded" + '\n'
-//			+ 'Authorization: AuthSub token="' + token + '"' + '\n'
-//			+ "User-Agent: Java/1.5.0_06" + '\n'
-//			+ "Host: www.google.com" + '\n'
-//			+ "Accept: text/html, text/javascript, image/gif, image/jpeg, *; q=.2, */*; q=.2" 
-//			+ "Connection: keep-alive" );
+//working
+var srcurl = 'http://www.google.com/m8/feeds/contacts/default/full?xdh%3AAuthorization=AuthSub%20token%3D'+token+'&xdh%3AContent-Length=0&xdh%3AX-HTTP-Method-Override=GET&xdh%3AX-If-No-Redirect=1&xdp%3Aalt=json-xd&xdp%3Abody=&xdp%3Auser-agent=gCalBirthdays%2520GData-JavaScript%252Fdev%25201247602271626-329&xdpe%3Adummy-uri=http%3A%2F%2F127.0.0.1%3A8000%2FgCalBirthdays%2Ftest%2FgCalBirthdays.gif&xdpe%3Arequest-id=0';
 
-//  scriptElement.setAttribute("src", "http://www.google.com/m8/feeds/contacts/glaserfrank%40gmail.com/full&callback=listEntries");
+//todo strip
+//var srcurl = 'http://www.google.com/m8/feeds/contacts/default/full?xdh%3AAuthorization=AuthSub%20token%3D'+token+'&xdh%3AContent-Length=0&xdh%3Av%3D3.0&xdh%3AX-HTTP-Method-Override=GET&xdh%3AX-If-No-Redirect=1&xdp%3Aalt=json-xd&xdp%3Abody=&xdp%3Auser-agent=gCalBirthdays%2520GData-JavaScript%252Fdev%25201247602271626-329&xdpe%3Adummy-uri=http%3A%2F%2F127.0.0.1%3A8000%2FgCalBirthdays%2Ftest%2FgCalBirthdays.gif&xdpe%3Arequest-id=0';
+
+//?alt=json-in-script&callback=listEntries
+//todo
+
+  scriptElement.setAttribute("src", srcurl );
 
   scriptElement.setAttribute("type", "text/javascript");
   //scriptElement.setAttribute("type", "text/css");
@@ -225,7 +229,7 @@ function removeOldResults() {
 		
 			function main(){  
 				search (CONTACTS_FEED_URL);
-				prompt('search_end');
+		//prompt('search_end');
 				getContacts( CONTACTS_FEED_URL );
 				
                 //getCalendars( CALENDAR_FEED_URL ); // is executed by getContacts()
@@ -245,7 +249,7 @@ function removeOldResults() {
                 for (var i = 0; i < contacts.length; i++) {
                 	contactList.push(contacts[i]);
                 }
-prompt('end');
+//prompt('end');
 				var nextLink = conFeed.getNextLink();
 		        if ( nextLink ) {
 					var nextURL = conFeed.getNextLink().href;
