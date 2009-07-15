@@ -17,8 +17,8 @@
              *
              */
             //load the Google data JS Client Library
-            //google.load('gdata', '1.x');
-            google.load("gdata", "1.x", {packages: ["contacts", "calendar"]});
+            google.load('gdata', '1.x');
+            //google.load("gdata", "1.x", {packages: ["contacts", "calendar"]});
 //			google.load("jquery", "1.3.2");
 //		  	google.load("jqueryui", "1.7.2");
 //			google.load("prototype", "1.6.0.3");
@@ -35,7 +35,8 @@
             var CALENDAR_SUMMARY = 'This calendar contains the birthdays of Your Google Contacts.';
             var CALENDAR_COLOR = '#A32929'; // red "#A32929", blue "#2952A3" and green "#0D7813"
             var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
-            var CONTACTS_FEED_URL = 'http://www.google.com/m8/feeds/contacts/default/full';
+            var CONTACTS_FEED_URL = 'http://www.google.com/m8/feeds/contacts/default/full?v=3.0';
+			//var CONTACTS_FEED_URL = 'http://www.google.com/m8/feeds/contacts/default/full';
 			//var CONTACTS_FEED_URL = 'http://www.google.com/m8/feeds/contacts/default/full?max-results=1';
             var CALENDAR_FEED_URL = 'http://www.google.com/calendar/feeds/default/owncalendars/full';
 			//var CALENDAR_FEED_URL = 'http://www.google.com/calendar/feeds/default/allcalendars/full';
@@ -68,7 +69,8 @@
             function init(){
                 var authButton = document.getElementById('auth_button');
 				
-				conService = new google.gdata.contacts.ContactsService(APP_NAME);
+				conService = new google.gdata.client.GoogleService('cp', 'APP_NAME');   
+				//conService = new google.gdata.contacts.ContactsService(APP_NAME);
                 calService = new google.gdata.calendar.CalendarService(APP_NAME); 
 				
                 token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
@@ -111,125 +113,7 @@
 				init();				
             }
 			
-//------------------------------------------------------------
-
-function listEntries(j) {
-  // Clear any information displayed under the "data" div.
-  alert ('listEntries');
-  removeOldResults()
-
-  // Transform the JSON results into an unordered list of links.
-  var ul = document.createElement("ul");
-  for (var i = 0; i < j.feed.entry.length; ++i) {
-    var entry = j.feed.entry[i];
-    var alturl;
-    for (var k = 0; k < entry.link.length; ++k) {
-      if (entry.link[k].rel == "alternate") {
-        alturl = entry.link[k].href; 
-        break;
-      }
-    }
-    var li = document.createElement("li");
-    var txt = document.createTextNode(entry.title.$t);
-
-    if (alturl !== undefined) {
-      var a = document.createElement("a");
-      a.href = alturl;
-
-      a.appendChild(txt);
-      li.appendChild(a);
-    } else {
-      li.appendChild(txt);
-    }
-
-    ul.appendChild(li);
-  }
-  document.getElementById("data").appendChild(ul);
-}
-
-/**
- * Adds a JSON script element which queries Google Base and calls the 
- * call-back function.
- *
- * @param {DOM object} query The form element containing the input parameters
- *     "bq" and "feed".
- */
-function search(url) {
-  // Delete any previous Google Base JSON queries.
-  removeOldJSONScriptNodes();
-  // Clear any old data to prepare to display the Loading... message.
-  removeOldResults()
-
-  // Show a "Loading..." indicator.
-  var div = document.getElementById('data');
-  var p = document.createElement('p');
-  p.appendChild(document.createTextNode('Loading...'));
-  div.appendChild(p);
-
-  // Add a script element with the src as the user's Google Base query. 
-  // JSON output is specified by including the alt=json-in-script argument
-  // and the callback funtion is also specified as a URI argument.
-  var scriptElement = document.createElement("script");
-  scriptElement.setAttribute("id", "jsonScript");
-
-  var srcurl1 =  (url + "?alt=json-in-script&callback=listEntries" + " HTTP/1.1 "
-			//+ "Content-Type: application/x-www-form-urlencoded " 
-			+ 'Authorization AuthSub token=' + token + " "
-			+ "User-Agent: Java/1.5.0_06 " 
-			+ "Host: www.google.com " 
-			+ "Accept: text/html, text/javascript, image/gif, image/jpeg, *; q=.2, */*; q=.2 " 
-			+ "Connection: keep-alive ");
-//alert (srcurl);
-//alert (decodeURIComponent('http://www.google.com/m8/feeds/contacts/default/full?xdh%3AAuthorization=AuthSub%20token%3D2%2FbbBnClm7aGnzxc9ryP2tMoPiAJ-trg6WyvhPNYlGy_A&xdh%3AContent-Length=0&xdh%3AX-HTTP-Method-Override=GET&xdh%3AX-If-No-Redirect=1&xdp%3Aalt=json-xd&xdp%3Abody=&xdp%3Auser-agent=gCalBirthdays%2520GData-JavaScript%252Fdev%25201247602271626-329&xdpe%3Adummy-uri=http%3A%2F%2Fgcalbirthdays.googlecode.com%2Fsvn%2Ftrunk%2FgCalBirthdays%2Ftest%2FgCalBirthdays.gif&xdpe%3Arequest-id=0'));
-//var srcurl = 'http://www.google.com/m8/feeds/contacts/default/full?xdh%3AAuthorization=AuthSub%20token%3D2%2'+token+'&xdh%3AContent-Length=0&xdh%3AX-HTTP-Method-Override=GET&xdh%3AX-If-No-Redirect=1&xdp%3Aalt=json-xd&xdp%3Abody=&xdp%3Auser-agent=gCalBirthdays%2520GData-JavaScript%252Fdev%25201247602271626-329&xdpe%3Adummy-uri=http%3A%2F%2Fgcalbirthdays.googlecode.com%2Fsvn%2Ftrunk%2FgCalBirthdays%2Ftest%2FgCalBirthdays.gif&xdpe%3Arequest-id=0';
-
-//working
-var srcurl = 'http://www.google.com/m8/feeds/contacts/default/full?xdh%3AAuthorization=AuthSub%20token%3D'+token+'&xdh%3AContent-Length=0&xdh%3AX-HTTP-Method-Override=GET&xdh%3AX-If-No-Redirect=1&xdp%3Aalt=json-xd&xdp%3Abody=&xdp%3Auser-agent=gCalBirthdays%2520GData-JavaScript%252Fdev%25201247602271626-329&xdpe%3Adummy-uri=http%3A%2F%2F127.0.0.1%3A8000%2FgCalBirthdays%2Ftest%2FgCalBirthdays.gif&xdpe%3Arequest-id=0';
-
-//todo strip
-//var srcurl = 'http://www.google.com/m8/feeds/contacts/default/full?xdh%3AAuthorization=AuthSub%20token%3D'+token+'&xdh%3AContent-Length=0&xdh%3Av%3D3.0&xdh%3AX-HTTP-Method-Override=GET&xdh%3AX-If-No-Redirect=1&xdp%3Aalt=json-xd&xdp%3Abody=&xdp%3Auser-agent=gCalBirthdays%2520GData-JavaScript%252Fdev%25201247602271626-329&xdpe%3Adummy-uri=http%3A%2F%2F127.0.0.1%3A8000%2FgCalBirthdays%2Ftest%2FgCalBirthdays.gif&xdpe%3Arequest-id=0';
-
-//?alt=json-in-script&callback=listEntries
-//todo
-
-  scriptElement.setAttribute("src", srcurl );
-
-  scriptElement.setAttribute("type", "text/javascript");
-  //scriptElement.setAttribute("type", "text/css");
-  //scriptElement.setAttribute("type", "text/html")
-  document.documentElement.firstChild.appendChild(scriptElement);
-}
-
-/**
- * Deletes any old script elements which have been created by previous calls
- * to search().
- */
-function removeOldJSONScriptNodes() {
-  var jsonScript = document.getElementById("jsonScript");
-  if (jsonScript) {
-    jsonScript.parentNode.removeChild(jsonScript);
-  }
-}
-
-/**
- * Deletes pre-existing children of the data div from the page. The data div 
- * may contain a "Loading..." message, or the results of a previous query. 
- * This old data should be removed before displaying new data.
- */
-function removeOldResults() {
-  var div = document.getElementById("data");
-  if (div.firstChild) {
-    div.removeChild(div.firstChild);
-  }
-}
-
-//------------------------------------------------------------
-
-
-		
-			function main(){  
-				search (CONTACTS_FEED_URL);
-		//prompt('search_end');
+			function main(){  		
 				getContacts( CONTACTS_FEED_URL );
 				
                 //getCalendars( CALENDAR_FEED_URL ); // is executed by getContacts()
@@ -240,26 +124,60 @@ function removeOldResults() {
 				//var conQuery = new google.gdata.contacts.ContactQuery(CONTACTS_FEED_URL);
 				//conQuery.setSortOrder('ascending');
   				//conService.getContactFeed(conQuery, handleContactsFeed, handleError);
-				conService.getContactFeed(conURL, handleContactsFeed, handleError);
+				
+				// ContactsService v2
+				//conService.getContactFeed(conURL, handleContactsFeed, handleError);
+				
+				// WorkAround
+				conService.getFeed(conURL, handleContactsFeed, handleError);  
 			}
 
             function handleContactsFeed(conFeedRoot){
 				conFeed = conFeedRoot.feed;
-				contacts = conFeed.getEntries();
-                for (var i = 0; i < contacts.length; i++) {
-                	contactList.push(contacts[i]);
-                }
-//prompt('end');
-				var nextLink = conFeed.getNextLink();
-		        if ( nextLink ) {
-					var nextURL = conFeed.getNextLink().href;
-					//getContacts( nextURL );	
+				
+				// ContactsService v2
+				//contacts = conFeed.getEntries();
+                //for (var i = 0; i < contacts.length; i++) {
+                //	contactList.push(contacts[i]);
+                //}
+				
+				// WorkAround
+				for (var i = 0; i < conFeed.entry.length; ++i) {
+					contactList.push(conFeed.entry[i]);
 				}
-				else {
-					displayContacts();
-					getCalendars( CALENDAR_FEED_URL );
-				}
-			
+				
+				// ContactsService v2
+//				var nextLink = conFeed.getNextLink();
+//		        if ( nextLink ) {
+//					var nextURL = conFeed.getNextLink().href;
+//					//getContacts( nextURL );	
+//				}
+//				else {
+//					displayContacts();
+//					getCalendars( CALENDAR_FEED_URL );
+//				}
+
+				// WorkAround
+				//conFeed.getNextLink(); ??
+				alert (conFeedRoot.feed.link[5].href);
+
+
+//"link":[
+//{"rel":"alternate","type":"text/html","href":"http://www.google.com/"},
+//{"rel":"http://schemas.google.com/g/2005#feed","type":"application/atom+xml","href":"http://www.google.com/m8/feeds/contacts/glaserfrank%40gmail.com/full?v\\u003d3.0"},
+//{"rel":"http://schemas.google.com/g/2005#post","type":"application/atom+xml","href":"http://www.google.com/m8/feeds/contacts/glaserfrank%40gmail.com/full?v\\u003d3.0"},
+//{"rel":"http://schemas.google.com/g/2005#batch","type":"application/atom+xml","href":"http://www.google.com/m8/feeds/contacts/glaserfrank%40gmail.com/full/batch?v\\u003d3.0"},
+//{"rel":"self","type":"application/atom+xml","href":"http://www.google.com/m8/feeds/contacts/glaserfrank%40gmail.com/full?alt\\u003djson\\u0026max-results\\u003d25\\u0026v\\u003d3.0"},
+//{"rel":"next","type":"application/atom+xml","href":"http://www.google.com/m8/feeds/contacts/glaserfrank%40gmail.com/full?alt\\u003djson\\u0026start-index\\u003d26\\u0026max-results\\u003d25\\u0026v\\u003d3.0"}]
+				
+//				if (conFeedRoot.feed.link[5].href) {
+//					var nextURL = conFeedRoot.feed.link[5].href;
+//					getContacts( nextURL );	
+//				}
+//				else {
+//					displayContacts();
+//					getCalendars( CALENDAR_FEED_URL );
+//				}		
             }
             
 			function displayContacts() {
@@ -268,18 +186,16 @@ function removeOldResults() {
                 var tbody = document.createElement('tbody');
                 
 				for (var i = 0; i < contactList.length; i++) {
-                    var conTitle = contactList[i].getTitle().getText();;
-                    
-					//var conTitle = contactList[i].getExtendedProperties();
 					
-					//var conTitle = contact[i].getBirthday();
-                    //var conTitle = conFeed.getTitle().getText();
+					// ContactsService v2
+                    //var conTitle = contactList[i].getTitle().getText();;
                     
-                    //get User which is logged in
-                    //var conTitle = conFeed.getAuthors();
-                    //conTitle[0].getName().getValue(); // User Name
-                    //conTitle[0].getEmail().getValue(); // User Mail
-                    
+					// WorkAround
+					var conTitle = contactList[i].title.$t;
+					if (contactList[i].gContact$birthday) { 
+						conTitle = conTitle + ' ' + contactList[i].gContact$birthday.when;
+					}
+					
                     var row = document.createElement('tr');
                     var cell = document.createElement('td');
                     cell.appendChild(document.createTextNode("contact: "+conTitle));
