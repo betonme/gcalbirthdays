@@ -129,7 +129,7 @@
 				//conService.getContactFeed(conURL, handleContactsFeed, handleError);
 				
 				// WorkAround
-				conService.getFeed(conURL, handleContactsFeed, handleError);  
+				conService.getFeed(conURL, handleContactsFeed, handleError);	
 			}
 
             function handleContactsFeed(conFeedRoot){
@@ -142,10 +142,20 @@
                 //}
 				
 				// WorkAround
-				for (var i = 0; i < conFeed.entry.length; ++i) {
-					contactList.push(conFeed.entry[i]);
-				}
-				
+				//for (var i = 0; i < conFeed.entry.length; ++i) {
+				//	contactList.push(conFeed.entry[i]);
+				//}
+			   //for (var i = 0; i < conFeed.entry.length; ++i) {
+			   for each ( var contact in conFeed.entry ) {
+			      // Push only if contact has a title or fullname ???????
+			      if ( contact.title.$t ) {
+			         // Push only if contact has a birthday
+			         if ( contact.gContact$birthday ) {
+			            contactList.push( contact );      
+			         }
+			      }
+			   }
+
 				// ContactsService v2
 //				var nextLink = conFeed.getNextLink();
 //		        if ( nextLink ) {
@@ -158,26 +168,13 @@
 //				}
 
 				// WorkAround
-				//conFeed.getNextLink(); ??
-				alert (conFeedRoot.feed.link[5].href);
-
-
-//"link":[
-//{"rel":"alternate","type":"text/html","href":"http://www.google.com/"},
-//{"rel":"http://schemas.google.com/g/2005#feed","type":"application/atom+xml","href":"http://www.google.com/m8/feeds/contacts/glaserfrank%40gmail.com/full?v\\u003d3.0"},
-//{"rel":"http://schemas.google.com/g/2005#post","type":"application/atom+xml","href":"http://www.google.com/m8/feeds/contacts/glaserfrank%40gmail.com/full?v\\u003d3.0"},
-//{"rel":"http://schemas.google.com/g/2005#batch","type":"application/atom+xml","href":"http://www.google.com/m8/feeds/contacts/glaserfrank%40gmail.com/full/batch?v\\u003d3.0"},
-//{"rel":"self","type":"application/atom+xml","href":"http://www.google.com/m8/feeds/contacts/glaserfrank%40gmail.com/full?alt\\u003djson\\u0026max-results\\u003d25\\u0026v\\u003d3.0"},
-//{"rel":"next","type":"application/atom+xml","href":"http://www.google.com/m8/feeds/contacts/glaserfrank%40gmail.com/full?alt\\u003djson\\u0026start-index\\u003d26\\u0026max-results\\u003d25\\u0026v\\u003d3.0"}]
-				
-//				if (conFeedRoot.feed.link[5].href) {
-//					var nextURL = conFeedRoot.feed.link[5].href;
-//					getContacts( nextURL );	
-//				}
-//				else {
-//					displayContacts();
-//					getCalendars( CALENDAR_FEED_URL );
-//				}		
+				for each ( var link in conFeed.link ) {
+					if ('next' == link.rel) {
+						return getContacts (link.href);				
+					}
+				}
+				displayContacts();
+				getCalendars( CALENDAR_FEED_URL );
             }
             
 			function displayContacts() {
@@ -185,15 +182,16 @@
                 var table = document.createElement('table');
                 var tbody = document.createElement('tbody');
                 
-				for (var i = 0; i < contactList.length; i++) {
+				for each ( var contact in contactList ) {
+				//for (var i = 0; i < contactList.length; i++) {
 					
 					// ContactsService v2
                     //var conTitle = contactList[i].getTitle().getText();;
                     
 					// WorkAround
-					var conTitle = contactList[i].title.$t;
-					if (contactList[i].gContact$birthday) { 
-						conTitle = conTitle + ' ' + contactList[i].gContact$birthday.when;
+					var conTitle = contact.title.$t;
+					if (contact.gContact$birthday) { 
+						conTitle = conTitle + ' ' + contact.gContact$birthday.when;
 					}
 					
                     var row = document.createElement('tr');
@@ -215,11 +213,12 @@
                 calendars = calFeed.getEntries();
 
 				var calEntry;                
-                for (var i = 0; i < calendars.length; i++) {
-                    var calTitle = calendars[i].getTitle().getText();
+				for each ( var calendar in calendars ) {
+                //for (var i = 0; i < calendars.length; i++) {
+                    var calTitle = calendar.getTitle().getText();
                     if (-1 != calTitle.search(CALENDAR_NAME)) {
                         // Found CalendarEntry
- 						calEntry = calendars[i];
+ 						calEntry = calendar;
 						//alert ('found calendar');
                     }
                 }
@@ -229,7 +228,7 @@
 					createCalendar();	
 					
 					// Get Calendars again
-					getCalendars( calURL );
+					getCalendars( CALENDAR_FEED_URL );
                 }
 				else {
 					// Get Calendar URL
@@ -303,8 +302,9 @@
                 
 				batchURL = eventFeed.getFeedBatchLink().href;
 				
-                for (var i = 0; i < events.length; i++) {
-                    eventList.push(events[i]);
+				for each ( var event in events ) {
+                //for (var i = 0; i < events.length; i++) {
+                    eventList.push(event);
 				}
                 
 				var nextLink = eventFeed.getNextLink();
@@ -314,7 +314,7 @@
 				}	
 				else {
 					displayEvents();
-					checkEvents();
+					//checkEvents();
 				}			
             }
 
@@ -323,8 +323,9 @@
                 var table = document.createElement('table');
                 var tbody = document.createElement('tbody');
                 
-				for (var i = 0; i < eventList.length; i++) {
-                    var eventTitle = eventList[i].getTitle().getText();;
+				for each ( var event in eventList ) {
+				//for (var i = 0; i < eventList.length; i++) {
+                    var eventTitle = event.getTitle().getText();;
                     
                     var row = document.createElement('tr');
                     var cell = document.createElement('td');
@@ -336,35 +337,100 @@
                 htmlTableContent.appendChild(table);
 			}
 				
-			function checkEvents() {
-				//eventList
-				//contactList	
-				//addEvent();
-				//getHttpRequest();
-				
-//					for ( CalendarEventEntry event : eventFeed.getEntries() ) {
-//						if (event.getTitle().getPlainText().contains(contact.getName().getFullName().getValue())) {
-//							// found event for given contact
-//							// check date
-//							sdf.applyPattern(DATE_FORMAT_GCAL_SET_EVENT);
-//							if (event.getRecurrence().getValue().contains(sdf.format(date))) {
-//								//if ( event.getRecurrence().getValue().contains( recurData.substring(0, 25) )) {
-//								// same date - nothing todo
-//								//DEBUG: System.out.println("\tcontact and event have same date: " + contact.getName().getFullName().getValue() + " " + event.getTitle().getPlainText() );
-//								System.out.println("\tcontact and event have same date: " + contact.getName().getFullName().getValue() + " " + event.getTitle().getPlainText());
-//								exists = true;
-//							}
-//							else {
-//								// date not correct - update date
-//								//DEBUG: System.out.println("\tcontact and event have not the same date: " + contact.getName().getFullName().getValue() + " " + contact.getBirthday().getWhen() + " " + event.getTitle().getPlainText() /* + " " + event.getRecurrence().getValue() */ );
-//								System.out.println("\tcontact and event have not the same date: " + contact.getName().getFullName().getValue() + " " + contact.getBirthday().getWhen());
-//								update = true;
-//								entry = event;
-//							}
-//						}
-//					}				
-			}	
-				      
+function checkEvents() {
+   var entry;
+   var exists = false;
+   var update = false;
+   var batchid = 0;
+
+    for each ( var contact in conList ) {
+      var date = contact.gContact$birthday.replace(/-/g,'');
+      if ( 8 != date.length() ) {
+         date = '1970'+date; //to comply with Java date http://java.sun.com/j2se/1.3/docs/api/
+      } 
+      //for (var e = 0; e < eventList.length; e++) {
+      //for each (var tier in tiere)
+      for each ( var event in eventList ) {
+        exists = false;
+        update = false;
+        
+        // Check contact title or fullname ???????
+        if ( -1 != event.getTitle().getPlainText().search( contact.title.$t ) ) {
+        //if (-1 != event.getTitle().getPlainText().indexOf(contact.title.$t)) {
+        //str.search(/W3Schools/i); // Case-insensitive Search
+            // Event found for given contact
+            // Check date
+            //var date = contact.gContact$birthday;
+            //if ( -1 != event.getRecurrence().getValue().search( date.replace(/-/g,'') ) ) {
+            if ( -1 != event.getRecurrence().getValue().search( date ) ) {
+                 // Date correct - nothing todo
+                 exists = true;
+            }
+            else {
+                 // Date not correct - update date
+                 exists = false;
+                 update = true;
+                 entry = event;
+            }
+         }
+         else {
+            // Event not found for given contact
+            exists = false;
+            entry = new google.gdata.calendar.CalendarEventEntry();
+         }      
+      }
+   
+      // Handle new(to be added) and changed(to be updated) events
+      if ( false == exists ) {
+         // Create a recurring event
+         // Set up the recurring details using an ical string (RFC 2445 http://www.ietf.org/rfc/rfc2445.txt)
+         var recurrence = new google.gdata.Recurrence();
+         var icalBreak = '\r\n'; //'\n'
+         var recurrenceString = 'DTSTART;VALUE=DATE:' + date + icalBreak +
+                                           'DTEND;VALUE=DATE:' + date + icalBreak +
+                                           'RRULE:FREQ=YEARLY';
+         recurrence.setValue(recurrenceString);
+         
+         // Create a Reminder object that will be attached to the When object
+         var reminder = new google.gdata.Reminder();
+         reminder.setDays( REMINDER_DAYS );                                
+         reminder.setMethod( google.gdata.Reminder.METHOD_ALERT );
+
+         // Insert contact title or fullname ???????
+         entry.setTitle( contact.title.$t );
+         entry.setContent( contact.title.$t );
+         entry.setRecurrence( recurrence );
+         entry.addReminder( reminder );
+         
+         batchid++;
+         calService.insertEntry(eventURL, entry, callback, handleError, google.gdata.calendar.CalendarEventEntry);
+
+         //TODO batchURL
+      /*
+         BatchUtils.setBatchId(entry, batchid.toString());
+         if ( true == update ) { 
+           BatchUtils.setBatchOperationType(entry, BatchOperationType.UPDATE);
+         } else {
+           BatchUtils.setBatchOperationType(entry, BatchOperationType.INSERT);     
+         }
+         batchRequest.getEntries().add(entry);
+      */   
+      }
+   }
+   
+   // Get the batch link URL and send the batch request there.
+/*
+   if ( batchRequest.getEntries().isEmpty() ) {
+      alert("No Batch Request");
+   }else {
+      alert("Send Calendar Batch Request");
+      Link batchLink = eventFeed.getLink(Link.Rel.FEED_BATCH, Link.Type.ATOM);
+      //CalendarEventFeed batchResponse = 
+        calService.batch(new URL(batchLink.getHref()), batchRequest);
+   }
+*/
+}
+     
 
 			function addEvent() {
 				// Create a recurring event
@@ -404,7 +470,12 @@
              *  while retrieving a feed or adding an event.
              */
             function handleError(e){
-                alert(e.cause ? e.cause.statusText : e.message);
+                // Commented out because of:
+				// getFeed causes:
+				//   Invalid json format. 
+				//     Unescaped json is a not supported format for attributes or text values.
+				//   But getting is not interrupted!
+				//alert(e.cause ? e.cause.statusText : e.message);
             };
             
 			//TODO Why opens a file download dialog 3 times ???
