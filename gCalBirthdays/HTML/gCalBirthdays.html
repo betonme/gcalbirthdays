@@ -40,7 +40,7 @@
 
             const GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
-			const GROUP_FEED_URL = 'http://www.google.com/m8/feeds/groups/default/full';
+			const GROUP_FEED_URL = 'http://www.google.com/m8/feeds/groups/default/thin'; //full
             const CALENDAR_FEED_URL = 'http://www.google.com/calendar/feeds/default/owncalendars/full';
 
             const CONTACTS_FEED_URL_FULL = 'http://www.google.com/m8/feeds/contacts/default/full';
@@ -97,9 +97,10 @@
                 // ContactsService v3 GoogleService WorkAround for Contact Birthdays
       			contactService = new google.gdata.client.GoogleService('cp', APP_NAME);
 
-                // ContactsService v2 for ContactGroups
-                groupService = new google.gdata.contacts.ContactsService(APP_NAME);
+                // ContactsService v3 GoogleService WorkAround for Contact System Groups
+                groupService = new google.gdata.client.GoogleService('cp', APP_NAME);
 
+				// CalendarService v2
                 calendarService = new google.gdata.calendar.CalendarService(APP_NAME);
 
                 token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
@@ -135,58 +136,77 @@
             function onClickAuthButton(){
                 token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
                 if (token) {
-                                        // User is loged in
+                    // User is loged in
                     google.accounts.user.logout();
                 }
                 else {
-                                        // User is loged out
+                    // User is loged out
                     token = google.accounts.user.login(GOOGLE_FEED_AUTH);
                 }
                 init();
             }
 
             function main(){
-              getGroups( GROUP_FEED_URL );
-			  getCalendars( CALENDAR_FEED_URL );
+              queryGroups();
+			  queryCalendars();
             }
 
-            function getGroups(groupURL){
-				groupService.getContactGroupFeed(groupURL, handleGroupsFeed, handleError);
+            function queryGroups(){
+				// Query for all the contacts entry with this contact group
+			    var query = new google.gdata.contacts.ContactQuery(GROUP_FEED_URL);
+
+			    // Use query parameter to set the google contacts version
+				query.setParam(CONTACTS_VERSION_NAME, CONTACTS_VERSION_NUMBER);
+
+				// Submit the request using the contacts service object
+				groupService.getFeed(query, handleGroupsFeed, handleError);
 			}
 
 			function handleGroupsFeed(feedRoot){
 			  // An array of contact group entries
 			  groups = feedRoot.feed.entry;
 
-			  // Clear select
-			  clearSelect('group_select');
+			  // Clear options
+			  clearOptions('group_select');
 
 			  // Add 'All contacts' option
-		  	  addToGroupSelect('group_select', ALL_CONTACTS, '', true);
+		  	  addOption('group_select', ALL_CONTACTS, '', true);
+
+			  // Sort groups - replace 'System Group: '
+			  var id=0;
+			  for each (var group in groups) {
+			    group.title.$t = group.title.$t.replace(/System Group/gi,id++);
+			  }
+			  groups.sort(compareEntries);
+			  for each (var group in groups) {
+			    group.title.$t = group.title.$t.replace(/^.: /gi,'');
+			  }
 
 			  // Iterate through the array of contact groups, and add them to drop down box
 			  for each ( var group in groups ) {
-				addToGroupSelect('group_select', group.getTitle().getText(), group.getId().getValue());
+				addOption('group_select', group.title.$t, group.id.$t);
 			  }
 
 			   showSettingsBlock();
 			}
 
-			function addToGroupSelect(id, text, value, selected){
-				var elSel = document.getElementById(id);
-				addToSelect(elSel, text, value, selected);
-			}
+            function queryCalendars(){
+				// Query for all calendars
+			    var query = new google.gdata.client.Query(CALENDAR_FEED_URL);
 
-            function getCalendars(calURL){
-              calendarService.getOwnCalendarsFeed(calURL, handleCalendarsFeed, handleError);
+				// Submit the request using the contacts service object
+              	calendarService.getOwnCalendarsFeed(query, handleCalendarsFeed, handleError);
             }
 
             function handleCalendarsFeed(feedRoot){
 				// An array of calendar entries
 				calendars = feedRoot.feed.getEntries();
 
-				// Clear select
-				clearSelect('calendar_select');
+				// Clear options
+				clearOptions('calendar_select');
+
+			  	// Sort calendars
+				calendars.sort(compareEntries);
 
 				// Iterate through the array of calendars, and add them to drop down box
                 for each ( var calendar in calendars ) {
@@ -200,7 +220,6 @@
             }
 
 			function addToCalendarSelect(id, text, value, selected){
-				var elSel = document.getElementById(id);
 				if (true == selected) {
 					if ('undefined' == typeof addToCalendarSelect.counter) {
 						addToCalendarSelect.counter = 1;
@@ -209,44 +228,62 @@
 						selected = false;
 					}
 				}
-				addToSelect(elSel, text, value, selected);
+				addOption(id, text, value, selected);
+			}
+			
+			function selectOption(id, selId){
+				var elSel = document.getElementById(id);
+				elSel.selectedIndex = selId;
 			}
 
-			function clearSelect(id){
+			function clearOptions(id){
 				document.getElementById(id).length = 0;
 			}
-
-			function addToSelect(elSel, text, value, selected){
+			
+			function insertOption(id, text, value, selected){
+				var elSelId;
+				  for (elSelId=0; elSelId<elSel.length; elSelId++) {
+				  	var option = elSel.options[elSelId];
+				    if (0 < compareStrings(option.text, text)){
+				        break;
+				    }
+				    else if ( option.text == 'New calendar' ){
+				        break;
+				    }
+				  }
+			    addOption(id, text, value, selected, elSelId);
+				elSel.selectedIndex = elSelId;
+			}
+			
+			function addOption(id, text, value, selected, elSelId){
+			  var elSel = document.getElementById(id);
 			  var elOptNew = document.createElement('option');
 			  elOptNew.text = text;
 			  elOptNew.value = value;
 			  if (true == selected){
 			  	elOptNew.selected = true;
 			  }
-
 			  try {
-			    elSel.add(elOptNew, null); // standards compliant; doesn't work in IE
+			  	// standards compliant; doesn't work in IE
+				var elOptOld = elSel.options[elSelId];
+			    elSel.add(elOptNew, elOptOld);
 			  }
 			  catch(ex) {
-			    elSel.add(elOptNew); // IE only
-			  }
+			  	// IE only
+			    elSel.add(elOptNew, elSelId);
+			  }		  
 			}
 
-			function insertOptionBefore(id, text, value, selected){
-			  var elSel = document.getElementById(id);
-			    var elOptNew = document.createElement('option');
-			    elOptNew.text = text;
-			    elOptNew.value = value;
-				if (true == selected){
-			  		elOptNew.selected = true;
-			  	}
-			    var elOptOld = elSel.options[0];
-			    try {
-			      elSel.add(elOptNew, elOptOld); // standards compliant; doesn't work in IE
-			    }
-			    catch(ex) {
-			      elSel.add(elOptNew, 0); // IE only
-			    }
+			function compareNumbers(a, b) {
+				return a - b;
+			}
+
+			function compareStrings(a, b) {
+			 	return (b < a) - (a < b);
+			}
+
+			function compareEntries(a, b) {
+			 	return compareStrings(a.title.$t.toLowerCase(), b.title.$t.toLowerCase());
 			}
 
 			function showSettingsBlock(){
@@ -260,11 +297,12 @@
 				}
 			}
 
-			function onSelectCalendar(calendarSelectedIndex){
+			function onSelectNewCalendar(calendarSelectedIndex){
 				if(NEW_CALENDAR == document.getElementById('calendar_select').options[calendarSelectedIndex].text) {
 					var calendarName = prompt("Calendar name:","Birthdays");
 					if (calendarName!=null && calendarName!=""){
-						insertCalendar(calendarName);
+						//insertCalendar(calendarName);
+						insertOption('calendar_select', calendarName, calendarName, true);
 					}
 				}
 			}
@@ -305,7 +343,7 @@
 				  //selFromBox('calendar_select', entryRoot.entry.getTitle().getText());
 
 				  //TODO
-				  insertOptionBefore('calendar_select', entryRoot.entry.getTitle().getText(), entryRoot.entry.getId().getValue(), true );
+				  //insertOptionBefore('calendar_select', entryRoot.entry.getTitle().getText(), entryRoot.entry.getId().getValue(), true );
               }
 
               // Submit the request using the calendar service object
@@ -313,39 +351,34 @@
             }
 
             function startTransfer(groupSelectedIndex, calendarSelectedIndex){
-			  var calendarId;
+			  	var calendarId;
 
 				calendarId = document.getElementById('calendar_select').options[calendarSelectedIndex].value;
 
-			  getContactsQuery( document.getElementById('group_select').options[groupSelectedIndex].value );
+			  	queryContacts( document.getElementById('group_select').options[groupSelectedIndex].value );
 
-              //getCalendarsQuery( document.getElementById('group_select').options[groupSelectedIndex].value ); // is executed after getContacts()
+              	//queryContacts( document.getElementById('group_select').options[groupSelectedIndex].value ); // is executed after getContacts()
 
-              // getEvents( eventURL ); // is executed after getCalendars()
+              	// getEvents( eventURL ); // is executed after getCalendars()
 			}
 
-            function getContactsQuery(groupId){
+            function queryContacts(groupId){
 			    // Query for all the contacts entry with this contact group
 			    var query = new google.gdata.contacts.ContactQuery(CONTACTS_FEED_URL_FULL);
 
-			    // Use query parameter to set the group ID
+			    // Use query parameter to set the google contacts version
 				query.setParam(CONTACTS_VERSION_NAME, CONTACTS_VERSION_NUMBER);
 
+				// Use query parameter to set the group ID
 				if ('' != groupId) {
 					query.setParam('group', groupId);
 				}
-
-				// ContactsService v2
-              	// contactService.getContactFeed(query, handleContactsFeed, handleError);
 
               	// ContactsService v3 GoogleService WorkAround
               	contactService.getFeed(query, handleContactsFeed, handleError);
             }
 
             function getContacts(conURL){
-              // ContactsService v2
-              // contactService.getContactFeed(conURL, handleContactsFeed, handleError);
-
               // ContactsService v3 GoogleService WorkAround
 			  //if (-1 == conURL.search(/v=3\.0/i)) {
 			  //  conURL = conURL + '?'+CONTACTS_VERSION_NAME+'='+CONTACTS_VERSION_NUMBER;
@@ -602,7 +635,7 @@
 			        <div class="indent">
 						<td>Select Calendar:</td>
 						<td>
-							<select id="calendar_select" onchange="onSelectCalendar(this.selectedIndex)">
+							<select id="calendar_select" onchange="onSelectNewCalendar(this.selectedIndex)">
 							</select>
 						</td>
 			        </div>
@@ -620,6 +653,20 @@
             <div id="htmlTableContentID">
             </div>
         </div>
+
+		<!--Google Analytics-->
+		<script type="text/javascript">
+		   var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+		   document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+		</script>
+		<script type="text/javascript">
+		   try {
+		      var pageTracker = _gat._getTracker("UA-9798979-3");
+		      pageTracker._trackPageview();
+		   }
+		   catch(err) {}
+		</script>
+
     </body>
 </html>
 
