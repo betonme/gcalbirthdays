@@ -33,8 +33,7 @@
 
             //load the Google data JS Client Library
             google.load('gdata', '1.x');
-            // google.load("gdata", "1.x", {packages: ["contacts",
-			// "calendar"]});
+            // google.load("gdata", "1.x", {packages: ["contacts", "calendar"]});
 // google.load("jquery", "1.3.2");
 // google.load("jqueryui", "1.7.2");
 // google.load("prototype", "1.6.0.3");
@@ -104,12 +103,12 @@
 
 				document.getElementById('version').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
 
-      			contactService = new google.gdata.client.GoogleService('cp', 'APP_NAME');
+                // ContactsService v3 GoogleService WorkAround for Contact Birthdays
+      			contactService = new google.gdata.client.GoogleService('cp', APP_NAME);
 
                 // ContactsService v2 for ContactGroups
                 groupService = new google.gdata.contacts.ContactsService(APP_NAME);
 
-                // ContactsService v3 GoogleService WorkAround for Contact Birthdays
                 calendarService = new google.gdata.calendar.CalendarService(APP_NAME);
 
                 token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
@@ -250,7 +249,7 @@
 				if (true == selected){
 			  		elOptNew.selected = true;
 			  	}
-			    var elOptOld = elSel.options[0];  
+			    var elOptOld = elSel.options[0];
 			    try {
 			      elSel.add(elOptNew, elOptOld); // standards compliant; doesn't work in IE
 			    }
@@ -323,11 +322,11 @@
               var insertCalendarCallback = function(entryRoot){
 				  // DEBUG: alert('Calendar created!');
 				  //getCalendars( CALENDAR_FEED_URL );
-				  
+
 				  //var calendarName = entryRoot.entry.getTitle().getText();
 				  //setTimeout("selFromBox('calendar_select', calendarName)",1000);
 				  //selFromBox('calendar_select', entryRoot.entry.getTitle().getText());
-				  
+
 				  //TODO
 				  insertOptionBefore('calendar_select', entryRoot.entry.getTitle().getText(), entryRoot.entry.getId().getValue(), true );
               }
@@ -344,7 +343,7 @@
 			  getContactsQuery( document.getElementById('group_select').options[groupSelectedIndex].value );
 
               //getCalendarsQuery( document.getElementById('group_select').options[groupSelectedIndex].value ); // is executed after getContacts()
-			  
+
               // getEvents( eventURL ); // is executed after getCalendars()
 			}
 
