@@ -34,15 +34,6 @@
             //load the Google data JS Client Library
             google.load('gdata', '1.x');
             // google.load("gdata", "1.x", {packages: ["contacts", "calendar"]});
-// google.load("jquery", "1.3.2");
-// google.load("jqueryui", "1.7.2");
-// google.load("prototype", "1.6.0.3");
-// google.load("scriptaculous", "1.8.2");
-// google.load("mootools", "1.2.3");
-// google.load("dojo", "1.3.1");
-// google.load("swfobject", "2.2");
-// google.load("yui", "2.7.0");
-// google.load("ext-core", "3.0.0");
 
             const APP_NAME = 'gCalBirthdays';
             const APP_VERSION = '0.10';
@@ -288,21 +279,7 @@
               // Set the calendar summary
               calendarEntry.setSummary(google.gdata.Text.create(CALENDAR_SUMMARY));
 
-              // Set the calendar timezone
-				// GET FROM MAIN CALENDAR
-              // var timeZone = new
-				// google.gdata.calendar.TimeZoneProperty();
-              // timeZone.setValue('America/Los_Angeles');
-              // calendarEntry.setTimeZone(timeZone);
-
-              // Set the calendar location
-              // var where = new google.gdata.Where();
-              // where.setLabel('Mountain View, CA');
-              // where.setValueString('Mountain View, CA');
-              // calendarEntry.addLocation(where);
-
-              // Set the color that represent this calendar in the Google
-				// Calendar UI
+              // Set the color that represent this calendar in the Google Calendar UI
               var color = new google.gdata.calendar.ColorProperty();
 			  color.setValue(CALENDAR_COLOR);
               calendarEntry.setColor(color);
@@ -381,15 +358,6 @@
 
 			  conFeed = feedRoot.feed;
 
-              // ContactsService v2
-              // contacts = conFeed.getEntries();
-             // for each ( var contact in contacts ) {
-             // // Missing field because of v2
-             // if ( contact.getBirthday() ) {
-             // contactList.push(contact);
-             // }
-             // }
-
               // ContactsService v3 GoogleService WorkAround
               contacts = conFeed.entry;
 
@@ -402,11 +370,6 @@
                      //}
                   }
                }
-
-              // ContactsService v2
-              // if ( conFeed.getNextLink() ) {
-              // return getContacts( conFeed.getNextLink().href );
-              // }
 
               // ContactsService v3 GoogleService WorkAround
 				 for each ( var link in conFeed.link ) {
@@ -426,9 +389,6 @@
                 var tbody = document.createElement('tbody');
 
                for each ( var contact in contactList ) {
-                  // ContactsService v2
-                  // var conTitle = contactList[i].getTitle().getText();
-
                   // ContactsService v3 GoogleService WorkAround
                   var conTitle = contact.title.$t;
                   if (contact.gd$name.gd$fullName) {
@@ -447,55 +407,6 @@
                 table.appendChild(tbody);
                 htmlTableContent.appendChild(table);
             }
-
-//            function getCalendars(calURL){
-//              calendarService.getOwnCalendarsFeed(calURL, handleCalendarsFeed, handleError);
-//            }
-//
-//            function handleCalendarsFeed(feedRoot){
-//                calFeed = feedRoot.feed;
-//                calendars = calFeed.getEntries();
-//            calendarList = new Array();
-//                 var calEntry;
-//                 for each ( var calendar in calendars ) {
-//                    calendarList.push( calendar );
-//                    if (-1 != calendar.getTitle().getText().search(CALENDAR_NAME)) {
-//                        // Found CalendarEntry
-//                        calEntry = calendar;
-//                    }
-//                }
-//
-//               if ( null == calEntry ) {
-//                   // Create calendar
-//                   insertCalendar();
-//
-//                   // Get Calendars again
-//                   return getCalendars( CALENDAR_FEED_URL );
-//               }
-//
-//                // Next step: Get events
-//                showCalendars(calendarList);
-//                eventURL = calEntry.getLink().href;
-//                getEvents( calEntry.getLink().href );
-//            }
-//
-//            function showCalendars(calendarList) {
-//                var htmlTableContent = document.getElementById('htmlTableContentID');
-//                var table = document.createElement('table');
-//                var tbody = document.createElement('tbody');
-//
-//               for each ( var calendar in calendarList ) {
-//                    var calTitle = calendar.getTitle().getText();
-//
-//                    var row = document.createElement('tr');
-//                    var cell = document.createElement('td');
-//                    cell.appendChild(document.createTextNode("calendar: "+calTitle));
-//                    row.appendChild(cell);
-//                    tbody.appendChild(row);
-//                }
-//                table.appendChild(tbody);
-//                htmlTableContent.appendChild(table);
-//            }
 
             function getEvents( eventURL ) {
                calendarService.getEventsFeed(eventURL, handleEventsFeed, handleError);
