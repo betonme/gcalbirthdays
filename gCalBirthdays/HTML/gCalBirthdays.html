@@ -47,44 +47,50 @@
             google.load('gdata', '1.x');
             // google.load("gdata", "1.x", {packages: ["contacts", "calendar"]});
 
-            const APP_NAME = 'gCalBirthdays';
-            const APP_VERSION = '2.00';
+		  //Firefox Javascript 1.6 and higher
+		  //var declaration allowed
+		  //IE JScript 5.6 Compatibility
+		  //var declaration
+		    // Constants
+            var APP_NAME = 'gCalBirthdays';
+            var APP_VERSION = '2.00';
 
-            const GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
+            var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
-			const GROUP_FEED_URL_THIN = 'http://www.google.com/m8/feeds/groups/default/thin'; 
-			const GROUP_FEED_URL_FULL = 'http://www.google.com/m8/feeds/groups/default/full'; //not used
+			var GROUP_FEED_URL_THIN = 'http://www.google.com/m8/feeds/groups/default/thin'; 
+			var GROUP_FEED_URL_FULL = 'http://www.google.com/m8/feeds/groups/default/full'; //not used
             
-			const CALENDAR_FEED_URL_FULL = 'http://www.google.com/calendar/feeds/default/owncalendars/full';
+			var CALENDAR_FEED_URL_FULL = 'http://www.google.com/calendar/feeds/default/owncalendars/full';
 		
-            const CONTACTS_FEED_URL_THIN = 'http://www.google.com/m8/feeds/contacts/default/thin';
-            const CONTACTS_FEED_URL_FULL = 'http://www.google.com/m8/feeds/contacts/default/full'; //not used
-			const CONTACTS_FEED_URL_BASE = 'http://google.com/m8/feeds/groups/user%40gmail.com/base/'; //not used
+            var CONTACTS_FEED_URL_THIN = 'http://www.google.com/m8/feeds/contacts/default/thin';
+            var CONTACTS_FEED_URL_FULL = 'http://www.google.com/m8/feeds/contacts/default/full'; //not used
+			var CONTACTS_FEED_URL_BASE = 'http://google.com/m8/feeds/groups/user%40gmail.com/base/'; //not used
 
-			const CONTACTS_VERSION_NAME = 'v';
-			const CONTACTS_VERSION_NUMBER = '3.0';
+			var CONTACTS_VERSION_NAME = 'v';
+			var CONTACTS_VERSION_NUMBER = '3.0';
 
-            const CALENDAR_NAME = 'Birthdays'; // "Geburtstage";
-            const CALENDAR_SUMMARY = 'This calendar contains the birthdays of Your Google Contacts.';
-            const CALENDAR_COLOR = '#A32929'; // red "#A32929", blue "#2952A3" and green "#0D7813"
-		    const EVENT_SUMMARY_SUFFIX = '\r\n\r\nCreated by gCalBirthdays';
+            var CALENDAR_NAME = 'Birthdays'; // "Geburtstage";
+            var CALENDAR_SUMMARY = 'This calendar contains the birthdays of Your Google Contacts.';
+            var CALENDAR_COLOR = '#A32929'; // red "#A32929", blue "#2952A3" and green "#0D7813"
+		    var EVENT_SUMMARY_SUFFIX = '\r\n\r\nCreated by gCalBirthdays';
 
-            const CALENDAR_HIDDEN = false;
-            const CALENDAR_SELECTED = true;
+            var CALENDAR_HIDDEN = false;
+            var CALENDAR_SELECTED = true;
 
-            const DATE_FORMAT_CONTACTS = 'yyyy-MM-dd';
-            const DATE_FORMAT_CALENDAR = 'yyyyMMdd';
-            const DATE_FORMAT_YEAR = 'yyyy';
+            var DATE_FORMAT_CONTACTS = 'yyyy-MM-dd';
+            var DATE_FORMAT_CALENDAR = 'yyyyMMdd';
+            var DATE_FORMAT_YEAR = 'yyyy';
 
-			const ALL_CONTACTS = 'All contacts';
-			const NEW_CALENDAR = 'New calendar';
+			var ALL_CONTACTS = 'All contacts';
+			var NEW_CALENDAR = 'New calendar';
 
-			const ICAL_BREAK = '\r\n'; // '\n'
+			var ICAL_BREAK = '\r\n'; // '\n'
 
-            const REMINDER_DAYS = 14;
+            var REMINDER_DAYS = 14;
 
-            const MAX_RESULT = 50;
+            var MAX_RESULT = 50;
 
+			// Variables
             var contactService;
 			var groupService;
             var calendarService;
@@ -189,18 +195,30 @@
 
 			  // Replace 'System Group: ' with an identifier
 			  var id=0;
-			  for each (var group in groups) {
+			  //Firefox Javascript 1.6 and higher
+			  //for each (var group in groups) {
+			  //IE JScript 5.6 Compatibility
+			  for (var ie=0; ie<groups.length; ie++) {
+			  	group = groups[ie];
 			    group.title.$t = group.title.$t.replace(/System Group/gi,id++);
 			  }
 			  // Sort groups
 			  groups.sort(compareEntries);
 			  // Remove identifier
-			  for each (var group in groups) {
+			  //Firefox Javascript 1.6 and higher
+			  //for each (var group in groups) {
+			  //IE JScript 5.6 Compatibility
+			  for (var ie=0; ie<groups.length; ie++) {
+			  	group = groups[ie];			  
 			    group.title.$t = group.title.$t.replace(/^.: /gi,'');
 			  }
 
 			  // Iterate through the array of contact groups, and add them to drop down box
-			  for each ( var group in groups ) {
+			  //Firefox Javascript 1.6 and higher
+			  //for each (var group in groups) {
+			  //IE JScript 5.6 Compatibility
+			  for (var ie=0; ie<groups.length; ie++) {
+			  	group = groups[ie];			  
 				addOption('group_select', group.title.$t, group.id.$t);
 			  }
 
@@ -230,7 +248,11 @@
 				// Iterate through the array of calendars, and add them to drop down box
 				var i=0;
 				var selId=0;
-                for each ( var calendar in calendars ) {
+			  //Firefox Javascript 1.6 and higher
+			  //for each ( var calendar in calendars ) {
+			  //IE JScript 5.6 Compatibility
+			  for (var ie=0; ie<calendars.length; ie++) {
+			  	calendar = calendars[ie];				
 				   addOption('calendar_select', calendar.getTitle().getText(), calendar.getId().getValue());
 
 				   // Select first calendar which contains [Birthdays|Geburtstag]
@@ -401,7 +423,12 @@
               // ContactsService v3 GoogleService WorkAround
               contacts = conFeed.entry;
 
-               for each ( var contact in contacts ) {
+			  //Firefox Javascript 1.6 and higher
+			  //for each ( var contact in contacts ) {
+			  //IE JScript 5.6 Compatibility
+			  for (var ie=0; ie<contacts.length; ie++) {
+			  	contact = contacts[ie];
+               
                   // Push only if contact has a title or fullname ???????
                   //if ( contact.title.$t ) {
                      // Push only if contact has a birthday
@@ -412,7 +439,12 @@
                }
 
               // ContactsService v3 GoogleService WorkAround
-				 for each ( var link in conFeed.link ) {
+			  //Firefox Javascript 1.6 and higher
+			  //for each ( var link in conFeed.link ) {
+			  //IE JScript 5.6 Compatibility
+			  for (var ie=0; ie<conFeed.link.length; ie++) {
+			  	link = conFeed.link[ie];
+				 
 					 if ('next' == link.rel) {
 					 	return getContacts ( link.href );
 					 }
@@ -427,7 +459,12 @@
                var htmlTableContent = document.getElementById('htmlTableContentID');
                 var table = document.createElement('table');
                 var tbody = document.createElement('tbody');
-               for each ( var contact in contactList ) {
+			  //Firefox Javascript 1.6 and higher
+			  //for each ( var contact in contactList ) {
+			  //IE JScript 5.6 Compatibility
+			  for (var ie=0; ie<contactList.length; ie++) {
+			  	contact = contactList[ie];				
+               
                   // ContactsService v3 GoogleService WorkAround
                   var conTitle
 				  if (contact.title) {
@@ -460,7 +497,12 @@
 
                  batchURL = eventFeed.getFeedBatchLink().href;
 
-                for each ( var event in events ) {
+			  //Firefox Javascript 1.6 and higher
+			  //for each ( var event in events ) {
+			  //IE JScript 5.6 Compatibility
+			  for (var ie=0; ie<events.length; ie++) {
+			  	event = events[ie];	
+                
                    eventList.push(event);
                 }
 
@@ -477,8 +519,13 @@
                 var htmlTableContent = document.getElementById('htmlTableContentID');
                 var table = document.createElement('table');
                 var tbody = document.createElement('tbody');
-
-                   for each ( var event in eventList ) {
+				
+			  //Firefox Javascript 1.6 and higher
+			  //for each ( var event in eventList ) {
+			  //IE JScript 5.6 Compatibility
+			  for (var ie=0; ie<eventList.length; ie++) {
+			  	event = eventList[ie];	
+                   
                     var eventTitle = event.getTitle().getText();;
 
                     var row = document.createElement('tr');
@@ -493,7 +540,12 @@
 
                function checkEvents() {
                   var exists = false;
-                   for each ( var contact in contactList ) {
+			  //Firefox Javascript 1.6 and higher
+			  //for each ( var contact in contactList ) {
+			  //IE JScript 5.6 Compatibility
+			  for (var ie=0; ie<contactList.length; ie++) {
+			  	contact = contactList[ie];					  
+                   
                      exists = false;
                      var date = contact.gContact$birthday.when.replace(/-/g,'');
                      if ( 8 != date.length ) {
@@ -502,7 +554,11 @@
                         date = '1970'+date;
                         //alert('1970: '+date);
                      }
-                     for each ( var event in eventList ) {
+			  //Firefox Javascript 1.6 and higher
+			  //for each ( var event in eventList ) {
+			  //IE JScript 5.6 Compatibility
+			  for (var ie=0; ie<eventList.length; ie++) {
+			  	event = eventList[ie];						 
                         exists = true;
                        // Check contact title or fullname ??????? indexOf??
 		//Full Match to avoid errors on reuse calendars
