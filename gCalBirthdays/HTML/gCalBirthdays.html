@@ -5,697 +5,741 @@
         <meta name="generator" content="HTML Tidy, see www.w3.org">
 
         <title>gCalBirthdays</title>
-			<style type="text/css">
-			  body {
-			   font-family: arial, sans serif;
-			  } 
-			  a {
-			   color: #ff0000;
-			  }
-			  .indent {
-			    margin: 5px 10px 0px 10px; 
-			    padding: 5px
-			  }
-			</style>
-			<script type="text/javascript" src="http://www.google.com/jsapi"></script>
-			<script type="text/javascript">
+		<style type="text/css">
+		  .indent {
+		    margin: 10px 10px 5px 5px;
+		  }
+		</style>
 
-            /*  Copyright (c) 2009 Frank Glaser
-             *
-             *  This program is free software: you can redistribute it and/or modify
-             *  it under the terms of the GNU General Public License as published by
-             *  the Free Software Foundation, either version 3 of the License, or
-             *  (at your option) any later version.
-             *
-             *  This program is distributed in the hope that it will be useful,
-             *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-             *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-             *  GNU General Public License for more details.
-             *
-             *  You should have received a copy of the GNU General Public License
-             *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-             */
+		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+		<script type="text/javascript">
 
-            /* Restrictions on GData JavaScript Client 1.10:
-             * - The JavaScript client libraries don't yet support Contacts Data API Version 3.
-             *     v2 has no birthday fields
-             *     v2 has no support for structured name and postal address
-             * - Batch operations are not supported by the JavaScript client library.
-             */
+        /*  Copyright (c) 2009 Frank Glaser
+         *
+         *  This program is free software: you can redistribute it and/or modify
+         *  it under the terms of the GNU General Public License as published by
+         *  the Free Software Foundation, either version 3 of the License, or
+         *  (at your option) any later version.
+         *
+         *  This program is distributed in the hope that it will be useful,
+         *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+         *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+         *  GNU General Public License for more details.
+         *
+         *  You should have received a copy of the GNU General Public License
+         *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+         */
 
-            //load the Google data JS Client Library
-            google.load('gdata', '1.x');
-            // google.load("gdata", "1.x", {packages: ["contacts", "calendar"]});
+        /* Restrictions on GData JavaScript Client 1.10:
+         * - The JavaScript client libraries don't yet support Contacts Data API Version 3.
+         *     v2 has no birthday fields
+         *     v2 has no support for structured name and postal address
+         *     v2 no support for retrieving system groups
+         * - Batch operations are not supported by the JavaScript client library.
+         */
 
-		  //Firefox Javascript 1.6 and higher
-		  //var declaration allowed
-		  //IE JScript 5.6 Compatibility
-		  //var declaration
-		    // Constants
-            var APP_NAME = 'gCalBirthdays';
-            var APP_VERSION = '2.00';
+        // Load the Google data JS Client Library
+        google.load('gdata', '1.x');
+		// Save overhead, only load the necessary service
+        //google.load("gdata", "1.x", {packages: ['contacts', 'calendar']});
 
-            var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
+	   //Firefox Javascript 1.6 and higher
+	   //const declaration / for each loop allowed
+	   //IE JScript 5.6 Compatibility
+	   //var declaration / for loop
 
-			var GROUP_FEED_URL_THIN = 'http://www.google.com/m8/feeds/groups/default/thin'; 
-			var GROUP_FEED_URL_FULL = 'http://www.google.com/m8/feeds/groups/default/full'; //not used
-            
-			var CALENDAR_FEED_URL_FULL = 'http://www.google.com/calendar/feeds/default/owncalendars/full';
-		
-            var CONTACTS_FEED_URL_THIN = 'http://www.google.com/m8/feeds/contacts/default/thin';
-            var CONTACTS_FEED_URL_FULL = 'http://www.google.com/m8/feeds/contacts/default/full'; //not used
-			var CONTACTS_FEED_URL_BASE = 'http://google.com/m8/feeds/groups/user%40gmail.com/base/'; //not used
+	    // Constants
+        var APP_NAME = 'gCalBirthdays';
+        var APP_VERSION = '2.00';
 
-			var CONTACTS_VERSION_NAME = 'v';
-			var CONTACTS_VERSION_NUMBER = '3.0';
+        var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
-            var CALENDAR_NAME = 'Birthdays'; // "Geburtstage";
-            var CALENDAR_SUMMARY = 'This calendar contains the birthdays of Your Google Contacts.';
-            var CALENDAR_COLOR = '#A32929'; // red "#A32929", blue "#2952A3" and green "#0D7813"
-		    var EVENT_SUMMARY_SUFFIX = '\r\n\r\nCreated by gCalBirthdays';
+		var GROUP_FEED_URL_THIN = 'http://www.google.com/m8/feeds/groups/default/thin';
+		var GROUP_FEED_URL_FULL = 'http://www.google.com/m8/feeds/groups/default/full'; //not used
 
-            var CALENDAR_HIDDEN = false;
-            var CALENDAR_SELECTED = true;
+		var CALENDAR_FEED_URL_FULL = 'http://www.google.com/calendar/feeds/default/owncalendars/full';
 
-            var DATE_FORMAT_CONTACTS = 'yyyy-MM-dd';
-            var DATE_FORMAT_CALENDAR = 'yyyyMMdd';
-            var DATE_FORMAT_YEAR = 'yyyy';
+        var CONTACTS_FEED_URL_THIN = 'http://www.google.com/m8/feeds/contacts/default/thin';
+        var CONTACTS_FEED_URL_FULL = 'http://www.google.com/m8/feeds/contacts/default/full'; //not used
+		var CONTACTS_FEED_URL_BASE = 'http://google.com/m8/feeds/groups/user%40gmail.com/base/'; //not used
 
-			var ALL_CONTACTS = 'All contacts';
-			var NEW_CALENDAR = 'New calendar';
+		var CONTACTS_VERSION_NAME = 'v';
+		var CONTACTS_VERSION_NUMBER = '3.0';
 
-			var ICAL_BREAK = '\r\n'; // '\n'
+        var CALENDAR_NAME = 'Birthdays'; // "Geburtstage";
+        var CALENDAR_SUMMARY = 'This calendar contains the birthdays of Your Google Contacts.';
+        var CALENDAR_COLOR = '#A32929'; // red "#A32929", blue "#2952A3" and green "#0D7813"
+	    var EVENT_SUMMARY_SUFFIX = '\r\n\r\nCreated by gCalBirthdays';
 
-            var REMINDER_DAYS = 14;
+        var CALENDAR_HIDDEN = false;
+        var CALENDAR_SELECTED = true;
 
-            var MAX_RESULT = 50;
+        var DATE_FORMAT_CONTACTS = 'yyyy-MM-dd';
+        var DATE_FORMAT_CALENDAR = 'yyyyMMdd';
+        var DATE_FORMAT_YEAR = 'yyyy';
 
-			// Variables
-            var contactService;
-			var groupService;
-            var calendarService;
+		var ALL_CONTACTS = 'All contacts';
+		var NEW_CALENDAR = 'New calendar';
 
-            var contactList;
-            var eventList;
+		var ICAL_BREAK = '\r\n'; // '\n'
 
-            var batchURL;
-            var eventURL;
+        var REMINDER_DAYS = 14;
 
-            var token;
+        var MAX_RESULT = 50;  //not used
+
+		// Variables
+        var contactService;
+        var calendarService;
+
+        var contactList;
+        var eventList;
+
+        var token;
 
 
-            /**
-			 * This function checks if the user is logged in, and changes the
-			 * login button and displayed sections accordingly. It also
-			 * initializes the calendarService variable and calls a function to
-			 * fill in the form based on the URL.
-			 */
-            function init(){
-                var authButton = document.getElementById('auth_button');
+		/**
+		 * This function checks if the user is logged in, and changes the
+		 * login button and displayed sections accordingly. It also
+		 * initializes the calendarService variable and calls a function to
+		 * fill in the form based on the URL.
+		 */
+		function init(){
+			var authButton = document.getElementById('auth_button');
 
-				document.getElementById('version').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
+			document.getElementById('version').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
 
-                // ContactsService v3 GoogleService WorkAround for Contact Birthdays
-      			contactService = new google.gdata.client.GoogleService('cp', APP_NAME);
+			// ContactsService v3 GoogleService WorkAround for Contact
+			// Birthdays
+			contactService = new google.gdata.client.GoogleService('cp', APP_NAME);
 
-                // ContactsService v3 GoogleService WorkAround for Contact System Groups
-                groupService = new google.gdata.client.GoogleService('cp', APP_NAME);
+			// CalendarService v2
+			calendarService = new google.gdata.calendar.CalendarService(APP_NAME);
 
-				// CalendarService v2
-                calendarService = new google.gdata.calendar.CalendarService(APP_NAME);
+			token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
+			if (token) {
+				// User is loged in
+				authButton.value = 'Logout';
+				document.getElementById('loginNotice').style.display = 'none';
+				document.getElementById('htmlTable').style.display = 'block';
+				main();
+			}
+			else {
+				// User is loged out
+				authButton.value = 'Login';
+				document.getElementById('loginNotice').style.display = 'block';
+				document.getElementById('settings_block').style.display = 'none';
+				document.getElementById('htmlTable').style.display = 'none';
 
-                token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
-                if (token) {
-                   // User is loged in
-                   authButton.value = 'Logout';
-				   document.getElementById('loginNotice').style.display = 'none';
-				   document.getElementById('htmlTable').style.display = 'block';
-                   main();
-                }
-               else {
-                   // User is loged out
-                   authButton.value = 'Login';
-                   document.getElementById('loginNotice').style.display = 'block';
-				   document.getElementById('settings_block').style.display = 'none';
-				   document.getElementById('htmlTable').style.display = 'none';
+				var htmlTableHeader = document.getElementById('htmlTableHeaderID');
+				htmlTableHeader.innerHTML = '';
+				var htmlTableContent = document.getElementById('htmlTableContentID');
+				htmlTableContent.innerHTML = '';
+			}
+		};
 
-                   var htmlTableHeader = document.getElementById('htmlTableHeaderID');
-                   htmlTableHeader.innerHTML = '';
-                   var htmlTableContent = document.getElementById('htmlTableContentID');
-                  htmlTableContent.innerHTML = '';
-                }
-            };
+		// Tells the google JS lib to call the init function once loaded
+		google.setOnLoadCallback(init);
 
-            // Tells the google JS lib to call the init function once loaded
-            google.setOnLoadCallback(init);
+		/**
+		 * This function is triggered by the login/logout button. If the
+		 * user is logged in to the app, it logs them out. If the user is
+		 * logged out to the app, it logs them in.
+		 */
+		function onClickAuthButton(){
+			token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
+			if (token) {
+				// User is loged in
+				google.accounts.user.logout();
+			}
+			else {
+				// User is loged out
+				token = google.accounts.user.login(GOOGLE_FEED_AUTH);
+			}
+			init();
+		}
 
-            /**
-			 * This function is triggered by the login/logout button. If the
-			 * user is logged in to the app, it logs them out. If the user is
-			 * logged out to the app, it logs them in.
-			 */
-            function onClickAuthButton(){
-                token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
-                if (token) {
-                    // User is loged in
-                    google.accounts.user.logout();
-                }
-                else {
-                    // User is loged out
-                    token = google.accounts.user.login(GOOGLE_FEED_AUTH);
-                }
-                init();
-            }
+		function main(){
+			queryGroups();
+			queryCalendars();
+		}
 
-            function main(){
-              queryGroups();
-			  queryCalendars();
-            }
+		function queryGroups(){
+			// Query for all the contacts entry with this contact group
+			var query = new google.gdata.contacts.ContactQuery(GROUP_FEED_URL_THIN);
 
-            function queryGroups(){
-				// Query for all the contacts entry with this contact group
-			    var query = new google.gdata.contacts.ContactQuery(GROUP_FEED_URL_THIN);
+			// Use query parameter to set the google contacts version
+			query.setParam(CONTACTS_VERSION_NAME, CONTACTS_VERSION_NUMBER);
 
-			    // Use query parameter to set the google contacts version
-				query.setParam(CONTACTS_VERSION_NAME, CONTACTS_VERSION_NUMBER);
+			// Submit the request using the contacts service object
+			contactService.getFeed(query, handleGroupsFeed, handleError);
+		}
 
-				// Submit the request using the contacts service object
-				groupService.getFeed(query, handleGroupsFeed, handleError);
+		function handleGroupsFeed(feedRoot){
+			// An array of contact group entries
+			var groups = feedRoot.feed.entry;
+
+			// Clear options
+			clearOptions('group_select');
+
+			// Add 'All contacts' option
+			addOption('group_select', ALL_CONTACTS, '');
+
+			// Replace 'System Group: ' with an identifier
+			var id = 0;
+			// Firefox Javascript 1.6 and higher
+			// for each (var group in groups) {
+			// IE JScript 5.6 Compatibility
+			for (var ie = 0; ie < groups.length; ie++) {
+				var group = groups[ie];
+				group.title.$t = group.title.$t.replace(/System Group/gi, id++);
+			}
+			// Sort groups
+			groups.sort(compareEntries);
+			// Remove identifier
+			// Firefox Javascript 1.6 and higher
+			// for each (var group in groups) {
+			// IE JScript 5.6 Compatibility
+			for (var ie = 0; ie < groups.length; ie++) {
+				var group = groups[ie];
+				group.title.$t = group.title.$t.replace(/^.: /gi, '');
 			}
 
-			function handleGroupsFeed(feedRoot){
-			  // An array of contact group entries
-			  groups = feedRoot.feed.entry;
-
-			  // Clear options
-			  clearOptions('group_select');
-
-			  // Add 'All contacts' option
-		  	  addOption('group_select', ALL_CONTACTS, '');
-
-			  // Replace 'System Group: ' with an identifier
-			  var id=0;
-			  //Firefox Javascript 1.6 and higher
-			  //for each (var group in groups) {
-			  //IE JScript 5.6 Compatibility
-			  for (var ie=0; ie<groups.length; ie++) {
-			  	group = groups[ie];
-			    group.title.$t = group.title.$t.replace(/System Group/gi,id++);
-			  }
-			  // Sort groups
-			  groups.sort(compareEntries);
-			  // Remove identifier
-			  //Firefox Javascript 1.6 and higher
-			  //for each (var group in groups) {
-			  //IE JScript 5.6 Compatibility
-			  for (var ie=0; ie<groups.length; ie++) {
-			  	group = groups[ie];			  
-			    group.title.$t = group.title.$t.replace(/^.: /gi,'');
-			  }
-
-			  // Iterate through the array of contact groups, and add them to drop down box
-			  //Firefox Javascript 1.6 and higher
-			  //for each (var group in groups) {
-			  //IE JScript 5.6 Compatibility
-			  for (var ie=0; ie<groups.length; ie++) {
-			  	group = groups[ie];			  
+			// Iterate through the array of contact groups, and add them to
+			// drop down box
+			// Firefox Javascript 1.6 and higher
+			// for each (var group in groups) {
+			// IE JScript 5.6 Compatibility
+			for (var ie = 0; ie < groups.length; ie++) {
+				var group = groups[ie];
 				addOption('group_select', group.title.$t, group.id.$t);
-			  }
-
-			   selectOption('group_select', 0);
-
-			   showSettingsBlock();
 			}
 
-            function queryCalendars(){
-				// Query for all calendars
-			    var query = new google.gdata.client.Query(CALENDAR_FEED_URL_FULL);
+			selectOption('group_select', 0);
 
-				// Submit the request using the contacts service object
-              	calendarService.getOwnCalendarsFeed(query, handleCalendarsFeed, handleError);
-            }
+			showSettingsBlock();
+		}
 
-            function handleCalendarsFeed(feedRoot){
-				// An array of calendar entries
-				calendars = feedRoot.feed.getEntries();
+		function queryCalendars(){
+			// Query for all calendars
+			var query = new google.gdata.client.Query(CALENDAR_FEED_URL_FULL);
 
-				// Clear options
-				clearOptions('calendar_select');
+			// Submit the request using the calendar service object
+			calendarService.getOwnCalendarsFeed(query, handleCalendarsFeed, handleError);
+		}
 
-			  	// Sort calendars
-				calendars.sort(compareEntries);
+		function handleCalendarsFeed(feedRoot){
+			// An array of calendar entries
+			var calendars = feedRoot.feed.getEntries();
 
-				// Iterate through the array of calendars, and add them to drop down box
-				var i=0;
-				var selId=0;
-			  //Firefox Javascript 1.6 and higher
-			  //for each ( var calendar in calendars ) {
-			  //IE JScript 5.6 Compatibility
-			  for (var ie=0; ie<calendars.length; ie++) {
-			  	calendar = calendars[ie];				
-				   addOption('calendar_select', calendar.getTitle().getText(), calendar.getId().getValue());
+			// Clear options
+			clearOptions('calendar_select');
 
-				   // Select first calendar which contains [Birthdays|Geburtstag]
-				   if (0 == calendar.getTitle().getText().search(/(Birthday|Geburtstag)/i)) {
-				     selId=i;
-				   }
-				   i++;
-                }
+			// Sort calendars
+			calendars.sort(compareEntries);
 
-				// Add 'New Calendar' option
-				addOption('calendar_select', NEW_CALENDAR, '');
+			// Iterate through the array of calendars, and add them to drop
+			// down box
+			var i = 0;
+			var selId = -1;
+			// Firefox Javascript 1.6 and higher
+			// for each ( var calendar in calendars ) {
+			// IE JScript 5.6 Compatibility
+			for (var ie = 0; ie < calendars.length; ie++) {
+				var calendar = calendars[ie];
+				addOption('calendar_select', calendar.getTitle().getText(), calendar.getLink().href);
 
-			    selectOption('calendar_select', selId);
-
-				showSettingsBlock();
-            }
-
-			function selectOption(id, selId){
-				var elSel = document.getElementById(id);
-				elSel.selectedIndex = selId;
+				// Select first calendar which contains
+				// [Birthdays|Geburtstag]
+				if (-1 != calendar.getTitle().getText().search(/(Birthday|Geburtstag)/i)) {
+					if ( -1 == selId ) {
+						selId = i;
+					}
+				}
+				i++;
 			}
 
-			function clearOptions(id){
-				document.getElementById(id).length = 0;
-			}
+			// Add 'New Calendar' option
+			addOption('calendar_select', NEW_CALENDAR, '');
 
-			function insertOption(id, text, value){
-				var elSel = document.getElementById(id);
-				var elSelId;
-				  for (elSelId=0; elSelId<elSel.length; elSelId++) {
-				  	var option = elSel.options[elSelId];
-				    if (0 < compareStrings(option.text, text)){
-				        break;
-				    }
-				    else if ( option.text == 'New calendar' ){
-				        break;
-				    }
-				  }
-			    return addOption(id, text, value, elSelId);
-			}
+			selectOption('calendar_select', selId);
 
-			function addOption(id, text, value, elSelId){
-			  var elSel = document.getElementById(id);
-			  var elOptNew = document.createElement('option');
-			  elOptNew.text = text;
-			  elOptNew.value = value;
-			  try {
-			  	// standards compliant; doesn't work in IE
+			showSettingsBlock();
+		}
+
+		function selectOption(id, selId){
+			var elSel = document.getElementById(id);
+			elSel.selectedIndex = selId>0?selId:0;
+		}
+
+		function clearOptions(id){
+			document.getElementById(id).length = 0;
+		}
+
+		function insertOption(id, text, value){
+			var elSel = document.getElementById(id);
+			var elSelId;
+			for (elSelId = 0; elSelId < elSel.length; elSelId++) {
+				var option = elSel.options[elSelId];
+				if (0 < compareStrings(option.text, text)) {
+					break;
+				}
+				else
+					if (option.text == 'New calendar') {
+						break;
+					}
+			}
+			return addOption(id, text, value, elSelId);
+		}
+
+		function addOption(id, text, value, elSelId){
+			var elSel = document.getElementById(id);
+			var elOptNew = document.createElement('option');
+			elOptNew.text = text;
+			elOptNew.value = value;
+			try {
+				// standards compliant; doesn't work in IE
 				var elOptOld = elSel.options[elSelId];
-			    elSel.add(elOptNew, elOptOld);
-			  }
-			  catch(ex) {
-			  	// IE only
-			    elSel.add(elOptNew, elSelId);
-			  }
-			  return elSelId;
+				elSel.add(elOptNew, elOptOld);
 			}
-
-			function compareNumbers(a, b) {
-				return a - b;
+			catch (ex) {
+				// IE only
+				elSel.add(elOptNew, elSelId);
 			}
+			return elSelId;
+		}
 
-			function compareStrings(a, b) {
-			 	return (b < a) - (a < b);
+		function compareNumbers(a, b){
+			return a - b;
+		}
+
+		function compareStrings(a, b){
+			return (b < a) - (a < b);
+		}
+
+		function compareEntries(a, b){
+			return compareStrings(a.title.$t.toLowerCase(), b.title.$t.toLowerCase());
+		}
+
+		function showSettingsBlock(){
+			// Wait for both queries (queryGroups/queryCalendars) finished
+			// Both select boxes (group_select/calendar_select) are filled
+			if ('undefined' == typeof showSettingsBlock.counter) {
+				showSettingsBlock.counter = 1;
 			}
-
-			function compareEntries(a, b) {
-			 	return compareStrings(a.title.$t.toLowerCase(), b.title.$t.toLowerCase());
+			else {
+				document.getElementById('settings_block').style.display = 'block';
 			}
+		}
 
-			function showSettingsBlock(){
-				// Show settings block on second call
-				// Group and calendar boxes are filled
-				if ('undefined' == typeof showSettingsBlock.counter) {
-					showSettingsBlock.counter = 1;
+		function onSelectNewCalendar(calendarSelectedIndex){
+			if (NEW_CALENDAR == document.getElementById('calendar_select').options[calendarSelectedIndex].text) {
+				var calendarName = prompt("Calendar name:", "Birthdays");
+				if (calendarName != null && calendarName != "") {
+					insertCalendar(calendarName);
 				}
 				else {
-					document.getElementById('settings_block').style.display = 'block';
+					selectOption('calendar_select', 0);
 				}
 			}
+		}
 
-			function onSelectNewCalendar(calendarSelectedIndex){
-				if(NEW_CALENDAR == document.getElementById('calendar_select').options[calendarSelectedIndex].text) {
-					var calendarName = prompt("Calendar name:","Birthdays");
-					if (calendarName!=null && calendarName!=""){
-						insertCalendar(calendarName);
+		function insertCalendar(calendarName){
+			// Create an instance of CalendarEntry, representing the new
+			// calendar
+			var calendarEntry = new google.gdata.calendar.CalendarEntry();
+
+			// Set the calendar title
+			calendarEntry.setTitle(google.gdata.Text.create(calendarName));
+
+			// Set the calendar summary
+			calendarEntry.setSummary(google.gdata.Text.create(CALENDAR_SUMMARY));
+
+			// Set the color that represent this calendar in the Google
+			// Calendar UI
+			var color = new google.gdata.calendar.ColorProperty();
+			color.setValue(CALENDAR_COLOR);
+			calendarEntry.setColor(color);
+
+			// Set the calendar to be visible in the Google Calendar UI
+			var hidden = new google.gdata.calendar.HiddenProperty();
+			hidden.setValue(CALENDAR_HIDDEN);
+			calendarEntry.setHidden(hidden);
+
+			// Set the calendar to be selected in the Google Calendar UI
+			var selected = new google.gdata.calendar.SelectedProperty()
+			selected.setValue(CALENDAR_SELECTED);
+			calendarEntry.setSelected(selected);
+
+			// The callback method that will be called after a
+			// successful insertion from insertEntry()
+			var insertCalendarCallback = function(entryRoot){
+				// DEBUG: alert('Calendar inserted');
+				var elSelId = insertOption('calendar_select', entryRoot.entry.getTitle().getText(), entryRoot.entry.getLink().href);
+				selectOption('calendar_select', elSelId);
+			}
+			// Submit the request using the calendar service object
+			calendarService.insertEntry(CALENDAR_FEED_URL_FULL, calendarEntry, insertCalendarCallback, handleError, google.gdata.calendar.CalendarEntry);
+		}
+
+		function startTransfer(groupSelectedIndex, calendarSelectedIndex){
+			contactList = new Array();
+			eventList = new Array();
+
+			// Retrieve Contacts
+			queryContacts(document.getElementById('group_select').options[groupSelectedIndex].value);
+
+			// Retrieve Events
+			queryEvents(document.getElementById('calendar_select').options[calendarSelectedIndex].value);
+		}
+
+		function queryContacts(groupId){
+			// Query for all the contacts entry with this contact group
+			var query = new google.gdata.client.Query(CONTACTS_FEED_URL_THIN);
+
+			// Use query parameter to set the google contacts version
+			query.setParam(CONTACTS_VERSION_NAME, CONTACTS_VERSION_NUMBER);
+
+			// Not supported by ContactsService
+			// query.setParam('q', 'search text'); //'birthday' ?
+
+			// Use query parameter to set the group ID
+			if ('' != groupId) {
+				query.setParam('group', groupId);
+			}
+
+			// ContactsService v3 GoogleService WorkAround
+			contactService.getFeed(query, handleContactsFeed, handleError);
+		}
+
+		function getContacts(contactURL){
+			// ContactsService v3 GoogleService WorkAround
+			contactService.getFeed(contactURL, handleContactsFeed, handleError);
+		}
+
+		function handleContactsFeed(feedRoot){
+			var conFeed = feedRoot.feed;
+
+			// ContactsService v3 GoogleService WorkAround
+			var contacts = conFeed.entry;
+
+			// Firefox Javascript 1.6 and higher
+			// for each ( var contact in contacts ) {
+			// IE JScript 5.6 Compatibility
+			if (contacts) {
+				for (var ie = 0; ie < contacts.length; ie++) {
+					var contact = contacts[ie];
+
+					// Push only if contact has a title
+					if (contact.title.$t) {
+						// Push only if contact has a birthday
+						if (contact.gContact$birthday) {
+							contactList.push(contact);
+						}
 					}
 				}
 			}
-
-            function insertCalendar(calendarName){
-              // Create an instance of CalendarEntry, representing the new calendar
-              var calendarEntry = new google.gdata.calendar.CalendarEntry();
-
-              // Set the calendar title
-              calendarEntry.setTitle(google.gdata.Text.create(calendarName));
-
-              // Set the calendar summary
-              calendarEntry.setSummary(google.gdata.Text.create(CALENDAR_SUMMARY));
-
-              // Set the color that represent this calendar in the Google Calendar UI
-              var color = new google.gdata.calendar.ColorProperty();
-			  color.setValue(CALENDAR_COLOR);
-              calendarEntry.setColor(color);
-
-              // Set the calendar to be visible in the Google Calendar UI
-              var hidden = new google.gdata.calendar.HiddenProperty();
-			  hidden.setValue(CALENDAR_HIDDEN);
-              calendarEntry.setHidden(hidden);
-
-              // Set the calendar to be selected in the Google Calendar UI
-              var selected = new google.gdata.calendar.SelectedProperty()
-			  selected.setValue(CALENDAR_SELECTED);
-              calendarEntry.setSelected(selected);
-
-              // The callback method that will be called after a
-				// successful insertion from insertEntry()
-              var insertCalendarCallback = function(entryRoot){
-				  var elSelId = insertOption('calendar_select', entryRoot.entry.getTitle().getText(), entryRoot.entry.getId().getValue());
-				  selectOption('calendar_select', elSelId);
-              }
-
-              // Submit the request using the calendar service object
-              calendarService.insertEntry(CALENDAR_FEED_URL_FULL, calendarEntry, insertCalendarCallback, handleError, google.gdata.calendar.CalendarEntry);
-            }
-
-            function startTransfer(groupSelectedIndex, calendarSelectedIndex){
-			  	var calendarId;
-
-				//calendarId = document.getElementById('calendar_select').options[calendarSelectedIndex].value;
-                contactList = new Array();
-                eventList = new Array();
-
-			  	queryContacts( document.getElementById('group_select').options[groupSelectedIndex].value );
-
-              	//queryContacts( document.getElementById('group_select').options[groupSelectedIndex].value ); // is executed after getContacts()
-
-              	// getEvents( eventURL ); // is executed after getCalendars()
+			// ContactsService v3 GoogleService WorkAround
+			// Firefox Javascript 1.6 and higher
+			// for each ( var link in conFeed.link ) {
+			// IE JScript 5.6 Compatibility
+			for (var ie = 0; ie < conFeed.link.length; ie++) {
+				var link = conFeed.link[ie];
+				if ('next' == link.rel) {
+					return getContacts(link.href);
+				}
 			}
 
-            function queryContacts(groupId){
-			    // Query for all the contacts entry with this contact group
-			    var query = new google.gdata.client.Query(CONTACTS_FEED_URL_THIN);
+			// Next step: Check events
+			checkEvents();
+			showContacts();
+		}
 
-			    // Use query parameter to set the google contacts version
-				query.setParam(CONTACTS_VERSION_NAME, CONTACTS_VERSION_NUMBER);
+		function showContacts(){
+			var htmlTableContent = document.getElementById('htmlTableContentID');
+			var table = document.createElement('table');
+			var tbody = document.createElement('tbody');
+			// Firefox Javascript 1.6 and higher
+			// for each ( var contact in contactList ) {
+			// IE JScript 5.6 Compatibility
+			for (var ie = 0; ie < contactList.length; ie++) {
+				var contact = contactList[ie];
 
-				// Not supported by ContactsService
-				//query.setParam('q', 'search text'); //'birthday' ?
-
-				// Use query parameter to set the group ID
-				if ('' != groupId) {
-					query.setParam('group', groupId);
+				// ContactsService v3 GoogleService WorkAround
+				var conTitle
+				if (contact.title) {
+					conTitle = contact.title.$t;
+				}
+				if (contact.gd$name) {
+					conTitle = conTitle + ' ' + contact.gd$name.gd$fullName.$t;
+				}
+				if (contact.gContact$birthday) {
+					conTitle = conTitle + ' ' + contact.gContact$birthday.when;
 				}
 
-              	// ContactsService v3 GoogleService WorkAround
-              	contactService.getFeed(query, handleContactsFeed, handleError);
-            }
+				var row = document.createElement('tr');
+				var cell = document.createElement('td');
+				cell.appendChild(document.createTextNode("contact: " + conTitle));
+				row.appendChild(cell);
+				tbody.appendChild(row);
+			}
+			table.appendChild(tbody);
+			htmlTableContent.appendChild(table);
+		}
 
-            function getContacts(conURL){
-              // ContactsService v3 GoogleService WorkAround
-              contactService.getFeed(conURL, handleContactsFeed, handleError);
-            }
+		function queryEvents(calendarURL){
+			// Query for all the events entry within given calendarid
+			var query = new google.gdata.calendar.CalendarEventQuery(calendarURL);
 
-            function handleContactsFeed(feedRoot){
-			  conFeed = feedRoot.feed;
+			// Submit the request using the calendar service object
+			calendarService.getEventsFeed(query, handleEventsFeed, handleError);
+		}
 
-              // ContactsService v3 GoogleService WorkAround
-              contacts = conFeed.entry;
+		function getEvents(eventURL){
+			// Submit the request using the calendar service object
+			calendarService.getEventsFeed(eventURL, handleEventsFeed, handleError);
+		}
 
-			  //Firefox Javascript 1.6 and higher
-			  //for each ( var contact in contacts ) {
-			  //IE JScript 5.6 Compatibility
-			  for (var ie=0; ie<contacts.length; ie++) {
-			  	contact = contacts[ie];
-               
-                  // Push only if contact has a title or fullname ???????
-                  //if ( contact.title.$t ) {
-                     // Push only if contact has a birthday
-                     //if ( contact.gContact$birthday ) {
-                        contactList.push( contact );
-                     //}
-                  //}
-               }
+		function handleEventsFeed(feedRoot){
+			var eventFeed = feedRoot.feed;
+			var events = eventFeed.entry;
 
-              // ContactsService v3 GoogleService WorkAround
-			  //Firefox Javascript 1.6 and higher
-			  //for each ( var link in conFeed.link ) {
-			  //IE JScript 5.6 Compatibility
-			  for (var ie=0; ie<conFeed.link.length; ie++) {
-			  	link = conFeed.link[ie];
-				 
-					 if ('next' == link.rel) {
-					 	return getContacts ( link.href );
-					 }
-				 }
+			// Firefox Javascript 1.6 and higher
+			// for each ( var event in events ) {
+			// IE JScript 5.6 Compatibility
+			if (events) {
+				for (var ie = 0; ie < events.length; ie++) {
+					var event = events[ie];
 
-              // Next step: Get calendars
-              showContacts();
-              //getCalendars( CALENDAR_FEED_URL_FULL );
-            }
+					eventList.push(event);
+				}
+			}
 
-            function showContacts() {
-               var htmlTableContent = document.getElementById('htmlTableContentID');
-                var table = document.createElement('table');
-                var tbody = document.createElement('tbody');
-			  //Firefox Javascript 1.6 and higher
-			  //for each ( var contact in contactList ) {
-			  //IE JScript 5.6 Compatibility
-			  for (var ie=0; ie<contactList.length; ie++) {
-			  	contact = contactList[ie];				
-               
-                  // ContactsService v3 GoogleService WorkAround
-                  var conTitle
-				  if (contact.title) {
-				  	conTitle = contact.title.$t;
-				  }
-                  if (contact.gd$name) {
-                     conTitle = conTitle + ' ' + contact.gd$name.gd$fullName.$t;
-                  }
-                  if (contact.gContact$birthday) {
-                     conTitle = conTitle + ' ' + contact.gContact$birthday.when;
-                  }
+			if (eventFeed.getNextLink()) {
+				return getEvents(eventFeed.getNextLink().href);
+			}
+			
+			var batchURL = eventFeed.getFeedBatchLink().href;
+			var postURL;
+			
+			// ContactsService v3 GoogleService WorkAround
+			// Firefox Javascript 1.6 and higher
+			// for each ( var link in conFeed.link ) {
+			// IE JScript 5.6 Compatibility
+			for (var ie = 0; ie < eventFeed.link.length; ie++) {
+				var link = eventFeed.link[ie];
+				if ('http://schemas.google.com/g/2005#post' == link.rel) {
+					postURL = link.href;
+					break;
+				}
+			}
+			
+			// Next step: Check events
+			checkEvents(postURL);
+			showEvents();
+		}
 
-                    var row = document.createElement('tr');
-                    var cell = document.createElement('td');
-                    cell.appendChild(document.createTextNode("contact: "+conTitle));
-                    row.appendChild(cell);
-                    tbody.appendChild(row);
-                }
-                table.appendChild(tbody);
-                htmlTableContent.appendChild(table);
-            }
+		function showEvents(){
+			var htmlTableContent = document.getElementById('htmlTableContentID');
+			var table = document.createElement('table');
+			var tbody = document.createElement('tbody');
 
-            function getEvents( eventURL ) {
-               calendarService.getEventsFeed(eventURL, handleEventsFeed, handleError);
-            }
+			// Firefox Javascript 1.6 and higher
+			// for each ( var event in eventList ) {
+			// IE JScript 5.6 Compatibility
+			for (var ie = 0; ie < eventList.length; ie++) {
+				var event = eventList[ie];
 
-           function handleEventsFeed(feedRoot) {
-                eventFeed = feedRoot.feed;
-                events = eventFeed.getEntries();
+				var eventTitle = event.getTitle().getText();
 
-                 batchURL = eventFeed.getFeedBatchLink().href;
+				var row = document.createElement('tr');
+				var cell = document.createElement('td');
+				cell.appendChild(document.createTextNode("event: " + eventTitle));
+				row.appendChild(cell);
+				tbody.appendChild(row);
+			}
+			table.appendChild(tbody);
+			htmlTableContent.appendChild(table);
+		}
 
-			  //Firefox Javascript 1.6 and higher
-			  //for each ( var event in events ) {
-			  //IE JScript 5.6 Compatibility
-			  for (var ie=0; ie<events.length; ie++) {
-			  	event = events[ie];	
-                
-                   eventList.push(event);
-                }
+		function checkEvents(postURL){
+			// Save postURL into static variable
+			if (postURL){
+				checkEvents.postURL = postURL;
+			}
+			
+			// Wait for both queries (queryContacts/queryEvents) finished
+			// Both lists (contactList/eventList) are filled
+			if ('undefined' == typeof checkEvents.counter) {
+				checkEvents.counter = 1;
+			}
+			else if (0 == checkEvents.counter){
+				checkEvents.counter = 1;
+			}
+			else {
+				checkEvents.counter = 0;
 
-                  if ( eventFeed.getNextLink() ) {
-                      return getEvents( eventFeed.getNextLink().href );
-                  }
+//alert(contactList.length);
+//alert(eventList.length);
+				var exists = false;
+				// Firefox Javascript 1.6 and higher
+				// for each ( var contact in contactList ) {
+				// IE JScript 5.6 Compatibility
+				if (contactList) {
+					for (var ie = 0; ie < contactList.length; ie++) {
+						var contact = contactList[ie];
+						
+						exists = false;
+						var date = contact.gContact$birthday.when.replace(/-/g, '');
+						if (8 != date.length) {
+							// To comply with Java long date
+							// (http://java.sun.com/j2se/1.3/docs/api/java/util/Date.html#Date(long))
+							date = '1970' + date;
+							// DEBUG: alert('1970: '+date);
+						}
+						// Firefox Javascript 1.6 and higher
+						// for each ( var event in eventList ) {
+						// IE JScript 5.6 Compatibility
+						if (eventList) {
+							for (var ie = 0; ie < eventList.length; ie++) {
+								var event = eventList[ie];
+								exists = true;
+								// Check contact title
+		// !!!!!! Full Match to avoid errors on reuse calendars
+								if (-1 != event.getTitle().getText().search(contact.title.$t)) {
+									// str.search(/W3Schools/i); // Case-insensitive
+									// Search
+									// Event found for given contact
+									// Check date
+									if (-1 != event.getRecurrence().getValue().search(date)) {
+									// Date correct - nothing todo
+									// DEBUG:alert('date correct');
+									}
+									else {
+										// Date not correct - Update event
+										// DEBUG: alert('date update');
+										updateEvent(event, contact, date);
+									}
+								}
+							}
+						}
+						if (false == exists) {
+							// Event not found for given contact - Add/Create event
+							// DEBUG: alert('date add');
+							insertEvent(checkEvents.postURL, contact, date);
+						}
+					}
+				}	
+			
+				// Finished
+				alert('Finished!');	
+			}
+		}
 
-                  // Next step: Check events
-                   showEvents();
-                   checkEvents();
-              }
+		function insertEvent(postURL, contact, date){
+			var eventEntry = setEvent(new google.gdata.calendar.CalendarEventEntry(), contact, date);
 
-              function showEvents() {
-                var htmlTableContent = document.getElementById('htmlTableContentID');
-                var table = document.createElement('table');
-                var tbody = document.createElement('tbody');
-				
-			  //Firefox Javascript 1.6 and higher
-			  //for each ( var event in eventList ) {
-			  //IE JScript 5.6 Compatibility
-			  for (var ie=0; ie<eventList.length; ie++) {
-			  	event = eventList[ie];	
-                   
-                    var eventTitle = event.getTitle().getText();;
+			// The callback method that will be called after a
+			// successful insertion from insertEntry()
+			var insertEventCallback = function(result){
+				// DEBUG: alert('event added!');
+			}
+			calendarService.insertEntry(postURL, eventEntry, insertEventCallback, handleError, google.gdata.calendar.CalendarEventEntry);
+		}
 
-                    var row = document.createElement('tr');
-                    var cell = document.createElement('td');
-                    cell.appendChild(document.createTextNode("event: "+eventTitle));
-                    row.appendChild(cell);
-                    tbody.appendChild(row);
-                }
-                table.appendChild(tbody);
-                htmlTableContent.appendChild(table);
-              }
+		function updateEvent(eventEntry, contact, date){
+			var eventEntry = setEvent(eventEntry, contact, date);
 
-               function checkEvents() {
-                  var exists = false;
-			  //Firefox Javascript 1.6 and higher
-			  //for each ( var contact in contactList ) {
-			  //IE JScript 5.6 Compatibility
-			  for (var ie=0; ie<contactList.length; ie++) {
-			  	contact = contactList[ie];					  
-                   
-                     exists = false;
-                     var date = contact.gContact$birthday.when.replace(/-/g,'');
-                     if ( 8 != date.length ) {
-                        // To comply with Java long date
-                        // (http://java.sun.com/j2se/1.3/docs/api/java/util/Date.html#Date(long))
-                        date = '1970'+date;
-                        //alert('1970: '+date);
-                     }
-			  //Firefox Javascript 1.6 and higher
-			  //for each ( var event in eventList ) {
-			  //IE JScript 5.6 Compatibility
-			  for (var ie=0; ie<eventList.length; ie++) {
-			  	event = eventList[ie];						 
-                        exists = true;
-                       // Check contact title or fullname ??????? indexOf??
-		//Full Match to avoid errors on reuse calendars
-                       if ( -1 != event.getTitle().getText().search( contact.title.$t ) ) {
-                       // str.search(/W3Schools/i); // Case-insensitive Search
-                           // Event found for given contact
-                           // Check date
-                           if ( -1 != event.getRecurrence().getValue().search( date ) ) {
-                                // Date correct - nothing todo
-                                //alert('date correct');
-                           }
-                           else {
-                                // Date not correct - Update event
-                                //alert('date update');
-                                updateEvent( event, contact, date );
-                           }
-                        }
-                     }
-                     if ( false == exists ){
-                       // Event not found for given contact - Add/Create event
-                       //alert('date add');
-                       insertEvent( contact, date );
-                     }
-                  }
-                  // Next step: Finished
-                  alert ('Finished!');
-                }
+			// The callback method that will be called after a
+			// successful update from updateEntry()
+			var updateEventCallback = function(result){
+				// DEBUG: alert('event updated!');
+			}
+			eventEntry.updateEntry(updateEventCallback, handleError)
+		}
 
-              function insertEvent( contact, date ) {
-                 var eventEntry = setEvent( new google.gdata.calendar.CalendarEventEntry(), contact, date );
+		function setEvent(eventEntry, contact, date){
+			// Create a recurring event
 
-                 // The callback method that will be called after a
-					// successful insertion from insertEntry()
-                 var insertEventCallback = function(result){
-                     // DEBUG:
-                     // alert('event added!');
-                 }
-                 calendarService.insertEntry(eventURL, eventEntry, insertEventCallback, handleError, google.gdata.calendar.CalendarEventEntry);
-              }
+			// Set the title of the event
+			// Insert contact title and content
+			eventEntry.setTitle(google.gdata.Text.create(contact.title.$t));
+			eventEntry.setContent(google.gdata.Text.create(contact.title.$t + EVENT_SUMMARY_SUFFIX));
 
-              function updateEvent( eventEntry, contact, date ) {
-                 var eventEntry = setEvent( eventEntry, contact, date );
+            // Set the calendar time zone
+            // Set the calendar location
+			// Set show me as to available or busy
 
-                 // The callback method that will be called after a
-					// successful update from updateEntry()
-                 var updateEventCallback = function(result){
-                     // DEBUG:
-                     // alert('event updated!');
-                 }
-                 eventEntry.updateEntry( updateEventCallback, handleError )
-              }
+			// Set up the recurring details using an ical string
+			// (RFC 2445 http://www.ietf.org/rfc/rfc2445.txt)
+			var recurrence = new google.gdata.Recurrence();
+			var recurrenceString = 'DTSTART;VALUE=DATE:' + date + ICAL_BREAK +
+								   'DTEND;VALUE=DATE:' + date + ICAL_BREAK +
+								   'RRULE:FREQ=YEARLY';
+			recurrence.setValue(recurrenceString);
+			eventEntry.setRecurrence(recurrence);
 
-              function setEvent( eventEntry, contact, date ) {
-                 // Create a recurring event
+			// Create a Reminder object that will be attached to the
+			var reminder = new google.gdata.Reminder();
+			reminder.setDays(REMINDER_DAYS);
+			reminder.setMethod(google.gdata.Reminder.METHOD_ALERT);
+			eventEntry.addReminder(reminder);
 
-                 // Set the title of the event
-                 // Insert contact title or fullname ???????
-                 eventEntry.setTitle( google.gdata.Text.create(contact.title.$t) );
+			return eventEntry;
+		}
 
-                 // Set the content of the event
-                 eventEntry.setContent( google.gdata.Text.create(contact.title.$t + EVENT_SUMMARY_SUFFIX ) );
-
-                 // Set up the recurring details using an ical string
-                 // (RFC 2445 http://www.ietf.org/rfc/rfc2445.txt)
-                 var recurrence = new google.gdata.Recurrence();
-                 var recurrenceString = 'DTSTART;VALUE=DATE:' + date + ICAL_BREAK +
-                                        'DTEND;VALUE=DATE:' + date + ICAL_BREAK +
-                                        'RRULE:FREQ=YEARLY';
-                 recurrence.setValue(recurrenceString);
-                 eventEntry.setRecurrence( recurrence );
-
-                 // Create a Reminder object that will be attached to the
-                 var reminder = new google.gdata.Reminder();
-                 reminder.setDays( REMINDER_DAYS );
-                 reminder.setMethod( google.gdata.Reminder.METHOD_ALERT );
-                 eventEntry.addReminder( reminder );
-
-				 // Set Show me as to Available or Busy
-
-                 return eventEntry;
-              }
-
-            /**
-			 * This function is called if an error is encountered while
-			 * retrieving a feed or adding an event.
-			 */
-            function handleError(e){
-                // Commented out because of:
-                 // getFeed causes:
-                 // Invalid json format.
-                 // Unescaped json is a not supported format for attributes
-					// or text values.
-                 // But getting is not interrupted!
-                 //alert(e.cause ? e.cause.statusText : e.message);
-            };
+		/**
+		 * This function is called if an error is encountered while
+		 * retrieving a feed or adding an event.
+		 */
+		function handleError(e){
+			// Suppress error message:
+			//   Invalid JSON format.
+			//   Unescaped JSON is a not supported format for attributes or text values.
+			// Getting is not interrupted!
+			if (-1 == e.message.search(/unescaped json/i)) {
+				alert(e.cause ? e.cause.statusText : e.message);
+			}
+		};
 
 		</script>
-    </head>
+	</head>
 
 	<body>
-        <img src="gCalBirthdays.gif" alt="gCalBirthdays Logo"> <br>
+	    <img class="indent" src="gCalBirthdays.gif" alt="gCalBirthdays Logo"> <br>
 
-        <div id="version" class="indent">
-            Version:
-        </div>
+	    <div class="indent" id="version" class="indent">
+	        Version:
+	    </div>
 
-        <div class="indent">
-            Welcome to gCalBirthdays, an app that transfer Your
-            Google Contacts birthdays to Your Google Calendar.
-        </div>
-        <br>
+	    <div class="indent">
+	        Welcome to gCalBirthdays, an app that transfer Your
+	        Google Contacts birthdays to Your Google Calendar.
+	    </div>
 
-        <div id="loginNotice" class="indent" style="color:#cc0000; font-weight:bold; display:none">
-            Because this is a third-party app that uses your Google
-            account authentication, you'll need to grant access to
-            it by clicking the "Login" button.
-        </div>
+	    <div class="indent" id="loginNotice" class="indent" style="color:#cc0000; font-weight:bold; display:none">
+	        Because this is a third-party app that uses your Google
+	        account authentication, you'll need to grant access to
+	        it by clicking the "Login" button.
+	    </div>
 
-        <div class="indent">
-        	<form>
-            	<input id="auth_button" type="button" value="Authenticate" onclick="onClickAuthButton()">
-			</form>
-        </div>
+	    <div class="indent">
+	        	<input id="auth_button" type="button" value="Authenticate" onclick="onClickAuthButton()">
+		</div>
+	    <br>
 
-		<form id="settings_block" style="display:none">
+		<form class="indent" id="settings_block" style="display:none">
 			<table >
 				<tr>
-			        <div class="indent">
+			        <div>
 						<td>Select Group:</td>
 						<td>
-							<select id="group_select">
+							<select  id="group_select">
 							</select>
 						</td>
 			        </div>
 				</tr>
 				<tr>
-			        <div class="indent">
+			        <div>
 						<td>Select Calendar:</td>
 						<td>
 							<select id="calendar_select" onchange="onSelectNewCalendar(this.selectedIndex)">
@@ -704,18 +748,17 @@
 			        </div>
 				</tr>
 			</table>
-	        <div class="indent">
-	            <input id="start_button" type="button" value="Go" onclick="startTransfer(this.form.group_select.selectedIndex, this.form.calendar_select.selectedIndex)">
-	        </div>
+	        <input id="start_button" type="button" value="Go" onclick="startTransfer(this.form.group_select.selectedIndex, this.form.calendar_select.selectedIndex)">
 		</form>
+	    <br>
 
-        <div id="htmlTable" class="indent" style="display:none">
-            <div id="htmlTableHeaderID" style="font-weight: bold; border-bottom:1px solid grey;">
-                Debug:
-            </div>
-            <div id="htmlTableContentID">
-            </div>
-        </div>
+	    <div class="indent" id="htmlTable" class="indent" style="display:none">
+	        <div id="htmlTableHeaderID" style="font-weight: bold; border-bottom:1px solid grey;">
+	            Debug:
+	        </div>
+	        <div id="htmlTableContentID">
+	        </div>
+	    </div>
 
 		<!--Google Analytics-->
 		<script type="text/javascript">
@@ -730,6 +773,6 @@
 		   catch(err) {}
 		</script>
 
-    </body>
+	</body>
 </html>
 
