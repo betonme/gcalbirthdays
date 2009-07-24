@@ -43,11 +43,7 @@
 		// Save overhead, only load the necessary service
         //google.load("gdata", "1.x", {packages: ['contacts', 'calendar']});
 
-	   //Firefox Javascript 1.6 and higher
-	   //const declaration / for each loop allowed
-	   //IE JScript 5.6 Compatibility
-	   //var declaration / for loop
-
+	    //IE JScript 5.6 Compatibilit
 	    // Constants
         var APP_NAME = 'gCalBirthdays';
         var APP_VERSION = '2.00';
@@ -187,8 +183,6 @@
 
 			// Replace 'System Group: ' with an identifier
 			var id = 0;
-			// Firefox Javascript 1.6 and higher
-			// for each (var group in groups) {
 			// IE JScript 5.6 Compatibility
 			for (var ie = 0; ie < groups.length; ie++) {
 				var group = groups[ie];
@@ -197,8 +191,6 @@
 			// Sort groups
 			groups.sort(compareEntries);
 			// Remove identifier
-			// Firefox Javascript 1.6 and higher
-			// for each (var group in groups) {
 			// IE JScript 5.6 Compatibility
 			for (var ie = 0; ie < groups.length; ie++) {
 				var group = groups[ie];
@@ -207,8 +199,6 @@
 
 			// Iterate through the array of contact groups, and add them to
 			// drop down box
-			// Firefox Javascript 1.6 and higher
-			// for each (var group in groups) {
 			// IE JScript 5.6 Compatibility
 			for (var ie = 0; ie < groups.length; ie++) {
 				var group = groups[ie];
@@ -242,8 +232,6 @@
 			// down box
 			var i = 0;
 			var selId = -1;
-			// Firefox Javascript 1.6 and higher
-			// for each ( var calendar in calendars ) {
 			// IE JScript 5.6 Compatibility
 			for (var ie = 0; ie < calendars.length; ie++) {
 				var calendar = calendars[ie];
@@ -428,8 +416,6 @@
 			// ContactsService v3 GoogleService WorkAround
 			var contacts = conFeed.entry;
 
-			// Firefox Javascript 1.6 and higher
-			// for each ( var contact in contacts ) {
 			// IE JScript 5.6 Compatibility
 			if (contacts) {
 				for (var ie = 0; ie < contacts.length; ie++) {
@@ -447,8 +433,6 @@
 				}
 			}
 			// ContactsService v3 GoogleService WorkAround
-			// Firefox Javascript 1.6 and higher
-			// for each ( var link in conFeed.link ) {
 			// IE JScript 5.6 Compatibility
 			for (var ie = 0; ie < conFeed.link.length; ie++) {
 				var link = conFeed.link[ie];
@@ -468,8 +452,6 @@
 			var htmlTableContent = document.getElementById('htmlTableContentID');
 			var table = document.createElement('table');
 			var tbody = document.createElement('tbody');
-			// Firefox Javascript 1.6 and higher
-			// for each ( var contact in contactList ) {
 			// IE JScript 5.6 Compatibility
 			for (var ie = 0; ie < contactList.length; ie++) {
 				var contact = contactList[ie];
@@ -518,8 +500,6 @@
 			var eventFeed = feedRoot.feed;
 			var events = eventFeed.entry;
 
-			// Firefox Javascript 1.6 and higher
-			// for each ( var event in events ) {
 			// IE JScript 5.6 Compatibility
 			if (events) {
 				for (var ie = 0; ie < events.length; ie++) {
@@ -532,13 +512,11 @@
 			if (eventFeed.getNextLink()) {
 				return getEvents(eventFeed.getNextLink().href);
 			}
-			
+
 			var batchURL = eventFeed.getFeedBatchLink().href;
 			var postURL;
-			
+
 			// ContactsService v3 GoogleService WorkAround
-			// Firefox Javascript 1.6 and higher
-			// for each ( var link in conFeed.link ) {
 			// IE JScript 5.6 Compatibility
 			for (var ie = 0; ie < eventFeed.link.length; ie++) {
 				var link = eventFeed.link[ie];
@@ -549,7 +527,7 @@
 			}
 			//alert('Found ' + handleEventsFeed.eventCounter + ' event(s)\n');
 			   // + 'and ' + handleEventsFeed.birthdaysCounter + ' birthday(s)');
-				
+
 			// Next step: Check events
 			checkEvents(postURL);
 			showEvents();
@@ -560,8 +538,6 @@
 			var table = document.createElement('table');
 			var tbody = document.createElement('tbody');
 
-			// Firefox Javascript 1.6 and higher
-			// for each ( var event in eventList ) {
 			// IE JScript 5.6 Compatibility
 			for (var ie = 0; ie < eventList.length; ie++) {
 				var event = eventList[ie];
@@ -583,7 +559,7 @@
 			if (postURL){
 				checkEvents.postURL = postURL;
 			}
-			
+
 			// Wait for both queries (queryContacts/queryEvents) finished
 			// Both lists (contactList/eventList) are filled
 			if ('undefined' == typeof checkEvents.counter) {
@@ -598,13 +574,11 @@
 //alert(contactList.length);
 //alert(eventList.length);
 				var exists = false;
-				// Firefox Javascript 1.6 and higher
-				// for each ( var contact in contactList ) {
 				// IE JScript 5.6 Compatibility
 				if (contactList) {
 					for (var ie = 0; ie < contactList.length; ie++) {
 						var contact = contactList[ie];
-						
+
 						exists = false;
 						var date = contact.gContact$birthday.when.replace(/-/g, '');
 						if (8 != date.length) {
@@ -613,17 +587,15 @@
 							date = '1970' + date;
 	//TODO						// DEBUG: alert('1970: '+date);
 						}
-						// Firefox Javascript 1.6 and higher
-						// for each ( var event in eventList ) {
 						// IE JScript 5.6 Compatibility
 						if (eventList) {
 							for (var ie = 0; ie < eventList.length; ie++) {
-								var event = eventList[ie];					
+								var event = eventList[ie];
 								// Search for contact title
 								if (-1 != event.getTitle().getText().search(contact.title.$t)) {
 									// Search for birthday
 									if (-1 != event.getTitle().getText().search(/(Birthday|Geburtstag)/i)) {
-										exists = true;				
+										exists = true;
 										// Event found for given contact
 										// Check date
 										if (-1 != event.getRecurrence().getValue().search(date)) {
@@ -645,10 +617,10 @@
 							insertEvent(checkEvents.postURL, contact, date);
 						}
 					}
-				}	
-			
+				}
+
 				// Finished
-				alert('Finished!');	
+				alert('Finished!');
 			}
 		}
 
@@ -669,7 +641,7 @@
 			// The callback method that will be called after a
 			// successful update from updateEntry()
 			var updateEventCallback = function(result){
-				// DEBUG: 
+				// DEBUG:
 				alert('event updated!');
 			}
 			eventEntry.updateEntry(updateEventCallback, handleError)
