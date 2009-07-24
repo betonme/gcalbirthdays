@@ -85,7 +85,8 @@
 
         var REMINDER_DAYS = 14;
 
-        var MAX_RESULT = 50;  //not used
+        var MAX_RESULT = 25;  //not used
+        var MAX_BATCH = 25;
 
 		// Variables
         var contactService;
@@ -610,30 +611,30 @@
 							// To comply with Java long date
 							// (http://java.sun.com/j2se/1.3/docs/api/java/util/Date.html#Date(long))
 							date = '1970' + date;
-							// DEBUG: alert('1970: '+date);
+	//TODO						// DEBUG: alert('1970: '+date);
 						}
 						// Firefox Javascript 1.6 and higher
 						// for each ( var event in eventList ) {
 						// IE JScript 5.6 Compatibility
 						if (eventList) {
 							for (var ie = 0; ie < eventList.length; ie++) {
-								var event = eventList[ie];
-								exists = true;
-								// Check contact title
-		// !!!!!! Full Match to avoid errors on reuse calendars
+								var event = eventList[ie];					
+								// Search for contact title
 								if (-1 != event.getTitle().getText().search(contact.title.$t)) {
-									// str.search(/W3Schools/i); // Case-insensitive
-									// Search
-									// Event found for given contact
-									// Check date
-									if (-1 != event.getRecurrence().getValue().search(date)) {
-									// Date correct - nothing todo
-									// DEBUG: alert('date correct');
-									}
-									else {
-										// Date not correct - Update event
-										// DEBUG: alert('date update');
-										updateEvent(event, contact, date);
+									// Search for birthday
+									if (-1 != event.getTitle().getText().search(/(Birthday|Geburtstag)/i)) {
+										exists = true;				
+										// Event found for given contact
+										// Check date
+										if (-1 != event.getRecurrence().getValue().search(date)) {
+											// Date correct - nothing todo
+											// DEBUG: alert('date correct');
+										}
+										else {
+											// Date not correct - Update event
+											// DEBUG: alert('date update');
+											updateEvent(event, contact, date);
+										}
 									}
 								}
 							}
@@ -679,8 +680,8 @@
 
 			// Set the title of the event
 			// Insert contact title and content
-			eventEntry.setTitle(google.gdata.Text.create(contact.title.$t));
-			eventEntry.setContent(google.gdata.Text.create(contact.title.$t + EVENT_SUMMARY_SUFFIX));
+			eventEntry.setTitle(google.gdata.Text.create(contact.title.$t + 'Birthday Celebration')); // TODO: Add date
+			eventEntry.setContent(google.gdata.Text.create(EVENT_SUMMARY_SUFFIX));
 
             // Set the calendar time zone
             // Set the calendar location
