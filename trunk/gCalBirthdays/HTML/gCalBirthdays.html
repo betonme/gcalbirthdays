@@ -417,6 +417,11 @@
 		}
 
 		function handleContactsFeed(feedRoot){
+			// Count contacts
+			if ('undefined' == typeof handleContactsFeed.contactsCounter) {
+				handleContactsFeed.contactsCounter = 0;
+				handleContactsFeed.birthdaysCounter = 0;
+			}
 			var conFeed = feedRoot.feed;
 
 			// ContactsService v3 GoogleService WorkAround
@@ -427,6 +432,7 @@
 			// IE JScript 5.6 Compatibility
 			if (contacts) {
 				for (var ie = 0; ie < contacts.length; ie++) {
+					handleContactsFeed.contactsCounter++;
 					var contact = contacts[ie];
 
 					// Push only if contact has a title
@@ -434,6 +440,7 @@
 						// Push only if contact has a birthday
 						if (contact.gContact$birthday) {
 							contactList.push(contact);
+							handleContactsFeed.birthdaysCounter++;
 						}
 					}
 				}
@@ -448,6 +455,8 @@
 					return getContacts(link.href);
 				}
 			}
+			//alert('Found ' + handleContactsFeed.contactsCounter + ' contact(s)\n'
+			//    + 'and ' + handleContactsFeed.birthdaysCounter + ' birthday(s)');
 
 			// Next step: Check events
 			checkEvents();
@@ -500,6 +509,11 @@
 		}
 
 		function handleEventsFeed(feedRoot){
+			// Count events
+			if ('undefined' == typeof handleEventsFeed.contactsCounter) {
+				handleEventsFeed.eventCounter = 0;
+				handleEventsFeed.birthdaysCounter = 0;
+			}
 			var eventFeed = feedRoot.feed;
 			var events = eventFeed.entry;
 
@@ -509,8 +523,8 @@
 			if (events) {
 				for (var ie = 0; ie < events.length; ie++) {
 					var event = events[ie];
-
 					eventList.push(event);
+					handleEventsFeed.eventCounter++;
 				}
 			}
 
@@ -532,7 +546,9 @@
 					break;
 				}
 			}
-			
+			//alert('Found ' + handleEventsFeed.eventCounter + ' event(s)\n');
+			   // + 'and ' + handleEventsFeed.birthdaysCounter + ' birthday(s)');
+				
 			// Next step: Check events
 			checkEvents(postURL);
 			showEvents();
@@ -612,7 +628,7 @@
 									// Check date
 									if (-1 != event.getRecurrence().getValue().search(date)) {
 									// Date correct - nothing todo
-									// DEBUG:alert('date correct');
+									// DEBUG: alert('date correct');
 									}
 									else {
 										// Date not correct - Update event
@@ -652,7 +668,8 @@
 			// The callback method that will be called after a
 			// successful update from updateEntry()
 			var updateEventCallback = function(result){
-				// DEBUG: alert('event updated!');
+				// DEBUG: 
+				alert('event updated!');
 			}
 			eventEntry.updateEntry(updateEventCallback, handleError)
 		}
