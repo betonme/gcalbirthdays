@@ -598,7 +598,7 @@
                     // Event found for given contact
                     // Check date
                     if (-1 != event.getRecurrence().getValue().search(date)) {
-                      // Date correct - nothing todo
+                      // Date correct - do nothing
                       // DEBUG: alert('date correct');
                     }
                     else {
@@ -651,8 +651,17 @@
 
       // Set the title of the event
       // Insert contact title and content
-	  var stringDate = date.
-      eventEntry.setTitle(google.gdata.Text.create(contact.title.$t + EVENT_TITLE_SUFFIX + '(Born ' + stringDate + ')')); // TODO: Add date
+	  // Build date string
+	  var stringDate;
+	  if (8 == date.length) {
+	  	// YYYYMMDD -> DD.MM.YYYY
+		stringDate = date[6] + date[7] + '.' + date[4] + date[5] + '.' + date[0] + date[1] + date[2] + date[3];
+      }
+	  else {
+	  	// MMDD -> DD.MM.
+		stringDate = date[2] + date[3] + '.' + date[0] + date[1] + '.';
+      }
+      eventEntry.setTitle(google.gdata.Text.create(contact.title.$t + EVENT_TITLE_SUFFIX + ' (Born ' + stringDate + ')'));
       eventEntry.setContent(google.gdata.Text.create(EVENT_SUMMARY_SUFFIX));
 
       // Set the calendar time zone
