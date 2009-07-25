@@ -50,7 +50,9 @@
     //IE JScript 5.6 Compatibility
     // Constants
     var APP_NAME = 'gCalBirthdays';
-    var APP_VERSION = '2.00';
+    var APP_VERSION = '2.00_Beta';
+
+	var DEBUG = true; //false;
 
     var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
@@ -107,9 +109,9 @@
      * fill in the form based on the URL.
      */
     function init(){
-      var authButton = document.getElementById('auth_button');
+      var authButton = document.getElementById('authButtonID');
 
-      document.getElementById('version').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
+      document.getElementById('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
 
       // ContactsService v3 GoogleService WorkAround for Contact
       // Birthdays
@@ -122,21 +124,16 @@
       if (token) {
         // User is loged in
         authButton.value = 'Logout';
-        document.getElementById('loginNotice').style.display = 'none';
-        document.getElementById('htmlTable').style.display = 'block';
+        document.getElementById('loginNoticeID').style.display = 'none';
+		document.getElementById('htmlDebugID').style.display = 'block';
         main();
       }
       else {
         // User is loged out
         authButton.value = 'Login';
-        document.getElementById('loginNotice').style.display = 'block';
-        document.getElementById('settings_block').style.display = 'none';
-        document.getElementById('htmlTable').style.display = 'none';
-
-        var htmlTableHeader = document.getElementById('htmlTableHeaderID');
-        htmlTableHeader.innerHTML = '';
-        var htmlTableContent = document.getElementById('htmlTableContentID');
-        htmlTableContent.innerHTML = '';
+        document.getElementById('loginNoticeID').style.display = 'block';
+        document.getElementById('settingsFormID').style.display = 'none';
+		document.getElementById('htmlDebugID').style.display = 'none';
       }
     };
 
@@ -167,6 +164,8 @@
     }
 
     function queryGroups(){
+	  printDebug('Query Groups');
+
       // Query for all the contacts entry with this contact group
       var query = new google.gdata.contacts.ContactQuery(GROUP_FEED_URL_THIN);
 
@@ -182,10 +181,10 @@
       var groups = feedRoot.feed.entry;
 
       // Clear options
-      clearOptions('group_select');
+      clearOptions('groupSelectID');
 
       // Add 'All contacts' option
-      addOption('group_select', ALL_CONTACTS, '');
+      addOption('groupSelectID', ALL_CONTACTS, '');
 
       // Replace 'System Group: ' with an identifier
       var id = 0;
@@ -208,15 +207,17 @@
       // IE JScript 5.6 Compatibility
       for (var ie = 0; ie < groups.length; ie++) {
         var group = groups[ie];
-        addOption('group_select', group.title.$t, group.id.$t);
+        addOption('groupSelectID', group.title.$t, group.id.$t);
       }
 
-      selectOption('group_select', 0);
+      selectOption('groupSelectID', 0);
 
       showSettingsBlock();
     }
 
     function queryCalendars(){
+	  printDebug('Query Calendars');
+
       // Query for all calendars
       var query = new google.gdata.client.Query(CALENDAR_FEED_URL_FULL);
 
@@ -229,19 +230,18 @@
       var calendars = feedRoot.feed.getEntries();
 
       // Clear options
-      clearOptions('calendar_select');
+      clearOptions('calendarSelectID');
 
       // Sort calendars
       calendars.sort(compareEntries);
 
-      // Iterate through the array of calendars, and add them to drop
-      // down box
+      // Iterate through the array of calendars, and add them to drop down box
       var i = 0;
       var selId = -1;
       // IE JScript 5.6 Compatibility
       for (var ie = 0; ie < calendars.length; ie++) {
         var calendar = calendars[ie];
-        addOption('calendar_select', calendar.getTitle().getText(), calendar.getLink().href);
+        addOption('calendarSelectID', calendar.getTitle().getText(), calendar.getLink().href);
 
         // Select first calendar which contains
         // [Birthdays|Geburtstag]
@@ -254,9 +254,9 @@
       }
 
       // Add 'New Calendar' option
-      addOption('calendar_select', NEW_CALENDAR, '');
+      addOption('calendarSelectID', NEW_CALENDAR, '');
 
-      selectOption('calendar_select', selId);
+      selectOption('calendarSelectID', selId);
 
       showSettingsBlock();
     }
@@ -317,30 +317,29 @@
 
     function showSettingsBlock(){
       // Wait for both queries (queryGroups/queryCalendars) finished
-      // Both select boxes (group_select/calendar_select) are filled
+      // Both select boxes (groupSelectID/calendarSelectID) are filled
       if ('undefined' == typeof showSettingsBlock.counter) {
         showSettingsBlock.counter = 1;
       }
       else {
-        document.getElementById('settings_block').style.display = 'block';
+        document.getElementById('settingsFormID').style.display = 'block';
       }
     }
 
     function onSelectNewCalendar(calendarSelectedIndex){
-      if (NEW_CALENDAR == document.getElementById('calendar_select').options[calendarSelectedIndex].text) {
+      if (NEW_CALENDAR == document.getElementById('calendarSelectID').options[calendarSelectedIndex].text) {
         var calendarName = prompt("Calendar name:", "Birthdays");
         if (calendarName != null && calendarName != "") {
           insertCalendar(calendarName);
         }
         else {
-          selectOption('calendar_select', 0);
+          selectOption('calendarSelectID', 0);
         }
       }
     }
 
     function insertCalendar(calendarName){
-      // Create an instance of CalendarEntry, representing the new
-      // calendar
+      // Create an instance of CalendarEntry, representing the new calendar
       var calendarEntry = new google.gdata.calendar.CalendarEntry();
 
       // Set the calendar title
@@ -368,9 +367,9 @@
       // The callback method that will be called after a
       // successful insertion from insertEntry()
       var insertCalendarCallback = function(entryRoot){
-        // DEBUG: alert('Calendar inserted');
-        var elSelId = insertOption('calendar_select', entryRoot.entry.getTitle().getText(), entryRoot.entry.getLink().href);
-        selectOption('calendar_select', elSelId);
+		printDebug('Calendar inserted');
+        var elSelId = insertOption('calendarSelectID', entryRoot.entry.getTitle().getText(), entryRoot.entry.getLink().href);
+        selectOption('calendarSelectID', elSelId);
       }
       // Submit the request using the calendar service object
       calendarService.insertEntry(CALENDAR_FEED_URL_FULL, calendarEntry, insertCalendarCallback, handleError, google.gdata.calendar.CalendarEntry);
@@ -381,13 +380,15 @@
       eventList = new Array();
 
       // Retrieve Contacts
-      queryContacts(document.getElementById('group_select').options[groupSelectedIndex].value);
+      queryContacts(document.getElementById('groupSelectID').options[groupSelectedIndex].value);
 
       // Retrieve Events
-      queryEvents(document.getElementById('calendar_select').options[calendarSelectedIndex].value);
+      queryEvents(document.getElementById('calendarSelectID').options[calendarSelectedIndex].value);
     }
 
     function queryContacts(groupId){
+	  printDebug('Query Contacts');
+
       // Query for all the contacts entry with this contact group
       var query = new google.gdata.client.Query(CONTACTS_FEED_URL_THIN);
 
@@ -446,45 +447,34 @@
           return getContacts(link.href);
         }
       }
-      //alert('Found ' + handleContactsFeed.contactsCounter + ' contact(s)\n'
-      //    + 'and ' + handleContactsFeed.birthdaysCounter + ' birthday(s)');
+	  printDebug('Contact(s) ' + handleContactsFeed.contactsCounter);
+      printDebug ('Birthday(s) ' + handleContactsFeed.birthdaysCounter);
 
       // Next step: Check events
-      checkBirthdays();
       showContacts();
+	  checkBirthdays();
     }
 
     function showContacts(){
-      var htmlTableContent = document.getElementById('htmlTableContentID');
-      var table = document.createElement('table');
-      var tbody = document.createElement('tbody');
       // IE JScript 5.6 Compatibility
       for (var ie = 0; ie < contactList.length; ie++) {
         var contact = contactList[ie];
 
         // ContactsService v3 GoogleService WorkAround
-        var conTitle
+        var text;
         if (contact.title) {
-          conTitle = contact.title.$t;
-        }
-        if (contact.gd$name) {
-          conTitle = conTitle + ' ' + contact.gd$name.gd$fullName.$t;
+          text = contact.title.$t;
         }
         if (contact.gContact$birthday) {
-          conTitle = conTitle + ' ' + contact.gContact$birthday.when;
+          text = text + ' ' + contact.gContact$birthday.when;
         }
-
-        var row = document.createElement('tr');
-        var cell = document.createElement('td');
-        cell.appendChild(document.createTextNode("contact: " + conTitle));
-        row.appendChild(cell);
-        tbody.appendChild(row);
+		printDebug('Contact: ' + text);
       }
-      table.appendChild(tbody);
-      htmlTableContent.appendChild(table);
     }
 
     function queryEvents(calendarURL){
+	  printDebug('Query Events');
+
       // Query for all the events entry within given calendarid
       var query = new google.gdata.calendar.CalendarEventQuery(calendarURL);
 
@@ -531,33 +521,23 @@
           break;
         }
       }
-      //alert('Found ' + handleEventsFeed.eventCounter + ' event(s)\n');
-         // + 'and ' + handleEventsFeed.birthdaysCounter + ' birthday(s)');
+	  printDebug('Event(s): ' + handleEventsFeed.eventCounter);
+      //printDebug('Birthday(s): ' + handleEventsFeed.birthdaysCounter);
 
       // Next step: Check events
-      checkBirthdays(postURL);
       showEvents();
+	  checkBirthdays(postURL);
     }
 
     function showEvents(){
-      var htmlTableContent = document.getElementById('htmlTableContentID');
-      var table = document.createElement('table');
-      var tbody = document.createElement('tbody');
-
       // IE JScript 5.6 Compatibility
       for (var ie = 0; ie < eventList.length; ie++) {
         var event = eventList[ie];
 
-        var eventTitle = event.getTitle().getText();
+        var text = event.getTitle().getText();
 
-        var row = document.createElement('tr');
-        var cell = document.createElement('td');
-        cell.appendChild(document.createTextNode("event: " + eventTitle));
-        row.appendChild(cell);
-        tbody.appendChild(row);
+		printDebug('Event: ' + text);
       }
-      table.appendChild(tbody);
-      htmlTableContent.appendChild(table);
     }
 
     function checkBirthdays(postURL){
@@ -599,11 +579,11 @@
                     // Check date
                     if (-1 != event.getRecurrence().getValue().search(date)) {
                       // Date correct - do nothing
-                      // DEBUG: alert('date correct');
+					  printDebug('Event correct: ' + contact.title.$t);
                     }
                     else {
                       // Date not correct - Update event
-                      // DEBUG: alert('date update');
+                      printDebug('Event to update: ' + contact.title.$t);
                       updateEvent(event, contact, date);
                     }
                   }
@@ -612,13 +592,14 @@
             }
             if (false == exists) {
               // Event not found for given contact - Add/Create event
-              // DEBUG: alert('date add');
+			  printDebug('Event to add: ' + contact.title.$t);
               insertEvent(checkBirthdays.postURL, contact, date);
             }
           }
         }
 
         // Finished
+		printDebug('Finished!');
         alert('Finished!');
       }
     }
@@ -629,7 +610,7 @@
       // The callback method that will be called after a
       // successful insertion from insertEntry()
       var insertEventCallback = function(result){
-        // DEBUG: alert('event added!');
+		printDebug('Event added: ' + result);
       }
       calendarService.insertEntry(postURL, eventEntry, insertEventCallback, handleError, google.gdata.calendar.CalendarEventEntry);
     }
@@ -640,8 +621,7 @@
       // The callback method that will be called after a
       // successful update from updateEntry()
       var updateEventCallback = function(result){
-        // DEBUG:
-        alert('event updated!');
+		printDebug('Event updated: ' + result);
       }
       eventEntry.updateEntry(updateEventCallback, handleError)
     }
@@ -674,7 +654,7 @@
 	  	// To comply with Java long date
 		// (http://java.sun.com/j2se/1.3/docs/api/java/util/Date.html#Date(long))
 		date = '1970' + date;
-		// DEBUG: alert('1970: '+date);
+		printDebug('Date set year 1970!');
 	  }
       var recurrence = new google.gdata.Recurrence();
       var recurrenceString = 'DTSTART;VALUE=DATE:' + date + ICAL_BREAK +
@@ -701,10 +681,33 @@
       //   Invalid JSON format.
       //   Unescaped JSON is a not supported format for attributes or text values.
       // Getting is not interrupted!
-      if (-1 == e.message.search(/unescaped json/i)) {
-        alert(e.cause ? e.cause.statusText : e.message);
-      }
+      //if (-1 == e.message.search(/unescaped json/i)) {
+        //alert(e.cause ? e.cause.statusText : e.message);
+      //}
+	  for (err in e) {
+	  	printDebug (err);
+	  }
+	  printDebug (e.lineNumber);
+	  //printDebug('Error: ' + e.cause ? e.cause.statusText : e.message);
+	  //printDebug(e.cause ? e.cause.statusText : e.message);
     };
+
+	function printDebug(text){
+	  if (true == DEBUG) {
+	  	var htmlDebug = document.getElementById('htmlDebugID');
+
+		// First call print debug header
+		if ('undefined' == typeof printDebug.counter) {
+          printDebug.counter = 1;
+		  htmlDebug.appendChild(document.createTextNode('Debug:'));
+	      htmlDebug.appendChild(document.createElement('hr'));
+        }
+
+		// Append debug text
+	    htmlDebug.appendChild(document.createTextNode(text));
+	    htmlDebug.appendChild(document.createElement('br'));
+	  }
+	}
 
     </script>
   </head>
@@ -713,7 +716,7 @@
   	<div class="indent">
       <img src="gCalBirthdays.gif" alt="gCalBirthdays Logo"> <br>
 
-      <p id="version">
+      <p id="versionID">
           Version:
       </p>
 
@@ -722,43 +725,37 @@
           Google Contacts birthdays to Your Google Calendar.
       </p>
 
-      <p id="loginNotice" style="color:#cc0000; font-weight:bold; display:none">
+      <p id="loginNoticeID" style="color:#cc0000; font-weight:bold; display:none">
           Because this is a third-party app that uses your Google
           account authentication, you'll need to grant access to
           it by clicking the "Login" button.
       </p>
 
       <p>
-        <input id="auth_button" type="button" value="Authenticate" onclick="onClickAuthButton()">
+        <input id="authButtonID" type="button" value="Authenticate" onclick="onClickAuthButton()">
       </p>
 
-      <form id="settings_block" style="display:none">
+      <form id="settingsFormID" style="display:none">
         <table >
           <tr>
             <td>Select Group:</td>
             <td>
-              <select  id="group_select"></select>
+              <select  id="groupSelectID"></select>
             </td>
           </tr>
           <tr>
             <td>Select Calendar:</td>
             <td>
-              <select id="calendar_select" onchange="onSelectNewCalendar(this.selectedIndex)"></select>
+              <select id="calendarSelectID" onchange="onSelectNewCalendar(this.selectedIndex)"></select>
             </td>
           </tr>
         </table>
-        <input id="start_button" type="button" value="Go" onclick="startTransfer(this.form.group_select.selectedIndex, this.form.calendar_select.selectedIndex)">
+        <input id="startButtonID" type="button" value="Go" onclick="startTransfer(this.form.groupSelectID.selectedIndex, this.form.calendarSelectID.selectedIndex)">
       </form>
       <br>
 
-      <p id="htmlTable" style="display:none">
-        <p id="htmlTableHeaderID" style="font-weight: bold; border-bottom:1px solid grey;">
-          Debug:
-        </p>
-        <p id="htmlTableContentID">
-        </p>
-      </p>
-	</p>
+      <form id="htmlDebugID" style="display:none"></form>
+    </div>
 
     <!--Google Analytics-->
     <script type="text/javascript">
