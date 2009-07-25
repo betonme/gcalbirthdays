@@ -2,7 +2,6 @@
 
 <html>
   <head>
-    <meta name="generator" content="HTML Tidy, see www.w3.org">
     <title>gCalBirthdays</title>
     <style type="text/css">
       .indent {
@@ -50,9 +49,9 @@
     //IE JScript 5.6 Compatibility
     // Constants
     var APP_NAME = 'gCalBirthdays';
-    var APP_VERSION = '2.00_Beta';
+    var APP_VERSION = '2.00';
 
-    var DEBUG = true; //false;
+    var DEBUG = false; //false|true;
 
     var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
@@ -164,7 +163,7 @@
     }
 
     function queryGroups(){
-      //printDebug('Query Groups');
+      printDebug('Query Groups');
 
       // Query for all the contacts entry with this contact group
       var query = new google.gdata.contacts.ContactQuery(GROUP_FEED_URL_THIN);
@@ -216,7 +215,7 @@
     }
 
     function queryCalendars(){
-    //printDebug('Query Calendars');
+      printDebug('Query Calendars');
 
       // Query for all calendars
       var query = new google.gdata.client.Query(CALENDAR_FEED_URL_FULL);
@@ -367,7 +366,7 @@
       // The callback method that will be called after a
       // successful insertion from insertEntry()
       var insertCalendarCallback = function(entryRoot){
-        //printDebug('Calendar inserted');
+        printDebug('Calendar inserted');
         var elSelId = insertOption('calendarSelectID', entryRoot.entry.getTitle().getText(), entryRoot.entry.getLink().href);
         selectOption('calendarSelectID', elSelId);
       }
@@ -387,16 +386,13 @@
     }
 
     function queryContacts(groupId){
-      //printDebug('Query Contacts');
+      printDebug('Query Contacts');
 
       // Query for all the contacts entry with this contact group
       var query = new google.gdata.client.Query(CONTACTS_FEED_URL_THIN);
 
       // Use query parameter to set the google contacts version
       query.setParam(CONTACTS_VERSION_NAME, CONTACTS_VERSION_NUMBER);
-
-      // Not supported by ContactsService
-      // query.setParam('q', 'search text'); //'birthday' ?
 
       // Use query parameter to set the group ID
       if ('' != groupId) {
@@ -447,12 +443,12 @@
           return getContacts(link.href);
         }
       }
-      //printDebug('Contact(s) ' + handleContactsFeed.contactsCounter);
-      //printDebug ('Birthday(s) ' + handleContactsFeed.birthdaysCounter);
+      printDebug('Contact(s) ' + handleContactsFeed.contactsCounter);
+      printDebug ('Birthday(s) ' + handleContactsFeed.birthdaysCounter);
 
       // Next step: Check events
       showContacts();
-    checkBirthdays();
+      checkBirthdays();
     }
 
     function showContacts(){
@@ -468,12 +464,12 @@
         if (contact.gContact$birthday) {
           text = text + ' ' + contact.gContact$birthday.when;
         }
-        //printDebug('Contact: ' + text);
+        printDebug('Contact: ' + text);
       }
     }
 
     function queryEvents(calendarURL){
-      //printDebug('Query Events');
+      printDebug('Query Events');
 
       // Query for all the events entry within given calendarid
       var query = new google.gdata.calendar.CalendarEventQuery(calendarURL);
@@ -521,8 +517,8 @@
           break;
         }
       }
-      //printDebug('Event(s): ' + handleEventsFeed.eventCounter);
-      ////printDebug('Birthday(s): ' + handleEventsFeed.birthdaysCounter);
+      printDebug('Event(s): ' + handleEventsFeed.eventCounter);
+      //printDebug('Birthday(s): ' + handleEventsFeed.birthdaysCounter);
 
       // Next step: Check events
       showEvents();
@@ -534,7 +530,7 @@
       for (var ie = 0; ie < eventList.length; ie++) {
         var event = eventList[ie];
         var text = event.getTitle().getText();
-        //printDebug('Event: ' + text);
+        printDebug('Event: ' + text);
       }
     }
 
@@ -577,11 +573,11 @@
                     // Check date
                     if (-1 != event.getRecurrence().getValue().search(date)) {
                       // Date correct - do nothing
-                      //printDebug('Event correct: ' + contact.title.$t);
+                      printDebug('Event correct: ' + contact.title.$t);
                     }
                     else {
                       // Date not correct - Update event
-                      //printDebug('Event to update: ' + contact.title.$t);
+                      printDebug('Event to update: ' + contact.title.$t);
                       updateEvent(event, contact, date);
                     }
                   }
@@ -590,14 +586,14 @@
             }
             if (false == exists) {
               // Event not found for given contact - Add/Create event
-              //printDebug('Event to add: ' + contact.title.$t);
+              printDebug('Event to add: ' + contact.title.$t);
               insertEvent(checkBirthdays.postURL, contact, date);
             }
           }
         }
 
         // Finished
-        //printDebug('Finished!');
+        printDebug('Finished!');
         alert('Finished!');
       }
     }
@@ -608,7 +604,7 @@
       // The callback method that will be called after a
       // successful insertion from insertEntry()
       var insertEventCallback = function(result){
-        //printDebug('Event added: ' + result);
+        printDebug('Event added: ' + result);
       }
       calendarService.insertEntry(postURL, eventEntry, insertEventCallback, handleError, google.gdata.calendar.CalendarEventEntry);
     }
@@ -619,7 +615,7 @@
       // The callback method that will be called after a
       // successful update from updateEntry()
       var updateEventCallback = function(result){
-        //printDebug('Event updated: ' + result);
+        printDebug('Event updated: ' + result);
       }
       eventEntry.updateEntry(updateEventCallback, handleError)
     }
@@ -652,7 +648,7 @@
         // To comply with Java long date
         // (http://java.sun.com/j2se/1.3/docs/api/java/util/Date.html#Date(long))
         date = '1970' + date;
-        //printDebug('Date set year 1970!');
+        printDebug('Date set year 1970!');
       }
       var recurrence = new google.gdata.Recurrence();
       var recurrenceString = 'DTSTART;VALUE=DATE:' + date + ICAL_BREAK +
@@ -675,22 +671,10 @@
      * retrieving a feed or adding an event.
      */
     function handleError(e){
-      // Suppress error message:
-      //   Invalid JSON format.
-      //   Unescaped JSON is a not supported format for attributes or text values.
-      // Getting is not interrupted!
-      //if (-1 == e.message.search(/unescaped json/i)) {
-        //alert(e.cause ? e.cause.statusText : e.message);
-      //}
-      for (err in e) {
-        //printDebug (err);
-      }
-      printDebug(e.lineNumber);
+      printDebug('Error: ' + e.cause ? e.cause.statusText : e.message);
       printDebug(e.fileName);
-      ////printDebug(e.stack);
-      //printDebug(e.cause.statusText);
-      //printDebug(e.message);
-      ////printDebug('Error: ' + e.cause ? e.cause.statusText : e.message);
+      //printDebug(e.lineNumber);
+      printDebug(e.stack);
     };
 
     function printDebug(text){
