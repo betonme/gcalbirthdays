@@ -43,16 +43,16 @@
 
 
     // Load the Google data JS Client Library
-    google.load('gdata', '1.x');
+    //google.load('gdata', '1.x');
     // Save overhead, only load the necessary service
-    //google.load("gdata", "1.x", {packages: ['contacts', 'calendar']});
+    google.load("gdata", "1.x", {packages: ['contacts', 'calendar']});
 
     //IE JScript 5.6 Compatibility
     // Constants
     var APP_NAME = 'gCalBirthdays';
     var APP_VERSION = '2.00_Beta';
 
-	var DEBUG = true; //false;
+    var DEBUG = true; //false;
 
     var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
@@ -125,7 +125,7 @@
         // User is loged in
         authButton.value = 'Logout';
         document.getElementById('loginNoticeID').style.display = 'none';
-		document.getElementById('htmlDebugID').style.display = 'block';
+        document.getElementById('htmlDebugID').style.display = 'block';
         main();
       }
       else {
@@ -133,7 +133,7 @@
         authButton.value = 'Login';
         document.getElementById('loginNoticeID').style.display = 'block';
         document.getElementById('settingsFormID').style.display = 'none';
-		document.getElementById('htmlDebugID').style.display = 'none';
+        document.getElementById('htmlDebugID').style.display = 'none';
       }
     };
 
@@ -164,7 +164,7 @@
     }
 
     function queryGroups(){
-	  printDebug('Query Groups');
+      //printDebug('Query Groups');
 
       // Query for all the contacts entry with this contact group
       var query = new google.gdata.contacts.ContactQuery(GROUP_FEED_URL_THIN);
@@ -216,7 +216,7 @@
     }
 
     function queryCalendars(){
-	  printDebug('Query Calendars');
+    //printDebug('Query Calendars');
 
       // Query for all calendars
       var query = new google.gdata.client.Query(CALENDAR_FEED_URL_FULL);
@@ -367,7 +367,7 @@
       // The callback method that will be called after a
       // successful insertion from insertEntry()
       var insertCalendarCallback = function(entryRoot){
-		printDebug('Calendar inserted');
+        //printDebug('Calendar inserted');
         var elSelId = insertOption('calendarSelectID', entryRoot.entry.getTitle().getText(), entryRoot.entry.getLink().href);
         selectOption('calendarSelectID', elSelId);
       }
@@ -387,7 +387,7 @@
     }
 
     function queryContacts(groupId){
-	  printDebug('Query Contacts');
+      //printDebug('Query Contacts');
 
       // Query for all the contacts entry with this contact group
       var query = new google.gdata.client.Query(CONTACTS_FEED_URL_THIN);
@@ -447,12 +447,12 @@
           return getContacts(link.href);
         }
       }
-	  printDebug('Contact(s) ' + handleContactsFeed.contactsCounter);
-      printDebug ('Birthday(s) ' + handleContactsFeed.birthdaysCounter);
+      //printDebug('Contact(s) ' + handleContactsFeed.contactsCounter);
+      //printDebug ('Birthday(s) ' + handleContactsFeed.birthdaysCounter);
 
       // Next step: Check events
       showContacts();
-	  checkBirthdays();
+    checkBirthdays();
     }
 
     function showContacts(){
@@ -468,12 +468,12 @@
         if (contact.gContact$birthday) {
           text = text + ' ' + contact.gContact$birthday.when;
         }
-		printDebug('Contact: ' + text);
+        //printDebug('Contact: ' + text);
       }
     }
 
     function queryEvents(calendarURL){
-	  printDebug('Query Events');
+      //printDebug('Query Events');
 
       // Query for all the events entry within given calendarid
       var query = new google.gdata.calendar.CalendarEventQuery(calendarURL);
@@ -521,22 +521,20 @@
           break;
         }
       }
-	  printDebug('Event(s): ' + handleEventsFeed.eventCounter);
-      //printDebug('Birthday(s): ' + handleEventsFeed.birthdaysCounter);
+      //printDebug('Event(s): ' + handleEventsFeed.eventCounter);
+      ////printDebug('Birthday(s): ' + handleEventsFeed.birthdaysCounter);
 
       // Next step: Check events
       showEvents();
-	  checkBirthdays(postURL);
+      checkBirthdays(postURL);
     }
 
     function showEvents(){
       // IE JScript 5.6 Compatibility
       for (var ie = 0; ie < eventList.length; ie++) {
         var event = eventList[ie];
-
         var text = event.getTitle().getText();
-
-		printDebug('Event: ' + text);
+        //printDebug('Event: ' + text);
       }
     }
 
@@ -579,11 +577,11 @@
                     // Check date
                     if (-1 != event.getRecurrence().getValue().search(date)) {
                       // Date correct - do nothing
-					  printDebug('Event correct: ' + contact.title.$t);
+                      //printDebug('Event correct: ' + contact.title.$t);
                     }
                     else {
                       // Date not correct - Update event
-                      printDebug('Event to update: ' + contact.title.$t);
+                      //printDebug('Event to update: ' + contact.title.$t);
                       updateEvent(event, contact, date);
                     }
                   }
@@ -592,14 +590,14 @@
             }
             if (false == exists) {
               // Event not found for given contact - Add/Create event
-			  printDebug('Event to add: ' + contact.title.$t);
+              //printDebug('Event to add: ' + contact.title.$t);
               insertEvent(checkBirthdays.postURL, contact, date);
             }
           }
         }
 
         // Finished
-		printDebug('Finished!');
+        //printDebug('Finished!');
         alert('Finished!');
       }
     }
@@ -610,7 +608,7 @@
       // The callback method that will be called after a
       // successful insertion from insertEntry()
       var insertEventCallback = function(result){
-		printDebug('Event added: ' + result);
+        //printDebug('Event added: ' + result);
       }
       calendarService.insertEntry(postURL, eventEntry, insertEventCallback, handleError, google.gdata.calendar.CalendarEventEntry);
     }
@@ -621,7 +619,7 @@
       // The callback method that will be called after a
       // successful update from updateEntry()
       var updateEventCallback = function(result){
-		printDebug('Event updated: ' + result);
+        //printDebug('Event updated: ' + result);
       }
       eventEntry.updateEntry(updateEventCallback, handleError)
     }
@@ -631,15 +629,15 @@
 
       // Set the title of the event
       // Insert contact title and content
-	  // Build date string
-	  var stringDate;
-	  if (8 == date.length) {
-	  	// YYYYMMDD -> DD.MM.YYYY
-		stringDate = date[6] + date[7] + '.' + date[4] + date[5] + '.' + date[0] + date[1] + date[2] + date[3];
+      // Build date string
+      var stringDate;
+      if (8 == date.length) {
+        // YYYYMMDD -> DD.MM.YYYY
+        stringDate = date[6] + date[7] + '.' + date[4] + date[5] + '.' + date[0] + date[1] + date[2] + date[3];
       }
-	  else {
-	  	// MMDD -> DD.MM.
-		stringDate = date[2] + date[3] + '.' + date[0] + date[1] + '.';
+      else {
+        // MMDD -> DD.MM.
+        stringDate = date[2] + date[3] + '.' + date[0] + date[1] + '.';
       }
       eventEntry.setTitle(google.gdata.Text.create(contact.title.$t + EVENT_TITLE_SUFFIX + ' (Born ' + stringDate + ')'));
       eventEntry.setContent(google.gdata.Text.create(EVENT_SUMMARY_SUFFIX));
@@ -650,12 +648,12 @@
 
       // Set up the recurring details using an ical string
       // (RFC 2445 http://www.ietf.org/rfc/rfc2445.txt)
-	  if (8 != date.length) {
-	  	// To comply with Java long date
-		// (http://java.sun.com/j2se/1.3/docs/api/java/util/Date.html#Date(long))
-		date = '1970' + date;
-		printDebug('Date set year 1970!');
-	  }
+      if (8 != date.length) {
+        // To comply with Java long date
+        // (http://java.sun.com/j2se/1.3/docs/api/java/util/Date.html#Date(long))
+        date = '1970' + date;
+        //printDebug('Date set year 1970!');
+      }
       var recurrence = new google.gdata.Recurrence();
       var recurrenceString = 'DTSTART;VALUE=DATE:' + date + ICAL_BREAK +
                    'DTEND;VALUE=DATE:' + date + ICAL_BREAK +
@@ -684,36 +682,39 @@
       //if (-1 == e.message.search(/unescaped json/i)) {
         //alert(e.cause ? e.cause.statusText : e.message);
       //}
-	  for (err in e) {
-	  	printDebug (err);
-	  }
-	  printDebug (e.lineNumber);
-	  //printDebug('Error: ' + e.cause ? e.cause.statusText : e.message);
-	  //printDebug(e.cause ? e.cause.statusText : e.message);
+      for (err in e) {
+        //printDebug (err);
+      }
+      printDebug(e.lineNumber);
+      printDebug(e.fileName);
+      ////printDebug(e.stack);
+      //printDebug(e.cause.statusText);
+      //printDebug(e.message);
+      ////printDebug('Error: ' + e.cause ? e.cause.statusText : e.message);
     };
 
-	function printDebug(text){
-	  if (true == DEBUG) {
-	  	var htmlDebug = document.getElementById('htmlDebugID');
+    function printDebug(text){
+      if (true == DEBUG) {
+        var htmlDebug = document.getElementById('htmlDebugID');
 
-		// First call print debug header
-		if ('undefined' == typeof printDebug.counter) {
+        // First call print debug header
+        if ('undefined' == typeof printDebug.counter) {
           printDebug.counter = 1;
-		  htmlDebug.appendChild(document.createTextNode('Debug:'));
-	      htmlDebug.appendChild(document.createElement('hr'));
+          htmlDebug.appendChild(document.createTextNode('Debug:'));
+          htmlDebug.appendChild(document.createElement('hr'));
         }
 
-		// Append debug text
-	    htmlDebug.appendChild(document.createTextNode(text));
-	    htmlDebug.appendChild(document.createElement('br'));
-	  }
-	}
+        // Append debug text
+        htmlDebug.appendChild(document.createTextNode(text));
+        htmlDebug.appendChild(document.createElement('br'));
+      }
+    }
 
     </script>
   </head>
 
   <body>
-  	<div class="indent">
+    <div class="indent">
       <img src="gCalBirthdays.gif" alt="gCalBirthdays Logo"> <br>
 
       <p id="versionID">
