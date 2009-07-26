@@ -1,4 +1,4 @@
 #summary Test page for gCalBirthday Gadget
 
 = Gadget Type URL Link=
-
+http://www.google.com/calendar/render?gadgeturl=http://gcalbirthdays.googlecode.com/svn-history/r99/trunk/gCalBirthdays/HTML/test.xml
