@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+   <ModulePrefs
+      title="gCalBirthdays"
+      title_url="http://gcalbirthdays.googlecode.com"
+      author="Frank Glaser"
+      author_email="GlaserFrank@gmail.com"
+      scrolling="true">
+      <Require feature="google.calendar-0.5"/>
+      <Require feature="dynamic-height"/>
+      <Require feature="setprefs"/>
+      <UserPref name="mycolor" display_name="Color" default_value="Yellow" datatype="enum" >
+         <EnumValue value="Red" />
+         <EnumValue value="Aqua" />
+      </UserPref>
+      <UserPref name="mycolor" display_name="Color" default_value="Yellow" datatype="enum" >
+         <EnumValue value="Red" />
+         <EnumValue value="Aqua" />
+      </UserPref>
+   </ModulePrefs>
+   <Content type="url" href="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/HTML/gCalBirthdays.html" />
+</Module>
