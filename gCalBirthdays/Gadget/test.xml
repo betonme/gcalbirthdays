@@ -19,98 +19,12 @@
 <html>
 <head>
 
-<style type="text/css">
-      .indent {
-        margin: 30px 0px 0px 20px;
-      }
-
-body {
-  background-color: white;
-  margin: 0;
-  padding: 0;
-}
-
-body, td {
-  font-family: Arial;
-  font-size: small;
-}
-
-td {
-  vertical-align: top;
-}
-
-#zones {
-  width: 100%;
-  height: 100%;
-}
-
-#zonetable {
-  table-layout: fixed;
-  width: 100%;
-}
-
-#zonetable td {
-  padding-left: 2px;
-}
-
-#settingslink {
-  cursor: pointer;
-  font-size: 80%;
-  padding: 0 5px 3px 0;
-}
-
-#settingsform {
-  margin: 5px;
-}
-
-#settingsform td {
-  font-size: 80%;
-}
-
-.controls {
-  margin: 5px 0;
-}
-
-td.time {
-  padding-right: 5px;
-}
-
-#chip {
-  text-align: left;
-  margin: 0 5px;
-  padding: 2px 4px;
-  color: #fff;
-  cursor: pointer;
-}
-
-.chipborder {
-  margin: 0 6px;
-  height: 1px;
-  font-size: 0;
-  line-height: 0;
-}
-
-.title {
-  font-family: verdana, sans-serif;
-  font-size: 8pt;
-}
-
-</style>
-
-<!--[if lt IE 7]>
-<style>
-#zonetable td {
-  vertical-align: middle;
-}
-</style>
-<![endif]-->
-
 </head>
 <body>
-<div id=zones />
+<div id="zones" />
 
 <script>
-	
+
 var MSG_SAVE = 'Save';
 var MSG_CANCEL = 'Cancel';
 var MSG_SETTINGS = 'Settings';
@@ -132,8 +46,7 @@ function redraw() {
   var html = '';
   //var html = [];
   //html.push('<table id=zonetable cellpadding=0 cellspacing=0 border=0>');
-  html.push(
-        '<span id="settingslink" ',
+  html.push('<span id="settingslink" ',
         'onclick="showSettings()"><u>',
         MSG_SETTINGS, '</u></span>');
 
