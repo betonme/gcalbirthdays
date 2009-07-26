@@ -1,0 +1,4 @@
+#summary Test page for gCalBirthday Gadget
+
+= Gadget Type URL Link=
+
