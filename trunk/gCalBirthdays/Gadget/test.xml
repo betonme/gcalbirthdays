@@ -109,6 +109,8 @@ td.time {
 <body>
 <div id=zones />
 
+<script>
+	
 var MSG_SAVE = 'Save';
 var MSG_CANCEL = 'Cancel';
 var MSG_SETTINGS = 'Settings';
