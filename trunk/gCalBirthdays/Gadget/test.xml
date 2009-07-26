@@ -18,7 +18,13 @@
 
 <html>
 <head>
-
+<style>
+body {
+  background-color: white;
+  margin: 0;
+  padding: 0;
+}
+</style>
 </head>
 <body>
 <div id="zones" />
@@ -45,10 +51,11 @@ function redraw() {
   // Draw it
   var html = '';
   //var html = [];
-  //html.push('<table id=zonetable cellpadding=0 cellspacing=0 border=0>');
-  html.push('<span id="settingslink" ',
-        'onclick="showSettings()"><u>',
-        MSG_SETTINGS, '</u></span>');
+
+  html.push('<table id=zonetable cellpadding=0 cellspacing=0 border=0>');
+
+
+  html.push('</table>');
 
   document.getElementById('zones').innerHTML = html;
 }
