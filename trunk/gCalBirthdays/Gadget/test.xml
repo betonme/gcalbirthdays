@@ -109,8 +109,6 @@ td.time {
 <body>
 <div id=zones />
 
-var gadgets, google;
-
 var MSG_SAVE = 'Save';
 var MSG_CANCEL = 'Cancel';
 var MSG_SETTINGS = 'Settings';
@@ -120,146 +118,43 @@ var MSG_SETTINGS = 'Settings';
 // GENERAL DRAWING LIBRARIES
 
 /**
- * Generate html for the time zone table;
- * @return {string} An html string containing the table of time zones.
- */
-function generateTzTable() {
-  var html = [];
-  html.push('<table id=zonetable cellpadding=0 cellspacing=0 border=0>');
-  html.push('<tr style="background-color:white;color:blue">',
-      '<td align=right colspan=2>',
-        '<span id="settingslink" ',
-        'onclick="showSettings()"><u>',
-        MSG_SETTINGS, '</u></span>',
-      '</td>');
-
-  html.push('</table>');
-
-  return html.join('');
-}
-
-/**
- * Get the height of an HTMLElement
- * @param {Element} element The element in question.
- * @return {number} The height of that element.
- */
-function nodeHeight(element) {
-  var doc = element.ownerDocument;
-  if (doc && doc.getBoxObjectFor) {
-    var box = doc.getBoxObjectFor(element);
-    return box.height;
-  } else {
-    return element.offsetHeight;
-  }
-}
-
-/**
- * Draw the timezone table.
- * @param {Object} opt_event The event to show the TZ table for, otherwise
- *     the current time.
- */
-function drawTz() {
-  // Draw it
-  var html = '';
-
-  html += generateTzTable();
-  document.getElementById('zones').innerHTML = html;
-
-  // Resize the iframe to the "correct" height.
-  // Some browsers have trouble picking a "size" of the iframe [ie - I don't
-  // trust _IG_AdjustIFrameHeight with no arguments]. To solve this, we get
-  // the height ourselves!
-  var desiredHeight = nodeHeight(document.getElementById('zones'));
-  gadgets.window.adjustHeight(desiredHeight);
-}
-
-/**
  * Ask the gadget to redraw periodically [showing the up-to-date time in
  * different time zones].
  */
-function redrawPeriodically() {
+function redraw() {
   var zones = document.getElementById('zones');
   zones.style.overflowY = 'hidden';
   zones.style.height = '';
-  // Redraw only if there is no event onscreen
-  drawTz();
+
+  // Draw it
+  var html = '';
+  //var html = [];
+  //html.push('<table id=zonetable cellpadding=0 cellspacing=0 border=0>');
+  html.push(
+        '<span id="settingslink" ',
+        'onclick="showSettings()"><u>',
+        MSG_SETTINGS, '</u></span>');
+
+  document.getElementById('zones').innerHTML = html;
 }
 
 // Kick everything off.
-redrawPeriodically();
+redraw();
 
 
 ///////////////////////////////////////////////////////////////////////////
 // SETUP THE GADGET
 
 /**
- * The container has replied with the preferences
- * @param {Object} prefs The set of preferences.
- */
-function getPrefsCallback(prefs) {
-
-}
-
-/**
- * Initialize the subscriptions.
- */
-if (gadgets && gadgets.rpc && google) {
-  //google.calendar.read.subscribeToEvents(onEventChange);
-  google.calendar.getPreferences(getPrefsCallback);
-}
-
-/** The height of the settings area in pixels */
-var SETTINGS_HEIGHT_IN_PX = 350;
-
-/**
  * Display the settings screen for the gadget.
  */
 function showSettings() {
-  // Put a scrollbar back on the gadget.
-  var zones = document.getElementById('zones');
-  zones.style.overflowY = 'scroll';
-  zones.style.height = SETTINGS_HEIGHT_IN_PX + 'px';
-
-  // Draw the HTML for the settings page.
-  var buttons = '<div class="controls"><input type=submit value="' +
-      MSG_SAVE + '"> ' +
-      '<button onclick="redrawPeriodically();return false;">' + MSG_CANCEL +
-      '</button></div>';
-  var html = [];
-  html.push('<form id="settingsform" onsubmit="saveSettings(this); ' +
-      'return false">');
-  html.push(buttons);
-//todo add select tags
-  html.push(buttons);
-  html.push('</form>');
-
-  zones.innerHTML = html.join('');
-  gadgets.window.adjustHeight(SETTINGS_HEIGHT_IN_PX);
 }
-
-/**
- * We are on the settings page, and use asked us to save.
- * @param {Element} form The form element.
- */
-function saveSettings(form) {
-  // Figure out what the user checked.
-  var elements = form.elements;
-  var len = elements.length;
-  var out = '';
-  // Save it to the prefs
-  //prefs_.set(TZ_PREF_ID, out);
-
-  // Ask the periodic redraw to start up again [we turned it off while in
-  // settings]
-  //redrawPeriodically();
-}
-
 
 ///////////////////////////////////////////////////////////////////////////
 // General algorithm functions
 
-    </script>
-
+</script>
 
 </body>
 </html>
