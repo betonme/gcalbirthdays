@@ -12,10 +12,12 @@
     <UserPref name="test" display_name="Color" default_value="Yellow" datatype="hidden"/>
   </ModulePrefs>
   <Content type="html">
+  	<![CDATA[
       <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
 	  <br />
       <p id="versionID">
-          Version2:
+          Version3:
       </p>
+	]]>
   </Content>
 </Module>
