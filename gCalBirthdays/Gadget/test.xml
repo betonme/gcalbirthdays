@@ -11,7 +11,11 @@
     <Require feature="setprefs"/>
     <UserPref name="test" display_name="Color" default_value="Yellow" datatype="hidden"/>
   </ModulePrefs>
-  <Content type="html"><![CDATA[
-    Hello, world!
-  ]]></Content>
+  <Content type="html">
+      <img src="gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
+	  <br />
+      <p id="versionID">
+          Version:
+      </p>
+  </Content>
 </Module>
