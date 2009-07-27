@@ -13,10 +13,66 @@
   </ModulePrefs>
   <Content type="html">
   	<![CDATA[
-      <img src="gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
+	  <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+      <script type="text/javascript">
+
+        // Load the Google data JS Client Library
+        //google.load('gdata', '1.x');
+        // Save overhead, only load the necessary service
+        google.load("gdata", "1.x", {packages: ['contacts', 'calendar']});
+
+	    //IE JScript 5.6 Compatibility
+	    // Constants
+	    var APP_NAME = 'gCalBirthdays';
+	    var APP_VERSION = '2.005';
+
+        var token;
+
+        /**
+         * This function checks if the user is logged in, and changes the
+         * login button and displayed sections accordingly. It also
+         * initializes the calendarService variable and calls a function to
+         * fill in the form based on the URL.
+         */
+        function init(){
+//          var authButton = document.getElementById('authButtonID');
+
+          document.getElementById('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
+*/
+          // ContactsService v3 GoogleService WorkAround for Contact
+          // Birthdays
+          contactService = new google.gdata.client.GoogleService('cp', APP_NAME);
+
+          // CalendarService v2
+          calendarService = new google.gdata.calendar.CalendarService(APP_NAME);
+
+          token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
+          if (token) {
+            // User is loged in
+            authButton.value = 'Logout';
+            document.getElementById('loginNoticeID').style.display = 'none';
+            document.getElementById('htmlDebugID').style.display = 'block';
+            main();
+	      }
+	      else {
+	        // User is loged out
+	        authButton.value = 'Login';
+	        document.getElementById('loginNoticeID').style.display = 'block';
+	        document.getElementById('settingsFormID').style.display = 'none';
+	        document.getElementById('htmlDebugID').style.display = 'none';
+	      }
+*/
+	    };
+
+	    // Tells the google JS lib to call the init function once loaded
+	    google.setOnLoadCallback(init);
+
+      </script>
+
+      <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
 	  <br />
       <p id="versionID">
-          Version4:
+          Version
       </p>
 	]]>
   </Content>
