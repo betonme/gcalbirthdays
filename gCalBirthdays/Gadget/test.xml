@@ -13,10 +13,10 @@
   </ModulePrefs>
   <Content type="html">
   	<![CDATA[
-      <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
+      <img src="gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
 	  <br />
       <p id="versionID">
-          Version3:
+          Version4:
       </p>
 	]]>
   </Content>
