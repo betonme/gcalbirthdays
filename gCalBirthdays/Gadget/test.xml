@@ -23,7 +23,7 @@
 
         var token;
 
-		function onLoadHandler(){
+		function init(){
 		  document.getElementById('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
 		}
 
