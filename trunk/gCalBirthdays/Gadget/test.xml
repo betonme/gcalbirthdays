@@ -1,86 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Module>
-   <ModulePrefs
-      title="gCalBirthdays"
-      title_url="http://gcalbirthdays.googlecode.com"
-      author="Frank Glaser"
-      author_email="GlaserFrank@gmail.com"
-      scrolling="true">
-      <Require feature="google.calendar-0.5"/>
-      <Require feature="dynamic-height"/>
-      <Require feature="setprefs"/>
-      <UserPref name="mycolor" display_name="Color" default_value="Yellow" datatype="enum" >
-         <EnumValue value="Red" />
-         <EnumValue value="Aqua" />
-      </UserPref>
-   </ModulePrefs>
-<Content type="html">
-
-<html>
-<head>
-<style>
-body {
-  background-color: white;
-  margin: 0;
-  padding: 0;
-}
-</style>
-</head>
-<body>
-<div id="zones" />
-
-<script>
-
-var MSG_SAVE = 'Save';
-var MSG_CANCEL = 'Cancel';
-var MSG_SETTINGS = 'Settings';
-
-
-///////////////////////////////////////////////////////////////////////////
-// GENERAL DRAWING LIBRARIES
-
-/**
- * Ask the gadget to redraw periodically [showing the up-to-date time in
- * different time zones].
- */
-function redraw() {
-  var zones = document.getElementById('zones');
-  zones.style.overflowY = 'hidden';
-  zones.style.height = '';
-
-  // Draw it
-  var html = '';
-  //var html = [];
-
-  html.push('<table id=zonetable cellpadding=0 cellspacing=0 border=0>');
-
-
-  html.push('</table>');
-
-  document.getElementById('zones').innerHTML = html;
-}
-
-// Kick everything off.
-redraw();
-
-
-///////////////////////////////////////////////////////////////////////////
-// SETUP THE GADGET
-
-/**
- * Display the settings screen for the gadget.
- */
-function showSettings() {
-}
-
-///////////////////////////////////////////////////////////////////////////
-// General algorithm functions
-
-</script>
-
-</body>
-</html>
-
-</Content>
-
+  <ModulePrefs
+    title="gCalBirthdays"
+    title_url="http://gcalbirthdays.googlecode.com"
+    author="Frank Glaser"
+    author_email="GlaserFrank@gmail.com"
+    scrolling="true">
+    <Require feature="google.calendar-0.5"/>
+    <Require feature="dynamic-height"/>
+    <Require feature="setprefs"/>
+    <UserPref name="test" display_name="Color" default_value="Yellow" datatype="hidden"/>
+  </ModulePrefs>
+  <Content type="html"><![CDATA[
+    Hello, world!
+  ]]></Content>
 </Module>
