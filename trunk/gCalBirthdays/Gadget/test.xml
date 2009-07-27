@@ -41,14 +41,16 @@
 	    // Tells the google JS lib to call the init function once loaded
 	    //google.setOnLoadCallback(init);
 
-        registerOnLoadHandler(init);
+		// The gadget containers request that we do NOT run any JS inline.
+		// Instead, register a callback handler.
+		gadgets.util.registerOnLoadHandler(init);
 
       </script>
 
       <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
 
       <p id="versionID">
-          Versionx2
+          Versionx3
       </p>
 	]]>
   </Content>
