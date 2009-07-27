@@ -67,14 +67,14 @@
 	    // Tells the google JS lib to call the init function once loaded
 	    google.setOnLoadCallback(init);
 
-	document.getElementById('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
+        registerOnLoadHandler(init);
 
       </script>
 
       <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
 
       <p id="versionID">
-          Versionx
+          Versionx1
       </p>
 	]]>
   </Content>
