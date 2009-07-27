@@ -16,41 +16,37 @@
 	  <script type="text/javascript" src="http://www.google.com/jsapi"></script>
       <script type="text/javascript">
 
-        // Load the Google data JS Client Library
-        //google.load('gdata', '1.x');
-        // Save overhead, only load the necessary service
-        //google.load("gdata", "1.x", {packages: ['contacts', 'calendar']});
-
 	    //IE JScript 5.6 Compatibility
 	    // Constants
 	    var APP_NAME = 'gCalBirthdays';
-	    var APP_VERSION = '2.005';
+	    var APP_VERSION = '2.006';
 
         var token;
 
-        /**
-         * This function checks if the user is logged in, and changes the
-         * login button and displayed sections accordingly. It also
-         * initializes the calendarService variable and calls a function to
-         * fill in the form based on the URL.
-         */
-        function init(){
-          document.getElementById('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
-	    };
+		function onLoadHandler(){
+		  document.getElementById('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
+		}
 
-	    // Tells the google JS lib to call the init function once loaded
-	    //google.setOnLoadCallback(init);
+        function onLoadHandler(){
+          // Load the Google data JS Client Library
+          //google.load('gdata', '1.x');
+          // Save overhead, only load the necessary service
+          google.load("gdata", "1.x", {packages: ['contacts', 'calendar']});
+
+	      // Tells the google JS lib to call the init function once loaded
+	      google.setOnLoadCallback(init);
+	    };
 
 		// The gadget containers request that we do NOT run any JS inline.
 		// Instead, register a callback handler.
-		gadgets.util.registerOnLoadHandler(init);
+		gadgets.util.registerOnLoadHandler(onLoadHandler);
 
       </script>
 
       <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
 
       <p id="versionID">
-          Versionx3
+          Version
       </p>
 	]]>
   </Content>
