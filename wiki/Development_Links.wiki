@@ -11,8 +11,10 @@ List of Links, which are useful to develop the app.
  * Google Gadgets API http://code.google.com/intl/de-DE/apis/gadgets/
 
 = Google Javascript Library =
+ * gdata-javascript-client http://code.google.com/p/gdata-javascript-client/
  * Developer's Guide http://code.google.com/intl/de-DE/apis/gdata/client-js.html
  * Reference Guide (JSdoc) http://code.google.com/intl/de-DE/apis/gdata/jsdoc/
+ * Group http://groups.google.com/group/google-data-javascript-client
 
 = Forum Links =
  * http://getsatisfaction.com/google/topics/birthday_reminders_for_gmail_contacts
