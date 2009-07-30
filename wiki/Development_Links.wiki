@@ -18,6 +18,7 @@ List of Links, which are useful to develop the app.
 
 = Forum Links =
  * http://getsatisfaction.com/google/topics/birthday_reminders_for_gmail_contacts
+ * http://groups.google.com/group/google-calendar-help-misc/browse_thread/thread/da7b1a36c01d253d
  * http://www.google.com/support/forum/p/Calendar/thread?tid=4da91b6497363b2f&hl=en
  * http://groups.google.com/group/google-calendar-help-misc/browse_thread/thread/47b1b8f69dce16d5
  * http://groups.google.com/group/google-calendar-help-misc/browse_thread/thread/87d464bb8d81e66/a4976be0b7608239?lnk=gst&q=
