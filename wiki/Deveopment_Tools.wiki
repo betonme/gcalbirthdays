@@ -1,0 +1,21 @@
+#summary List of Tools, which are used to develop the app
+
+= Introduction =
+List of Tools, which are used to develop the app.
+
+= Development Tools =
+ * Eclipse IDE for Java EE Developers 3.5 (Galileo) http://www.eclipse.org/
+ * Aptana Studio 1.5.0 Eclipse Plugin http://www.aptana.com/
+ * Firebug 1.4.0 http://getfirebug.com/ 
+
+= Configuration Management =
+ * Subversive 0.7.8 http://www.eclipse.org/subversive/
+ * Subversive SVN Connectors 2.0.0 http://community.polarion.com/index.php?page=overview&project=subversive
+
+= Additional Tools =
+ * AnyEdit tools plugin for Eclipse 2.2.0 http://andrei.gmxhome.de/anyedit/index.html
+ * HTML Tidy Eclipse Plugin 1.2.2 http://eclipsetidy.sourceforge.net/ 
+
+= Tested with =
+ * Firefox 3.5
+ * IE 8
