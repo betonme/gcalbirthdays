@@ -9,12 +9,36 @@ List of Links, which are useful to develop the app.
  * Google Contacts APIs http://code.google.com/intl/de-DE/apis/contacts/
  * Google Accounts APIs http://code.google.com/intl/de-DE/apis/accounts/index.html
  * Google Gadgets API http://code.google.com/intl/de-DE/apis/gadgets/
+ * Google AJAX APIs http://code.google.com/intl/de-DE/apis/ajax/
+ * Not necessary anymore:
+  * Google App Engine http://code.google.com/intl/de-DE/appengine/
 
-= Google Javascript Library =
+= Libraries =
  * gdata-javascript-client http://code.google.com/p/gdata-javascript-client/
- * Developer's Guide http://code.google.com/intl/de-DE/apis/gdata/client-js.html
- * Reference Guide (JSdoc) http://code.google.com/intl/de-DE/apis/gdata/jsdoc/
- * Group http://groups.google.com/group/google-data-javascript-client
+  * Developer's Guide http://code.google.com/intl/de-DE/apis/gdata/client-js.html
+  * Reference Guide (JSdoc) http://code.google.com/intl/de-DE/apis/gdata/jsdoc/
+  * Group http://groups.google.com/group/google-data-javascript-client
+  * Google AJAX Libraries API http://code.google.com/intl/de-DE/apis/ajaxlibs/
+ * PHP functions in JavaScript http://phpjs.org
+ * Only for gCalBirthdays V1:
+  * google-collections http://code.google.com/p/google-collections/
+  * gdata-java-client http://code.google.com/p/gdata-java-client/
+  * gdata-java-client-eclipse-plugin http://code.google.com/p/gdata-java-client-eclipse-plugin/
+  * Google API Libraries for Google Web Toolkit http://code.google.com/p/gwt-google-apis/
+   * Google Java Dependencies http://code.google.com/p/gdata-java-client/wiki/Dependencies
+
+= Online Playground =
+ * http://code.google.com/intl/de-DE/apis/gdata/samples.html
+ * http://code.google.com/apis/ajax/playground
+ * http://code.google.com/intl/de-DE/apis/contacts/docs/1.0/developers_guide_js.html
+ * http://code.google.com/intl/de-DE/apis/calendar/docs/1.0/developers_guide_js.html
+ * http://code.google.com/intl/de-DE/apis/gadgets/docs/tools.html#GGE
+ * http://code.google.com/intl/de-DE/apis/calendar/calendar_gadgets.html#UsingCreator
+ * http://www.w3schools.com/
+
+= Tutorials =
+ * http://selfhtml.org/
+ * http://www.w3schools.com/
 
 = Forum Links =
  * http://getsatisfaction.com/google/topics/birthday_reminders_for_gmail_contacts
