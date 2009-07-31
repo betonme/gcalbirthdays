@@ -12,7 +12,8 @@
     <OAuth>
       <Service name="google">
         <Access url="https://www.google.com/accounts/OAuthGetAccessToken" method="GET" />
-        <Request url="https://www.google.com/accounts/OAuthGetRequestToken?scope=http://www.google.com/m8/feeds/" method="GET" />
+    	<!--Request url="https://www.google.com/accounts/OAuthGetRequestToken?scope=http://www.google.com/m8/feeds/%20http://www.google.com/calendar/feeds/" method="GET" /-->
+		<Request url="https://www.google.com/accounts/OAuthGetRequestToken?scope=http://www.google.com/calendar/feeds/" method="GET" />
         <Authorization url="https://www.google.com/accounts/OAuthAuthorizeToken?oauth_callback=http://oauth.gmodules.com/gadgets/oauthcallback" />
       </Service>
     </OAuth>
@@ -64,27 +65,60 @@
 	    var APP_NAME = 'gCalBirthdays';
 	    var APP_VERSION = '2.009';
 
-	    // Call fetchData() when gadget loads.
-	    gadgets.util.registerOnLoadHandler(fetchData);
+        var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
-	    // Invoke makeRequest() to fetch data from the service provider endpoint.
-	    // Depending on the results of makeRequest, decide which version of the UI
-	    // to ask showOneSection() to display. If user has approved access to his
-	    // or her data, display data.
-	    // If the user hasn't approved access yet, response.oauthApprovalUrl contains a
-	    // URL that includes a Google-supplied request token. This is presented in the
-	    // gadget as a link that the user clicks to begin the approval process.
+		// The gadget containers request that we do NOT run any JS inline.
+		// Instead, register a callback handler.
+		gadgets.util.registerOnLoadHandler(initGadget);
+
+	    function initGadget() {
+          // Load the Google data JS Client Library
+          //google.load('gdata', '1.x');
+          // Save overhead, only load the necessary service
+          google.load("gdata", "1.x", {packages: ['contacts', 'calendar']});
+
+	      // Tells the google JS lib to call the init function once loaded
+	      google.setOnLoadCallback(setupMyService);
+	    }
+
+	    function setupMyService(){
+	      contactService = new google.gdata.client.GoogleService('cp', APP_NAME);
+	      contactService.useOAuth('google');
+
+		  fetchData();
+
+/*
+	      var authButton = document.getElementById('authButtonID');
+
+	      document.getElementById('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
+          gadgets.window.adjustHeight();
+
+	      var token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
+	      if (token) {
+	        // User is loged in
+	        authButton.value = 'Logout';
+	        document.getElementById('loginNoticeID').style.display = 'none';
+	        //document.getElementById('htmlConsoleID').style.display = 'block';
+			//document.getElementById('consoleCheckboxFormID').style.display = 'block';
+	        //mainJS();
+	      }
+	      else {
+	        // User is loged out
+	        authButton.value = 'Login';
+	        document.getElementById('loginNoticeID').style.display = 'block';
+	        //document.getElementById('settingsFormID').style.display = 'none';
+	        //document.getElementById('htmlConsoleID').style.display = 'none';
+			//document.getElementById('consoleCheckboxFormID').style.display = 'none';
+	      }
+*/
+	    };
+
 	    function fetchData() {
-	      var params = {};
-	      url = "http://www.google.com/m8/feeds/contacts/default/base?alt=json";
-	      params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
-	      params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.OAUTH;
-	      params[gadgets.io.RequestParameters.OAUTH_SERVICE_NAME] = "google";
-	      params[gadgets.io.RequestParameters.OAUTH_USE_TOKEN] = "always";
-	      params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.GET;
-
-	      gadgets.io.makeRequest(url, function (response) {
+	      var callback = function(response) {
 	        if (response.oauthApprovalUrl) {
+
+	          // TODO: Display "Sign in" link (response.oauthApprovalUrl contains the URL)
+
 	          // Create the popup handler. The onOpen function is called when the user
 	          // opens the popup window. The onClose function is called when the popup
 	          // window is closed.
@@ -104,24 +138,32 @@
 	          var approvaldone = document.getElementById('approvaldone');
 	          approvaldone.onclick = popup.createApprovedOnClick();
 	          showOneSection('approval');
-	        } else if (response.data) {
-	            showOneSection('main');
-	            showResults(response.data);
 
-  		        document.getElementById('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
-		        gadgets.window.adjustHeight();
+	        } else if (response.feed) {
+
+	          // TODO: show results
+		      showOneSection('main');
+
+			  document.getElementById('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
+	          gadgets.window.adjustHeight();
 
 	        } else {
-	            // The response.oauthError and response.oauthErrorText values may help debug
-	            // problems with your gadget.
-	            var main = document.getElementById('main');
-	            var err = document.createTextNode('OAuth error: ' +
-	              response.oauthError + ': ' + response.oauthErrorText);
-	            main.appendChild(err);
-	            showOneSection('main');
+
+	          // TODO: handle the error
+
+	          // The response.oauthError and response.oauthErrorText values may help debug
+	          // problems with your gadget.
+	          var main = document.getElementById('main');
+	          var err = document.createTextNode('OAuth error: ' +
+	            response.oauthError + ': ' + response.oauthErrorText);
+	          main.appendChild(err);
+	          showOneSection('main');
 	        }
-	      }, params);
+	      };
+
+	      myService.getEventsFeed('http://www.google.com/calendar/feeds/default/public/full', callback, callback);
 	    }
+
 
 	    // Display UI depending on OAuth access state of the gadget (see <divs> above).
 	    // If user hasn't approved access to data, provide a "Personalize this gadget" link
@@ -149,50 +191,6 @@
 	    }
 
 /*
-        var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
-
-		// The gadget containers request that we do NOT run any JS inline.
-		// Instead, register a callback handler.
-		gadgets.util.registerOnLoadHandler(initGadget);
-
-	    function initGadget() {
-          // Load the Google data JS Client Library
-          //google.load('gdata', '1.x');
-          // Save overhead, only load the necessary service
-          google.load("gdata", "1.x", {packages: ['contacts', 'calendar']});
-
-	      // Tells the google JS lib to call the init function once loaded
-	      google.setOnLoadCallback(setupMyService);
-	    }
-
-	    function setupMyService(){
-	      contactService = new google.gdata.client.GoogleService('cp', APP_NAME);
-	      contactService.useOAuth('google');
-
-	      var authButton = document.getElementById('authButtonID');
-
-	      document.getElementById('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
-          gadgets.window.adjustHeight();
-
-	      var token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
-	      if (token) {
-	        // User is loged in
-	        authButton.value = 'Logout';
-	        document.getElementById('loginNoticeID').style.display = 'none';
-	        //document.getElementById('htmlConsoleID').style.display = 'block';
-			//document.getElementById('consoleCheckboxFormID').style.display = 'block';
-	        //mainJS();
-	      }
-	      else {
-	        // User is loged out
-	        authButton.value = 'Login';
-	        document.getElementById('loginNoticeID').style.display = 'block';
-	        //document.getElementById('settingsFormID').style.display = 'none';
-	        //document.getElementById('htmlConsoleID').style.display = 'none';
-			//document.getElementById('consoleCheckboxFormID').style.display = 'none';
-	      }
-	    };
-
 	    function onClickAuthButton(){
 	      var token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
 	      if (token) {
