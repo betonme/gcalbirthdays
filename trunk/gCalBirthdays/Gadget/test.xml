@@ -9,15 +9,44 @@
     <Require feature="google.calendar-0.5"/>
     <Require feature="dynamic-height"/>
     <Require feature="setprefs"/>
+    <Service name="google">
+      <Access url="https://www.google.com/accounts/OAuthGetAccessToken" method="GET" />
+      <Request url="https://www.google.com/accounts/OAuthGetRequestToken?scope=http://www.google.com/m8/feeds%20http://www.google.com/calendar/feeds" method="GET" />
+      <Authorization url="https://www.google.com/accounts/OAuthAuthorizeToken?oauth_callback=http://oauth.gmodules.com/gadgets/oauthcallback" />
+	</Service>
     <UserPref name="test" display_name="Color" default_value="Yellow" datatype="hidden"/>
   </ModulePrefs>
   <Content type="html">
   	<![CDATA[
+
+  <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
+
+  <div id="main" style="display: none">
+
+      <p id="versionID">
+          Version
+      </p>
+  </div>
+
+  <div id="approval" style="display: none">
+    <img src="http://gadget-doc-examples.googlecode.com/svn/trunk/images/new.gif">
+    <a href="#" id="personalize">Personalize this gadget</a>
+  </div>
+
+  <div id="waiting" style="display: none">
+    Please click
+    <a href="#" id="approvaldone">I've approved access</a>
+    once you've approved access to your data.
+  </div>
+
 	  <!--http://phpjs.org/packages/view/396/name:7d67fb58ff9ab58f4d0e4e55221b50e7-->
       <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/html_funcs.min.js"></script>
 
 	  <!--http://code.google.com/p/gdata-javascript-client/-->
       <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+
+  <!-- shindig oauth popup handling code http://code.google.com/p/gdata-samples/source/browse/trunk/gadgets/popup.js-->
+  <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/popup.js"></script>
 
 	  <!--gCalBirthay Javascript functions for HTML and Gadget Version -->
 	  <!--
@@ -31,28 +60,113 @@
 	    //IE JScript 5.6 Compatibility
 	    // Constants
 	    var APP_NAME = 'gCalBirthdays';
-	    var APP_VERSION = '2.007';
+	    var APP_VERSION = '2.008';
 
+	    // Call fetchData() when gadget loads.
+	    gadgets.util.registerOnLoadHandler(fetchData);
+
+	    // Invoke makeRequest() to fetch data from the service provider endpoint.
+	    // Depending on the results of makeRequest, decide which version of the UI
+	    // to ask showOneSection() to display. If user has approved access to his
+	    // or her data, display data.
+	    // If the user hasn't approved access yet, response.oauthApprovalUrl contains a
+	    // URL that includes a Google-supplied request token. This is presented in the
+	    // gadget as a link that the user clicks to begin the approval process.
+	    function fetchData() {
+	      var params = {};
+	      url = "http://www.google.com/m8/feeds/contacts/default/base?alt=json";
+	      params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
+	      params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.OAUTH;
+	      params[gadgets.io.RequestParameters.OAUTH_SERVICE_NAME] = "google";
+	      params[gadgets.io.RequestParameters.OAUTH_USE_TOKEN] = "always";
+	      params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.GET;
+
+	      gadgets.io.makeRequest(url, function (response) {
+	        if (response.oauthApprovalUrl) {
+	          // Create the popup handler. The onOpen function is called when the user
+	          // opens the popup window. The onClose function is called when the popup
+	          // window is closed.
+	          var popup = shindig.oauth.popup({
+	            destination: response.oauthApprovalUrl,
+	            windowOptions: null,
+	            onOpen: function() { showOneSection('waiting'); },
+	            onClose: function() { fetchData(); }
+	          });
+	          // Use the popup handler to attach onclick handlers to UI elements.  The
+	          // createOpenerOnClick() function returns an onclick handler to open the
+	          // popup window.  The createApprovedOnClick function returns an onclick
+	          // handler that will close the popup window and attempt to fetch the user's
+	          // data again.
+	          var personalize = document.getElementById('personalize');
+	          personalize.onclick = popup.createOpenerOnClick();
+	          var approvaldone = document.getElementById('approvaldone');
+	          approvaldone.onclick = popup.createApprovedOnClick();
+	          showOneSection('approval');
+	        } else if (response.data) {
+	            showOneSection('main');
+	            showResults(response.data);
+	        } else {
+	            // The response.oauthError and response.oauthErrorText values may help debug
+	            // problems with your gadget.
+	            var main = document.getElementById('main');
+	            var err = document.createTextNode('OAuth error: ' +
+	              response.oauthError + ': ' + response.oauthErrorText);
+	            main.appendChild(err);
+	            showOneSection('main');
+	        }
+	      }, params);
+	    }
+
+	    // Display UI depending on OAuth access state of the gadget (see <divs> above).
+	    // If user hasn't approved access to data, provide a "Personalize this gadget" link
+	    // that contains the oauthApprovalUrl returned from makeRequest.
+	    //
+	    // If the user has opened the popup window but hasn't yet approved access, display
+	    // text prompting the user to confirm that s/he approved access to data.  The user
+	    // may not ever need to click this link, if the gadget is able to automatically
+	    // detect when the user has approved access, but showing the link gives users
+	    // an option to fetch their data even if the automatic detection fails.
+	    //
+	    // When the user confirms access, the fetchData() function is invoked again to
+	    // obtain and display the user's data.
+	    function showOneSection(toshow) {
+	      var sections = [ 'main', 'approval', 'waiting' ];
+	      for (var i=0; i < sections.length; ++i) {
+	        var s = sections[i];
+	        var el = document.getElementById(s);
+	        if (s === toshow) {
+	          el.style.display = "block";
+	        } else {
+	          el.style.display = "none";
+	        }
+	      }
+	    }
+
+/*
         var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
 		// The gadget containers request that we do NOT run any JS inline.
 		// Instead, register a callback handler.
-		gadgets.util.registerOnLoadHandler(onLoadHandler);
+		gadgets.util.registerOnLoadHandler(initGadget);
 
-        function onLoadHandler(){
+	    function initGadget() {
           // Load the Google data JS Client Library
           //google.load('gdata', '1.x');
           // Save overhead, only load the necessary service
           google.load("gdata", "1.x", {packages: ['contacts', 'calendar']});
 
 	      // Tells the google JS lib to call the init function once loaded
-	      google.setOnLoadCallback(init);
-	    };
+	      google.setOnLoadCallback(setupMyService);
+	    }
 
-	    function init(){
+	    function setupMyService(){
+	      contactService = new google.gdata.client.GoogleService('cp', APP_NAME);
+	      contactService.useOAuth('google');
+
 	      var authButton = document.getElementById('authButtonID');
 
 	      document.getElementById('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
+          gadgets.window.adjustHeight();
 
 	      var token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
 	      if (token) {
@@ -85,30 +199,10 @@
 	      }
 	      init();
 	    };
+*/
 
       </script>
 
-      <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
-
-      <p id="versionID">
-          Version
-      </p>
-
-      <p>
-          Welcome to gCalBirthdays, an app that transfer Your
-          Google Contacts birthdays to Your Google Calendar.
-      </p>
-
-      <p id="loginNoticeID" style="color:#cc0000; font-weight:bold; display:none">
-          Because this is a third-party app that uses your Google
-          account authentication, you'll need to grant access to
-          it by clicking the "Login" button.
-      </p>
-
-      <p>
-        <input id="authButtonID" type="button" value="Authenticate" onclick="onClickAuthButton()">
-      </p>
-      <br>
 	]]>
   </Content>
 </Module>
