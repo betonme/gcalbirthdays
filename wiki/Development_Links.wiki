@@ -48,6 +48,7 @@ List of Links, which are useful to develop the app.
  * http://groups.google.com/group/google-calendar-help-misc/browse_thread/thread/87d464bb8d81e66/a4976be0b7608239?lnk=gst&q=
 
 = Alternatives =
+ * http://birthdaycal.appspot.com/
  * http://contact-birthdays.appspot.com/
  * http://www.fonlow.com/OpenContacts/
   * http://www.fonlow.com/OpenContacts/birthday_reminder_helper.htm 
