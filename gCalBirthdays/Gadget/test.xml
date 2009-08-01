@@ -64,6 +64,8 @@
 	    var APP_NAME = 'gCalBirthdays';
 	    var APP_VERSION = '2.009';
 
+    var CALENDAR_FEED_URL_FULL = 'http://www.google.com/calendar/feeds/default/owncalendars/full';
+
         //var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
 		// The gadget containers request that we do NOT run any JS inline.
@@ -163,7 +165,7 @@
 	        }
 	      };
 
-	      myService.getEventsFeed('http://www.google.com/calendar/feeds/default/public/full', callback, callback);
+	      myService.getOwnCalendarsFeed(CALENDAR_FEED_URL_FULL, callback, callback);
 	    }
 
 
