@@ -160,7 +160,7 @@
 	        }
 	      };
 
-	      myService.getEventsFeed('http://www.google.com/calendar/feeds/default/public/full', callback, callback);
+	      contactService.getEventsFeed('http://www.google.com/calendar/feeds/default/public/full', callback, callback);
 	    }
 
 
