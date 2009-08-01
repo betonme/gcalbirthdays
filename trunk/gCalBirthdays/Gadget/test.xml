@@ -12,8 +12,7 @@
     <OAuth>
       <Service name="google">
         <Access url="https://www.google.com/accounts/OAuthGetAccessToken" method="GET" />
-    	<!--Request url="https://www.google.com/accounts/OAuthGetRequestToken?scope=http://www.google.com/m8/feeds/%20http://www.google.com/calendar/feeds/" method="GET" /-->
-		<Request url="https://www.google.com/accounts/OAuthGetRequestToken?scope=http://www.google.com/calendar/feeds/" method="GET" />
+    	<Request url="https://www.google.com/accounts/OAuthGetRequestToken?scope=http://www.google.com/m8/feeds/%20http://www.google.com/calendar/feeds/" method="GET" />
         <Authorization url="https://www.google.com/accounts/OAuthAuthorizeToken?oauth_callback=http://oauth.gmodules.com/gadgets/oauthcallback" />
       </Service>
     </OAuth>
@@ -116,7 +115,7 @@
 	    function fetchData() {
 	      var callback = function(response) {
 	        if (response.oauthApprovalUrl) {
-
+				alert('1');
 	          // TODO: Display "Sign in" link (response.oauthApprovalUrl contains the URL)
 
 	          // Create the popup handler. The onOpen function is called when the user
@@ -140,7 +139,7 @@
 	          showOneSection('approval');
 
 	        } else if (response.feed) {
-
+				alert('2');
 	          // TODO: show results
 		      showOneSection('main');
 
@@ -148,7 +147,7 @@
 	          gadgets.window.adjustHeight();
 
 	        } else {
-
+			alert('3);
 	          // TODO: handle the error
 
 	          // The response.oauthError and response.oauthErrorText values may help debug
