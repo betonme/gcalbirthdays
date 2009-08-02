@@ -62,7 +62,7 @@
 	    //IE JScript 5.6 Compatibility
 	    // Constants
 	    var APP_NAME = 'gCalBirthdays';
-	    var APP_VERSION = '2.009';
+	    var APP_VERSION = '2.010';
 
     var CALENDAR_FEED_URL_FULL = 'http://www.google.com/calendar/feeds/default/owncalendars/full';
 
@@ -89,38 +89,64 @@
 //	      contactService = new google.gdata.client.GoogleService('cp', APP_NAME);
 //	      contactService.useOAuth('google');
 
-		  fetchData();
+		  //fetchData();
 
 /*
 	      var authButton = document.getElementById('authButtonID');
 
 	      document.getElementById('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
           gadgets.window.adjustHeight();
-
+*/
 	      var token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
 	      if (token) {
 	        // User is loged in
-	        authButton.value = 'Logout';
-	        document.getElementById('loginNoticeID').style.display = 'none';
+			  document.getElementById('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
+			showOneSection('main');
+//	        authButton.value = 'Logout';
+//	        document.getElementById('loginNoticeID').style.display = 'none';
 	        //document.getElementById('htmlConsoleID').style.display = 'block';
 			//document.getElementById('consoleCheckboxFormID').style.display = 'block';
 	        //mainJS();
 	      }
 	      else {
 	        // User is loged out
-	        authButton.value = 'Login';
-	        document.getElementById('loginNoticeID').style.display = 'block';
+
+				//alert('1');
+	          // TODO: Display "Sign in" link (response.oauthApprovalUrl contains the URL)
+
+	          // Create the popup handler. The onOpen function is called when the user
+	          // opens the popup window. The onClose function is called when the popup
+	          // window is closed.
+	          var popup = shindig.oauth.popup({
+	            destination: response.oauthApprovalUrl,
+	            windowOptions: null,
+	            onOpen: function() { showOneSection('waiting'); },
+	            onClose: function() { fetchData(); }
+	          });
+	          // Use the popup handler to attach onclick handlers to UI elements.  The
+	          // createOpenerOnClick() function returns an onclick handler to open the
+	          // popup window.  The createApprovedOnClick function returns an onclick
+	          // handler that will close the popup window and attempt to fetch the user's
+	          // data again.
+	          var personalize = document.getElementById('personalize');
+	          personalize.onclick = popup.createOpenerOnClick();
+	          var approvaldone = document.getElementById('approvaldone');
+	          approvaldone.onclick = popup.createApprovedOnClick();
+	          showOneSection('approval');
+
+//	        authButton.value = 'Login';
+//	        document.getElementById('loginNoticeID').style.display = 'block';
 	        //document.getElementById('settingsFormID').style.display = 'none';
 	        //document.getElementById('htmlConsoleID').style.display = 'none';
 			//document.getElementById('consoleCheckboxFormID').style.display = 'none';
 	      }
-*/
+
 	    };
 
 	    function fetchData() {
 	      var callback = function(response) {
 	        if (response.oauthApprovalUrl) {
-				alert('1');
+				//alert('1');
 	          // TODO: Display "Sign in" link (response.oauthApprovalUrl contains the URL)
 
 	          // Create the popup handler. The onOpen function is called when the user
@@ -144,7 +170,7 @@
 	          showOneSection('approval');
 
 	        } else if (response.feed) {
-				alert('2');
+				//alert('2');
 	          // TODO: show results
 		      showOneSection('main');
 
@@ -152,7 +178,7 @@
 	          gadgets.window.adjustHeight();
 
 	        } else {
-			alert('3');
+			    //alert('3');
 	          // TODO: handle the error
 
 	          // The response.oauthError and response.oauthErrorText values may help debug
