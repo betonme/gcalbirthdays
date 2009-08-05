@@ -1,9 +1,9 @@
-#summary Alternative projects.
+#summary Alternative projects
 
 = Alternative projects =
 == Online: ==
 || *URL* || *Calendar Name* || *Sync* || *Reminders* ||
-|| http://birthdaycal.appspot.com/ || My Contacts || to be tested || Yes       ||
+|| http://birthdaycal.appspot.com/ || My Contacts || Dynamic || Yes       ||
 || http://contact-birthdays.appspot.com/ || Contact Birthdays || Static ||Yes ||
 || http://www.google.com/support/calendar/bin/answer.py?answer=37098 ||Contacts' birthdays and events || Dynamic || No ||
 
