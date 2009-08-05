@@ -82,6 +82,9 @@
      * Query groups and calendars function.
      */
     function queryData() {
+      groupList = new Array();
+      calendarList = new Array();
+
       queryGroups();
       queryCalendars();
     }
@@ -107,6 +110,60 @@
       contactService.getFeed(groupURL, handleGroupsFeed, handleError);
     }
 
+    function handleGroupsFeed(feedRoot){
+      var groupFeed = feedRoot.feed;
+      var groups = groupFeed.entry;
+
+      // Clear options
+      //selectClearOptions('groupSelectID');
+
+      // Add all contacts option
+      //selectAddOption('groupSelectID', ALL_CONTACTS, '');
+
+      // Replace 'System Group: ' with an identifier
+      var id = 0;
+      // IE JScript 5.6 Compatibility
+      var len = groups.length;
+      for (var ie = 0; ie < len; ie++) {
+        var group = groups[ie];
+        group.title.$t = group.title.$t.replace(/System Group/gi, id++);
+      }
+      // Sort groups
+      groups.sort(compareEntries);
+      // Remove identifier
+      // IE JScript 5.6 Compatibility
+      for (var ie = 0; ie < len; ie++) {
+        var group = groups[ie];
+        group.title.$t = group.title.$t.replace(/^.: /gi, '');
+      }
+
+      // Iterate through the array of contact groups, and add them to
+      // drop down box
+      // IE JScript 5.6 Compatibility
+      var idl = groupList.length;
+      for (var ie = 0; ie < len; ie++) {
+        var group = groups[ie];
+        //selectAddOption('groupSelectID', group.title.$t, group.id.$t);
+        groupList[idl++] = { title: html_entity_decode(group.title.$t), id: group.id.$t };
+      }
+
+      // Get next page if it exists
+      if (NOTDEF != typeof groupFeed.link[5]) {
+        // link[5].rel = 'next'
+        var nextURL = groupFeed.link[5].href;
+        printConsole('Group NextURL: ' + nextURL);
+        return getGroups(nextURL);
+      }
+
+      // Set selection and size
+      //selectSetSelectedIndex('groupSelectID', 0);
+      //selectSetSizeOptions('groupSelectID');
+
+      // Next step: show groups
+      showGroups(0);
+      showSettingsBlock(states.fingroups);
+    }
+
     function queryCalendars(){
       printConsole('Query Calendars');
 
@@ -120,6 +177,61 @@
     function getCalendars(calendarURL){
       // Submit the request using the calendar service object
       calendarService.getEventsFeed(calendarURL, handleCalendarsFeed, handleError);
+    }
+
+    function handleCalendarsFeed(feedRoot){
+      var calFeed = feedRoot.feed;
+      var calendars = calFeed.getEntries();
+
+//      // Clear options
+//      selectClearOptions('calendarSelectID');
+
+      // Sort calendars
+      calendars.sort(compareEntries);
+
+      // Iterate through the array of calendars, and add them to drop down box
+      var i = 0;
+      var selId = -1;
+      // IE JScript 5.6 Compatibility
+      var idl = calendarList.length;
+      var len = calendars.length;
+      for (var ie = 0; ie < len; ie++) {
+        var calendar = calendars[ie];
+        //selectAddOption('calendarSelectID', calendar.getTitle().getText(), calendar.getLink().href);
+        calendarList[idl++] = { title: html_entity_decode(calendar.getTitle().getText()), url: calendar.getLink().href };
+
+        // Select first calendar which contains
+        // [Birthdays|Geburtstag]
+        if (NOTDEF != calendar.getTitle()) {
+          if (NOTDEF != calendar.getTitle().getText()) {
+            if (-1 != calendar.getTitle().getText().search(/(Birthday|Geburtstag)/i)) {
+              if (-1 == selId) {
+                selId = i;
+              }
+            }
+          }
+        }
+        i++;
+      }
+
+      // Get next page if it exists
+      if (NOTDEF != typeof calFeed.link[5]) {
+        // link[5].rel = 'next'
+        var nextURL = calFeed.link[5].href;
+        printConsole('Calendars NextURL: ' + nextURL);
+        return getCalendars(nextURL);
+      }
+
+//      // Add new calendar option
+//      selectAddOption('calendarSelectID', NEW_CALENDAR, '');
+//
+//      // Set selection and size
+//      selectSetSelectedIndex('calendarSelectID', selId);
+//      selectSetSizeOptions('calendarSelectID');
+
+      // Next step: show calendars
+      showCalendars(selId);
+      showSettingsBlock(states.fincalendars);
     }
 
     /**
