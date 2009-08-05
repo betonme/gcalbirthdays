@@ -81,8 +81,8 @@
 	    }
 
 	    function setupMyService(){
-	      contactService = new google.gdata.client.GoogleService('cp', APP_NAME);
-	      contactService.useOAuth('google');
+          myService = new google.gdata.calendar.CalendarService('exampleCo-exampleApp-1');
+          myService.useOAuth('google');
 
 		  fetchData();
 
