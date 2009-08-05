@@ -148,7 +148,7 @@
 	          gadgets.window.adjustHeight();
 
 	        } else {
-			alert('3);
+			alert('3');
 	          // TODO: handle the error
 
 	          // The response.oauthError and response.oauthErrorText values may help debug
