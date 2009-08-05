@@ -46,13 +46,3 @@ List of Links, which are useful to develop the app.
  * http://www.google.com/support/forum/p/Calendar/thread?tid=4da91b6497363b2f&hl=en
  * http://groups.google.com/group/google-calendar-help-misc/browse_thread/thread/47b1b8f69dce16d5
  * http://groups.google.com/group/google-calendar-help-misc/browse_thread/thread/87d464bb8d81e66/a4976be0b7608239?lnk=gst&q=
-
-= Alternatives =
- * http://birthdaycal.appspot.com/
- * http://contact-birthdays.appspot.com/
- * http://www.fonlow.com/OpenContacts/
-  * http://www.fonlow.com/OpenContacts/birthday_reminder_helper.htm 
- * http://gdata-javascript-client.googlecode.com/svn/trunk/samples/calendar/birthday_manager/birthday_manager.html
- * http://www.ehow.com/how_5176741_sync-birthdayevents-present-excelcsv-file.html
- * Outlook Sync http://www.google.com/support/calendar/bin/answer.py?answer=89955
- * Thunderbird Sync https://addons.mozilla.org/de/thunderbird/addon/3680
