@@ -67,6 +67,13 @@
     var contactService;
     var calendarService;
 
+    // Shared Variables
+    var groupList = new Array();
+    var calendarList = new Array();
+    var contactList = new Array();
+    var eventList = new Array();
+    var postURL;
+
     /**
      * Service setup function.
      */
@@ -81,9 +88,12 @@
     /**
      * Query groups and calendars function.
      */
-    function queryData() {
+    function queryGroupsAndCalendars() {
       groupList = new Array();
       calendarList = new Array();
+
+      handleGroupsFeed.state = 0;
+      handleCalendarsFeed.state = 0;
 
       queryGroups();
       queryCalendars();
@@ -277,8 +287,19 @@
     }
 
     /**
-     * Sync query functions.
+     * Query contacts and events function.
      */
+    function queryContactsAndEvents(groupId, calendarURL) {
+      contactList = new Array();
+      eventList = new Array();
+
+      handleContactsFeed.state = 0;
+      handleEventsFeed.state = 0;
+
+      queryContacts(groupId);
+      queryEvents(calendarURL);
+    }
+
     function queryContacts(groupId){
       printConsole('Query Contacts');
 
