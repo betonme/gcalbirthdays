@@ -1,5 +1,6 @@
-/*  gCalBirthday.js
- *  JavaScript functions for HTML and Gadget Version
+/*  gCalBirthdays.js
+ *
+ *  Shared JavaScript functions for HTML and Gadget Version of gCalBirthdays
  *
  *  Copyright (c) 2009 Frank Glaser
  *
@@ -29,6 +30,29 @@
  * - use for(;;) loop instead of for each (element in array) loop
  */
 
+    // Variables
+    var contactService;
+    var calendarService;
+
+    /**
+     * Service setup function.
+     */
+    function setupService(){
+      // ContactsService v3 GoogleService WorkAround for Contact Birthdays
+      contactService = new google.gdata.client.GoogleService('cp', APP_NAME);
+
+      // CalendarService v2
+      calendarService = new google.gdata.calendar.CalendarService(APP_NAME);
+    }
+
+    /**
+     * Query groups and calendars function.
+     */
+    function queryData() {
+      queryGroups();
+      queryCalendars();
+    }
+
     /**
      * Initial query functions.
      */
@@ -45,6 +69,11 @@
       contactService.getFeed(query, handleGroupsFeed, handleError);
     }
 
+    function getGroups(groupURL){
+      // ContactsService v3 GoogleService WorkAround
+      contactService.getFeed(groupURL, handleGroupsFeed, handleError);
+    }
+
     function queryCalendars(){
       printConsole('Query Calendars');
 
@@ -53,6 +82,11 @@
 
       // Submit the request using the calendar service object
       calendarService.getOwnCalendarsFeed(query, handleCalendarsFeed, handleError);
+    }
+
+    function getCalendars(calendarURL){
+      // Submit the request using the calendar service object
+      calendarService.getEventsFeed(calendarURL, handleCalendarsFeed, handleError);
     }
 
     /**
@@ -101,6 +135,8 @@
      * Sync query functions.
      */
     function queryContacts(groupId){
+      printConsole('Query Contacts');
+
       // Query for all the contacts entry with this contact group
       var query = new google.gdata.client.Query(CONTACTS_FEED_URL_THIN);
 
@@ -126,6 +162,8 @@
     }
 
     function queryEvents(calendarURL){
+      printConsole('Query Events');
+
       // Query for all the events entry within given calendarid
       var query = new google.gdata.calendar.CalendarEventQuery(calendarURL);
 
@@ -219,7 +257,7 @@
       elSel.selectedIndex = selId>0 ? selId : 0;
     }
 
-    function selectSetNrOptions(id, selSize){
+    function selectSetSizeOptions(id, selSize){
       var elSel = document.getElementById(id);
       if ( null == selSize ) {
         selSize = elSel.length;
@@ -279,3 +317,26 @@
       return compareStrings(a.title.$t.toLowerCase(), b.title.$t.toLowerCase());
     }
 
+    /**
+     * This function is called if an error is encountered while
+     * retrieving a feed or adding an event.
+     */
+    function handleError(e){
+      // Warnings
+    if (NOTDEF != e.message) {
+      if (-1 != e.message.search(/Invalid JSON format/i)) {
+          // Query is not interrupted!
+        printConsole('Warning: ' + e.message);
+      }
+    }
+    // Errors
+    else {
+      printConsole('Error message:    ' + e.message);
+      printConsole('Error fileName:   ' + e.fileName);
+      printConsole('Error lineNumber: ' + e.lineNumber);
+      if (NOTDEF != typeof e.cause) {
+        printConsole('Error cause:      ' + e.cause ? e.cause.statusText : e.message);
+      }
+      //printConsole('Error stack:      'e.stack);
+      }
+    };
