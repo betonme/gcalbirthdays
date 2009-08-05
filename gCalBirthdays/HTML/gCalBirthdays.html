@@ -252,9 +252,6 @@
 		printConsole('Calendars NextURL: ' + nextURL);
 		return getCalendars(nextURL);
 	  }
-//      if (NOTDEF != typeof calFeed.getNextLink()) {
-//        return getCalendars(calFeed.getNextLink().href);
-//      }
 
       // Add new calendar option
       selectAddOption('calendarSelectID', NEW_CALENDAR, '');
@@ -403,16 +400,6 @@
 		return getContacts(nextURL);
 	  }
 
-//      // ContactsService v3 GoogleService WorkAround
-//      // IE JScript 5.6 Compatibility
-//	  var len = conFeed.link.length;
-//      for (var ie = 0; ie < len; ie++) {
-//        var link = conFeed.link[ie];
-//        if ('next' == link.rel) {
-//          return getContacts(link.href);
-//        }
-//      }
-
       printConsole ('Contact(s) with Birthday: ' + contactList.length);
 	  if (0 == contactList.length) {
 		onclickStop();
@@ -479,18 +466,6 @@
 	  // link[2].rel = 'http://schemas.google.com/g/2005#post'
 	  postURL = eventFeed.getEntryPostLink().href;
 	  printConsole('Event PostURL: ' + postURL);
-
-//	  // ContactsService v3 GoogleService WorkAround
-//      // IE JScript 5.6 Compatibility
-//	  var len = eventFeed.link.length;
-//      for (var ie = 0; ie < len; ie++) {
-//        var link = eventFeed.link[ie];
-//        if ('http://schemas.google.com/g/2005#post' == link.rel) {
-//          postURL = link.href;
-//		  printConsole('PostURL: ' + postURL);
-//          break;
-//        }
-//      }
 
       printConsole('Event(s) with Birthday: ' + eventList.length);
 
