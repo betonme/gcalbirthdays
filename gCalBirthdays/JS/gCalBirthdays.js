@@ -30,6 +30,39 @@
  * - use for(;;) loop instead of for each (element in array) loop
  */
 
+    // Constants
+    var GROUP_FEED_URL_THIN = 'http://www.google.com/m8/feeds/groups/default/thin';
+    var GROUP_FEED_URL_FULL = 'http://www.google.com/m8/feeds/groups/default/full'; //not used
+
+    var CALENDAR_FEED_URL_FULL = 'http://www.google.com/calendar/feeds/default/owncalendars/full';
+
+    var CONTACTS_FEED_URL_THIN = 'http://www.google.com/m8/feeds/contacts/default/thin';
+    var CONTACTS_FEED_URL_FULL = 'http://www.google.com/m8/feeds/contacts/default/full'; //not used
+    var CONTACTS_FEED_URL_BASE = 'http://google.com/m8/feeds/groups/user%40gmail.com/base'; //not used
+
+    var CONTACTS_VERSION_NAME = 'v';
+    var CONTACTS_VERSION_NUMBER = '3.0';
+
+    var CALENDAR_NAME = 'Birthdays'; // "Geburtstage";
+    var CALENDAR_SUMMARY = 'This calendar contains the birthdays of Your Google Contacts.';
+    var CALENDAR_COLOR = '#A32929'; // red "#A32929", blue "#2952A3" and green "#0D7813"
+
+    var EVENT_TITLE_SUFFIX = ' Birthday Celebration';
+    var EVENT_SUMMARY_SUFFIX = 'Created by gCalBirthdays';
+
+    var CALENDAR_HIDDEN = false;
+    var CALENDAR_SELECTED = true;
+
+    var DATE_FORMAT_CONTACTS = 'yyyy-MM-dd';
+    var DATE_FORMAT_CALENDAR = 'yyyyMMdd';
+    var DATE_FORMAT_YEAR = 'yyyy';
+
+    var ICAL_BREAK = '\r\n'; // '\n'
+
+    var REMINDER_DAYS = 14;
+
+    var MAX_RESULT = 10;
+
     // Variables
     var contactService;
     var calendarService;
