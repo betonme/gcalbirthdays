@@ -21,33 +21,34 @@
   <Content type="html">
   	<![CDATA[
 
-	  <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
+  <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
 
-	  <div id="main" style="display: none">
-	      <p id="versionID">
-	          Version
-	      </p>
-	  </div>
+  <div id="main" style="display: none">
 
-	  <div id="approval" style="display: none">
-	    <img src="http://gadget-doc-examples.googlecode.com/svn/trunk/images/new.gif">
-	    <a href="#" id="personalize">Personalize this gadget</a>
-	  </div>
+      <p id="versionID">
+          Version
+      </p>
+  </div>
 
-	  <div id="waiting" style="display: none">
-	    Please click
-	    <a href="#" id="approvaldone">I've approved access</a>
-	    once you've approved access to your data.
-	  </div>
+  <div id="approval" style="display: none">
+    <img src="http://gadget-doc-examples.googlecode.com/svn/trunk/images/new.gif">
+    <a href="#" id="personalize">Personalize this gadget</a>
+  </div>
 
-	  <!--http://code.google.com/p/gdata-javascript-client/-->
-      <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+  <div id="waiting" style="display: none">
+    Please click
+    <a href="#" id="approvaldone">I've approved access</a>
+    once you've approved access to your data.
+  </div>
 
 	  <!--http://phpjs.org/packages/view/396/name:7d67fb58ff9ab58f4d0e4e55221b50e7-->
       <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/html_funcs.min.js"></script>
 
-  	  <!-- shindig oauth popup handling code http://code.google.com/p/gdata-samples/source/browse/trunk/gadgets/popup.js-->
-  	  <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/popup.js"></script>
+	  <!--http://code.google.com/p/gdata-javascript-client/-->
+      <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+
+  <!-- shindig oauth popup handling code http://code.google.com/p/gdata-samples/source/browse/trunk/gadgets/popup.js-->
+  <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/popup.js"></script>
 
 	  <!--gCalBirthay Javascript functions for HTML and Gadget Version -->
 	  <!--
@@ -61,11 +62,9 @@
 	    //IE JScript 5.6 Compatibility
 	    // Constants
 	    var APP_NAME = 'gCalBirthdays';
-	    var APP_VERSION = '2.011';
+	    var APP_VERSION = '2.009';
 
         var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
-
-		//var CALENDAR_FEED_URL_FULL = 'http://www.google.com/calendar/feeds/default/owncalendars/full';
 
 		// The gadget containers request that we do NOT run any JS inline.
 		// Instead, register a callback handler.
@@ -85,17 +84,39 @@
 	      contactService = new google.gdata.client.GoogleService('cp', APP_NAME);
 	      contactService.useOAuth('google');
 
+		  fetchData();
+
+/*
+	      var authButton = document.getElementById('authButtonID');
+
+	      document.getElementById('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
+          gadgets.window.adjustHeight();
+
 	      var token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
 	      if (token) {
 	        // User is loged in
-			document.getElementById('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
-			showOneSection('main');
-			gadgets.window.adjustHeight();
+	        authButton.value = 'Logout';
+	        document.getElementById('loginNoticeID').style.display = 'none';
 	        //document.getElementById('htmlConsoleID').style.display = 'block';
 			//document.getElementById('consoleCheckboxFormID').style.display = 'block';
+	        //mainJS();
 	      }
 	      else {
 	        // User is loged out
+	        authButton.value = 'Login';
+	        document.getElementById('loginNoticeID').style.display = 'block';
+	        //document.getElementById('settingsFormID').style.display = 'none';
+	        //document.getElementById('htmlConsoleID').style.display = 'none';
+			//document.getElementById('consoleCheckboxFormID').style.display = 'none';
+	      }
+*/
+	    };
+
+	    function fetchData() {
+	      var callback = function(response) {
+	      alert(response.oauthApprovalUrl);
+	        if (response.oauthApprovalUrl) {
+				alert('1');
 	          // TODO: Display "Sign in" link (response.oauthApprovalUrl contains the URL)
 
 	          // Create the popup handler. The onOpen function is called when the user
@@ -117,39 +138,9 @@
 	          var approvaldone = document.getElementById('approvaldone');
 	          approvaldone.onclick = popup.createApprovedOnClick();
 	          showOneSection('approval');
-			  gadgets.window.adjustHeight();
-	      }
-	    };
-
-/*
-	    function fetchData() {
-	      var callback = function(response) {
-	        if (response.oauthApprovalUrl) {
-				//alert('1');
-	          // TODO: Display "Sign in" link (response.oauthApprovalUrl contains the URL)
-
-	          // Create the popup handler. The onOpen function is called when the user
-	          // opens the popup window. The onClose function is called when the popup
-	          // window is closed.
-	          var popup = shindig.oauth.popup({
-	            destination: response.oauthApprovalUrl,
-	            windowOptions: "width=300,height=300,scrollbars=no,status=no,menubar=no,location=no", //windowOptions: null,
-	            onOpen: function() { showOneSection('waiting'); },
-	            onClose: function() { fetchData(); }
-	          });
-	          // Use the popup handler to attach onclick handlers to UI elements.  The
-	          // createOpenerOnClick() function returns an onclick handler to open the
-	          // popup window.  The createApprovedOnClick function returns an onclick
-	          // handler that will close the popup window and attempt to fetch the user's
-	          // data again.
-	          var personalize = document.getElementById('personalize');
-	          personalize.onclick = popup.createOpenerOnClick();
-	          var approvaldone = document.getElementById('approvaldone');
-	          approvaldone.onclick = popup.createApprovedOnClick();
-	          showOneSection('approval');
 
 	        } else if (response.feed) {
-				//alert('2');
+				alert('2');
 	          // TODO: show results
 		      showOneSection('main');
 
@@ -157,7 +148,7 @@
 	          gadgets.window.adjustHeight();
 
 	        } else {
-			    //alert('3');
+			alert('3);
 	          // TODO: handle the error
 
 	          // The response.oauthError and response.oauthErrorText values may help debug
@@ -170,9 +161,9 @@
 	        }
 	      };
 
-	      myService.getOwnCalendarsFeed(CALENDAR_FEED_URL_FULL, callback, callback);
+	      myService.getEventsFeed('http://www.google.com/calendar/feeds/default/public/full', callback, callback);
 	    }
-*/
+
 
 	    // Display UI depending on OAuth access state of the gadget (see <divs> above).
 	    // If user hasn't approved access to data, provide a "Personalize this gadget" link
@@ -198,6 +189,21 @@
 	        }
 	      }
 	    }
+
+/*
+	    function onClickAuthButton(){
+	      var token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
+	      if (token) {
+	        // User is loged in
+	        google.accounts.user.logout();
+	      }
+	      else {
+	        // User is loged out
+	        token = google.accounts.user.login(GOOGLE_FEED_AUTH);
+	      }
+	      init();
+	    };
+*/
 
       </script>
 
