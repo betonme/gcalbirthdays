@@ -1,0 +1,20 @@
+#summary Alternative projects.
+
+= Alternative projects =
+== Online: ==
+|| *URL* || *Calendar Name* || *Sync* || *Reminders* ||
+|| http://birthdaycal.appspot.com/ || My Contacts || to be tested || Yes       ||
+|| http://contact-birthdays.appspot.com/ || Contact Birthdays || Static ||Yes ||
+|| http://www.google.com/support/calendar/bin/answer.py?answer=37098 ||Contacts' birthdays and events || Dynamic || No ||
+
+== Stand-Alone Executable: ==
+ * http://www.fonlow.com/OpenContacts/
+  * http://www.fonlow.com/OpenContacts/birthday_reminder_helper.htm 
+
+== Sync Tools for Stand-Alone Calendars: ==
+ * Outlook Sync http://www.google.com/support/calendar/bin/answer.py?answer=89955
+ * Thunderbird Sync https://addons.mozilla.org/de/thunderbird/addon/3680
+
+== Further Techniques: ==
+ * http://www.ehow.com/how_5176741_sync-birthdayevents-present-excelcsv-file.html
+ * http://gdata-javascript-client.googlecode.com/svn/trunk/samples/calendar/birthday_manager/birthday_manager.html
