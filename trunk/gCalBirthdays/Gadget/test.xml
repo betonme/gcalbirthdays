@@ -19,7 +19,7 @@
     <UserPref name="test" display_name="Color" default_value="Yellow" datatype="hidden"/>
   </ModulePrefs>
   <Content type="html">
-  	<!--<![CDATA[
+  	<![CDATA[
 
   <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
 
@@ -46,28 +46,28 @@
     once you've approved access to your data.
   </div>
 
-	  http://phpjs.org/packages/view/396/name:7d67fb58ff9ab58f4d0e4e55221b50e7
+	  <!--http://phpjs.org/packages/view/396/name:7d67fb58ff9ab58f4d0e4e55221b50e7-->
       <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/html_funcs.min.js"></script>
 
-	  http://code.google.com/p/gdata-javascript-client/
+	  <!--http://code.google.com/p/gdata-javascript-client/-->
       <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 
-       shindig oauth popup handling code http://code.google.com/p/gdata-samples/source/browse/trunk/gadgets/popup.js
+      <!-- shindig oauth popup handling code http://code.google.com/p/gdata-samples/source/browse/trunk/gadgets/popup.js-->
       <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/popup.js"></script>
 
-	  gCalBirthay Javascript functions for HTML and Gadget Version
-
+	  <!--gCalBirthay Javascript functions for HTML and Gadget Version -->
+	  <!--
       <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/gCalBirthdays.js"></script>
       <script type="text/javascript" src="gCalBirthdays.js"></script>
+	  -->
 
-
-      gCalBirthay Gadget specific Javascript functions
+      <!--gCalBirthay Gadget specific Javascript functions-->
       <script type="text/javascript">
 
 	    //IE JScript 5.6 Compatibility
 	    // Constants
 	    var APP_NAME = 'gCalBirthdays';
-	    var APP_VERSION = '2.012';
+	    var APP_VERSION = '2.013';
 
         var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
@@ -115,20 +115,9 @@
 	    };
 
 	    function onClickAuthButton(){
-/*	      var token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
-	      if (token) {
-*/
-	        // User is loged in
-	        google.accounts.user.logout();
-	        alert('logout');
-/*
-	      }
-	      else {
-	        // User is loged out
-	        token = google.accounts.user.login(GOOGLE_FEED_AUTH);
-	        alert('login');
-	      }
-*/
+          // User is loged in
+          google.accounts.user.logout();
+      alert('logout');
 	      setupMyService();
 	    }
 
@@ -216,6 +205,6 @@
 
       </script>
 
-	]]>-->
+	]]>
   </Content>
 </Module>
