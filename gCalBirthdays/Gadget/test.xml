@@ -24,7 +24,6 @@
   <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
 
   <div id="main" style="display: none">
-
       <p id="versionID">
           Version
       </p>
@@ -47,8 +46,8 @@
 	  <!--http://code.google.com/p/gdata-javascript-client/-->
       <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 
-  <!-- shindig oauth popup handling code http://code.google.com/p/gdata-samples/source/browse/trunk/gadgets/popup.js-->
-  <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/popup.js"></script>
+      <!-- shindig oauth popup handling code http://code.google.com/p/gdata-samples/source/browse/trunk/gadgets/popup.js-->
+      <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/popup.js"></script>
 
 	  <!--gCalBirthay Javascript functions for HTML and Gadget Version -->
 	  <!--
@@ -161,7 +160,7 @@
 	        }
 	      };
 
-	      myService.getEventsFeed('http://www.google.com/calendar/feeds/default/public/full', callback, callback);
+	      myService.getOwnCalendarsFeed('http://www.google.com/calendar/feeds/default/owncalendars/full', callback, callback);
 	    }
 
 
