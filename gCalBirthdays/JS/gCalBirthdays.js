@@ -67,12 +67,19 @@
     var contactService;
     var calendarService;
 
+    // Shared Constants
+    var GROUP_SEPARATOR = ',';
+    var NOTDEF = 'undefined';
+    var states = {setup:{}, fingroups:{}, fincalendars:{}, fincontacts:{}, finevents:{}, started:{}, canceled:{}, finished:{}};
+
     // Shared Variables
     var groupList = new Array();
     var calendarList = new Array();
     var contactList = new Array();
     var eventList = new Array();
     var postURL;
+    var statemachine = states.setup;
+
 
     /**
      * Service setup function.
@@ -280,6 +287,12 @@
       handleContactsFeed.state = 0;
       handleEventsFeed.state = 0;
 
+      checkBirthdays.contacts = false;
+      checkBirthdays.events = false;
+
+      statemachine = states.started;
+      printConsole('StateMachine: ' + 'started');
+
       queryContacts(groupId);
       queryEvents(calendarURL);
     }
@@ -428,6 +441,82 @@
       showEvents();
       checkBirthdays(states.finevents);
     }
+
+    /**
+     * Compare contacts and events.
+     */
+    function checkBirthdays(state){
+      var lconlist = contactList;
+      var levlist = eventList;
+
+        // Wait for both queries (queryContacts/queryEvents) finished
+        // Both lists (contactList/eventList) are filled
+      if ( states.fincontacts == state) {
+        checkBirthdays.contacts = true;
+      }
+      if ( states.finevents == state) {
+        checkBirthdays.events = true;
+      }
+
+      if (checkBirthdays.contacts && checkBirthdays.events) {
+          var exists = false;
+          // IE JScript 5.6 Compatibility
+          if (NOTDEF != typeof lconlist) {
+        var lencon = lconlist.length;
+            for (var iec = 0; iec < lencon; iec++) {
+              var contact = lconlist[iec];
+
+        if (states.canceled == statemachine) {
+            printConsole('handleEventsFeed: ' + 'canceled');
+          return;
+        }
+              exists = false;
+              var date = contact.birthday.replace(/-/g, '');
+
+              // IE JScript 5.6 Compatibility
+              if (NOTDEF != typeof levlist) {
+          var lenev = levlist.length;
+                for (var iee = 0; iee < lenev; iee++) {
+                  var event = levlist[iee];
+
+          if (states.canceled == statemachine) {
+              printConsole('handleEventsFeed: ' + 'canceled');
+            return;
+          }
+
+                  // Search for contact title
+                  if (-1 != event.getTitle().getText().search(contact.title)) {
+                    exists = true;
+
+                    // Event found for given contact
+                    // Check date
+                    if (-1 != event.getRecurrence().getValue().search(date)) {
+                      // Date correct - do nothing
+                      printConsole('Event correct: ' + contact.title);
+            break;
+                    }
+                    else {
+                      // Date not correct - Update event
+                      printConsole('Event to update: ' + contact.title);
+                      updateEvent(event, contact, date);
+            break;
+                    }
+                  }
+                }
+              }
+              if (false == exists) {
+                // Event not found for given contact - Add/Create event
+                printConsole('Event to add: ' + contact.title);
+                insertEvent(postURL, contact, date);
+              }
+            }
+          }
+
+          // Finished
+          onfinishedSync();
+          printConsole('Finished!');
+        }
+      }
 
     /**
      * Event functions.
