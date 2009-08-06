@@ -23,6 +23,12 @@
 
   <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
 
+      <p>
+        <input id="authButtonID" type="button" value="Authenticate" onclick="onClickAuthButton()">
+      </p>
+
+         <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
+
   <div id="main" style="display: none">
       <p id="versionID">
           Version
@@ -83,19 +89,15 @@
           myService = new google.gdata.calendar.CalendarService('exampleCo-exampleApp-1');
           myService.useOAuth('google');
 
-		  fetchData();
-
-/*
 	      var authButton = document.getElementById('authButtonID');
 
 	      document.getElementById('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
-          gadgets.window.adjustHeight();
 
 	      var token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
 	      if (token) {
 	        // User is loged in
 	        authButton.value = 'Logout';
-	        document.getElementById('loginNoticeID').style.display = 'none';
+	        //document.getElementById('loginNoticeID').style.display = 'none';
 	        //document.getElementById('htmlConsoleID').style.display = 'block';
 			//document.getElementById('consoleCheckboxFormID').style.display = 'block';
 	        //mainJS();
@@ -103,13 +105,33 @@
 	      else {
 	        // User is loged out
 	        authButton.value = 'Login';
-	        document.getElementById('loginNoticeID').style.display = 'block';
+	        //document.getElementById('loginNoticeID').style.display = 'block';
 	        //document.getElementById('settingsFormID').style.display = 'none';
 	        //document.getElementById('htmlConsoleID').style.display = 'none';
 			//document.getElementById('consoleCheckboxFormID').style.display = 'none';
 	      }
-*/
+
+          gadgets.window.adjustHeight();
 	    };
+
+	    function onClickAuthButton(){
+		  printConsole('Button Auth');
+	      var token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
+	      if (token) {
+	        // User is loged in
+	        google.accounts.user.logout();
+	      }
+	      else {
+	        // User is loged out
+			// Use AuthSub Authentication
+	        token = google.accounts.user.login(GOOGLE_FEED_AUTH);
+	      }
+	      setupMyService();
+	    }
+
+		function onclickStart() {
+		  fetchData();
+		}
 
 	    function fetchData() {
 	      var callback = function(response) {
