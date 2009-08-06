@@ -40,8 +40,9 @@
     var CONTACTS_FEED_URL_FULL = 'http://www.google.com/m8/feeds/contacts/default/full'; //not used
     var CONTACTS_FEED_URL_BASE = 'http://google.com/m8/feeds/groups/user%40gmail.com/base'; //not used
 
-    var CONTACTS_VERSION_NAME = 'v';
+    var VERSION_PARAMETER = 'v';
     var CONTACTS_VERSION_NUMBER = '3.0';
+    var CALENDAR_VERSION_NUMBER = '2.0';
 
     var CALENDAR_NAME = 'Birthdays'; // "Geburtstage";
     var CALENDAR_SUMMARY = 'This calendar contains the birthdays of Your Google Contacts.';
@@ -116,7 +117,7 @@
       var query = new google.gdata.contacts.ContactQuery(GROUP_FEED_URL_THIN);
 
       // Use query parameter to set the google contacts version
-      query.setParam(CONTACTS_VERSION_NAME, CONTACTS_VERSION_NUMBER);
+      query.setParam(VERSION_PARAMETER, CONTACTS_VERSION_NUMBER);
 
       // Submit the request using the contacts service object
       contactService.getFeed(query, handleGroupsFeed, handleError);
@@ -178,6 +179,9 @@
 
       // Query for all calendars
       var query = new google.gdata.client.Query(CALENDAR_FEED_URL_FULL);
+
+      // Use query parameter to set the google contacts version
+      query.setParam(VERSION_PARAMETER, CALENDAR_VERSION_NUMBER);
 
       // Submit the request using the calendar service object
       calendarService.getOwnCalendarsFeed(query, handleCalendarsFeed, handleError);
