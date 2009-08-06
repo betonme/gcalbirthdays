@@ -1,8 +1,5 @@
 #summary List of Links, which are useful to develop the app
 
-= Introduction =
-List of Links, which are useful to develop the app.
-
 = Google API =
  * Google Data API http://code.google.com/intl/de-DE/apis/gdata/
  * Google Calendar APIs and Tools http://code.google.com/intl/de-DE/apis/calendar/
