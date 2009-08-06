@@ -115,7 +115,6 @@
 	    };
 
 	    function onClickAuthButton(){
-		  printConsole('Button Auth');
 	      var token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
 	      if (token) {
 	        // User is loged in
