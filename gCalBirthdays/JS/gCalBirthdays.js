@@ -123,6 +123,9 @@
     function handleGroupsFeed(feedRoot){
       var groupFeed = feedRoot.feed;
       var groups = groupFeed.entry;
+      //var groupsLen = (NOTDEF != typeof groups) ? groups.length : 0;
+      //handleGroupsFeed.state = handleGroupsFeed.state + groupsLen;
+      //printConsole('Group(s) query state: ' + handleGroupsFeed.state + '/' + groupFeed.openSearch$totalResults.$t);
 
       // Replace 'System Group: ' with an identifier
       var id = 0;
@@ -181,7 +184,10 @@
     function handleCalendarsFeed(feedRoot){
       var calFeed = feedRoot.feed;
       var calendars = calFeed.getEntries();
-      alert(calFeed.getTotalResults().$t);
+      //var calendarsLen = (NOTDEF != typeof calendars) ? calendars.length : 0;
+      //handleCalendarsFeed.state = handleCalendarsFeed.state + calendarsLen;
+      //printConsole('Calendars(s) query state: ' + handleCalendarsFeed.state + '/' + calFeed.openSearch$totalResults.$t);
+
       // Sort calendars
       calendars.sort(compareEntries);
 
