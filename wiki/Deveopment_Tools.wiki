@@ -6,6 +6,8 @@
   * Embedded Firefox Support (XUL-based) 1.2.7.024747	
  * Aptana Studio 1.5.1 Eclipse Plugin http://www.aptana.com/
   * Do not update to Embedded Firefox Support (XUL-based)	1.5.0.25247-67b08OGHNN14272164
+   * (https://developer.mozilla.org/de/XULRunner)
+   * (http://ftp.mozilla.org/pub/mozilla.org/xulrunner/eclipse/)
  * Firebug 1.4.0 http://getfirebug.com/ (http://support.aptana.com/asap/browse/STU-4501)
 
 = Configuration Management =
@@ -15,6 +17,7 @@
 = Additional Tools =
  * Anyedit tools plugin for Eclipse 2.2.0 http://andrei.gmxhome.de/anyedit/index.html
  * HTML Tidy Eclipse Plugin 1.2.2 http://eclipsetidy.sourceforge.net/ 
+ * View Dependencies 0.3.3.0 https://addons.mozilla.org/en-US/firefox/addon/2214
 
 = Tested with =
  * Firefox 3.5
