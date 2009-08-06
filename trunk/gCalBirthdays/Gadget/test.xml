@@ -67,7 +67,7 @@
 	    //IE JScript 5.6 Compatibility
 	    // Constants
 	    var APP_NAME = 'gCalBirthdays';
-	    var APP_VERSION = '2.009';
+	    var APP_VERSION = '2.010';
 
         var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
@@ -120,11 +120,12 @@
 	      if (token) {
 	        // User is loged in
 	        google.accounts.user.logout();
+	        alert('logout');
 	      }
 	      else {
 	        // User is loged out
-			// Use AuthSub Authentication
 	        token = google.accounts.user.login(GOOGLE_FEED_AUTH);
+	        alert('login');
 	      }
 	      setupMyService();
 	    }
@@ -210,21 +211,6 @@
 	        }
 	      }
 	    }
-
-/*
-	    function onClickAuthButton(){
-	      var token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
-	      if (token) {
-	        // User is loged in
-	        google.accounts.user.logout();
-	      }
-	      else {
-	        // User is loged out
-	        token = google.accounts.user.login(GOOGLE_FEED_AUTH);
-	      }
-	      init();
-	    };
-*/
 
       </script>
 
