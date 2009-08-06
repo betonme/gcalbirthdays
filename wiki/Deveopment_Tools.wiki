@@ -3,7 +3,10 @@
 = Development Tools =
  * Eclipse IDE for Java EE Developers 3.5 (Galileo) http://www.eclipse.org/
  * Aptana Studio 1.5.0 Eclipse Plugin http://www.aptana.com/
- * Firebug 1.4.0 http://getfirebug.com/ 
+  * Embedded Firefox Support (XUL-based) 1.2.7.024747	
+ * Aptana Studio 1.5.1 Eclipse Plugin http://www.aptana.com/
+  * Do not update to Embedded Firefox Support (XUL-based)	1.5.0.25247-67b08OGHNN14272164
+ * Firebug 1.4.0 http://getfirebug.com/ (http://support.aptana.com/asap/browse/STU-4501)
 
 = Configuration Management =
  * Subversive 0.7.8 http://www.eclipse.org/subversive/
