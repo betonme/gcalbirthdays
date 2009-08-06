@@ -124,12 +124,6 @@
       var groupFeed = feedRoot.feed;
       var groups = groupFeed.entry;
 
-      // Clear options
-      //selectClearOptions('groupSelectID');
-
-      // Add all contacts option
-      //selectAddOption('groupSelectID', ALL_CONTACTS, '');
-
       // Replace 'System Group: ' with an identifier
       var id = 0;
       // IE JScript 5.6 Compatibility
@@ -153,7 +147,6 @@
       var idl = groupList.length;
       for (var ie = 0; ie < len; ie++) {
         var group = groups[ie];
-        //selectAddOption('groupSelectID', group.title.$t, group.id.$t);
         groupList[idl++] = { title: html_entity_decode(group.title.$t), id: group.id.$t };
       }
 
@@ -164,10 +157,6 @@
         printConsole('Group NextURL: ' + nextURL);
         return getGroups(nextURL);
       }
-
-      // Set selection and size
-      //selectSetSelectedIndex('groupSelectID', 0);
-      //selectSetSizeOptions('groupSelectID');
 
       // Next step: show groups
       showGroups(0);
@@ -192,10 +181,7 @@
     function handleCalendarsFeed(feedRoot){
       var calFeed = feedRoot.feed;
       var calendars = calFeed.getEntries();
-
-//      // Clear options
-//      selectClearOptions('calendarSelectID');
-
+      alert(calFeed.getTotalResults().$t);
       // Sort calendars
       calendars.sort(compareEntries);
 
@@ -207,7 +193,6 @@
       var len = calendars.length;
       for (var ie = 0; ie < len; ie++) {
         var calendar = calendars[ie];
-        //selectAddOption('calendarSelectID', calendar.getTitle().getText(), calendar.getLink().href);
         calendarList[idl++] = { title: html_entity_decode(calendar.getTitle().getText()), url: calendar.getLink().href };
 
         // Select first calendar which contains
@@ -231,13 +216,6 @@
         printConsole('Calendars NextURL: ' + nextURL);
         return getCalendars(nextURL);
       }
-
-//      // Add new calendar option
-//      selectAddOption('calendarSelectID', NEW_CALENDAR, '');
-//
-//      // Set selection and size
-//      selectSetSelectedIndex('calendarSelectID', selId);
-//      selectSetSizeOptions('calendarSelectID');
 
       // Next step: show calendars
       showCalendars(selId);
@@ -327,6 +305,54 @@
       contactService.getFeed(contactURL, handleContactsFeed, handleError);
     }
 
+    function handleContactsFeed(feedRoot){
+      var conFeed = feedRoot.feed;
+      var contacts = conFeed.entry;
+      var contactsLen = (NOTDEF != typeof contacts) ? contacts.length : 0;
+      handleContactsFeed.state = handleContactsFeed.state + contactsLen;
+      printConsole('Contact(s) query state: ' + handleContactsFeed.state + '/' + conFeed.openSearch$totalResults.$t);
+
+      // IE JScript 5.6 Compatibility
+      if (NOTDEF != typeof contacts) {
+        var idl = contactList.length;
+        for (var ie = 0; ie < contactsLen; ie++) {
+          var contact = contacts[ie];
+          // Push only if contact has a title
+          if (NOTDEF != typeof contact.title.$t) {
+            // Push only if contact has a birthday
+            if (NOTDEF != typeof contact.gContact$birthday) {
+              // Complete push is not necessary becasue we need only the title and birthday
+              contactList[idl++] = { title: html_entity_decode(contact.title.$t), birthday: contact.gContact$birthday.when };
+            }
+          }
+        }
+      }
+
+      // Check statemachine
+      if (states.canceled == statemachine) {
+        printConsole('handleContactsFeed: ' + 'canceled');
+        return;
+      }
+
+      // Get next page if it exists
+      if (NOTDEF != typeof conFeed.link[5]) {
+        // link[5].rel = 'next'
+        var nextURL = conFeed.link[5].href;
+        printConsole('Contact NextURL: ' + nextURL);
+        return getContacts(nextURL);
+      }
+
+      printConsole ('Contact(s) with Birthday: ' + contactList.length);
+      if (0 == contactList.length) {
+        onclickStop();
+        return;
+      }
+
+      // Next step: Check events
+      showContacts();
+      checkBirthdays(states.fincontacts);
+    }
+
     function queryEvents(calendarURL){
       printConsole('Query Events');
 
@@ -343,6 +369,58 @@
     function getEvents(eventURL){
       // Submit the request using the calendar service object
       calendarService.getEventsFeed(eventURL, handleEventsFeed, handleError);
+    }
+
+
+    function handleEventsFeed(feedRoot){
+      var eventFeed = feedRoot.feed;
+      var events = eventFeed.entry;
+      var eventsLen = events.length;
+      handleEventsFeed.state = handleEventsFeed.state + eventsLen;
+      printConsole('Event(s) query state: ' + handleEventsFeed.state + '/' + eventFeed.getTotalResults().$t);
+
+      // IE JScript 5.6 Compatibility
+      if (NOTDEF != typeof events) {
+        for (var ie = 0; ie < eventsLen; ie++) {
+          var event = events[ie];
+          // Push only if event has a title
+          if (NOTDEF != typeof event.getTitle()) {
+            // Push only if event has content
+            if (NOTDEF != typeof event.getContent()) {
+              if (NOTDEF != typeof event.getContent().getText()) {
+                // Push only if event is created by us
+                if (-1 != event.getContent().getText().search(APP_NAME)) {
+                  // Complete push is necessary becasue we need the whole event content
+                  event.setTitle(google.gdata.Text.create(html_entity_decode(event.getTitle().getText())));
+                  eventList.push(event);
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Check statemachine
+      if (states.canceled == statemachine) {
+        printConsole('handleEventsFeed: ' + 'canceled');
+        return;
+      }
+
+      // Get next page if it exists
+      if (NOTDEF != typeof eventFeed.getNextLink()) {
+        return getEvents(eventFeed.getNextLink().href);
+      }
+
+      // Get URL to post/add events
+      // link[2].rel = 'http://schemas.google.com/g/2005#post'
+      postURL = eventFeed.getEntryPostLink().href;
+      printConsole('Event PostURL: ' + postURL);
+
+      printConsole('Event(s) with Birthday: ' + eventList.length);
+
+      // Next step: Check events
+      showEvents();
+      checkBirthdays(states.finevents);
     }
 
     /**
