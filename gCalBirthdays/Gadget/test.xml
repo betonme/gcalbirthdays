@@ -67,7 +67,7 @@
 	    //IE JScript 5.6 Compatibility
 	    // Constants
 	    var APP_NAME = 'gCalBirthdays';
-	    var APP_VERSION = '2.010';
+	    var APP_VERSION = '2.011';
 
         var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
