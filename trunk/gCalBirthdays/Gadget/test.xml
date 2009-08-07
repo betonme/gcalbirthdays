@@ -67,7 +67,7 @@
 	    //IE JScript 5.6 Compatibility
 	    // Constants
 	    var APP_NAME = 'gCalBirthdays';
-	    var APP_VERSION = '2.014';
+	    var APP_VERSION = '2.015';
 
         var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
@@ -137,7 +137,8 @@
 	          // window is closed.
 	          var popup = shindig.oauth.popup({
 	            destination: response.oauthApprovalUrl,
-	            windowOptions: null,
+	            //windowOptions: null,
+	            windowOptions: 'height=600,width=800',
 	            onOpen: function() { showOneSection('waiting'); },
 	            onClose: function() { fetchData(); }
 	          });
@@ -151,6 +152,7 @@
 	          var approvaldone = document.getElementById('approvaldone');
 	          approvaldone.onclick = popup.createApprovedOnClick();
 	          showOneSection('approval');
+	          gadgets.window.adjustHeight();
 
 	        } else if (response.feed) {
 				alert('2');
