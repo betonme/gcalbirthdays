@@ -67,7 +67,7 @@
 	    //IE JScript 5.6 Compatibility
 	    // Constants
 	    var APP_NAME = 'gCalBirthdays';
-	    var APP_VERSION = '2.013';
+	    var APP_VERSION = '2.014';
 
         var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
@@ -116,8 +116,8 @@
 
 	    function onClickAuthButton(){
           // User is loged in
-          google.accounts.user.logout();
       alert('logout');
+          google.accounts.user.logout();
 	      setupMyService();
 	    }
 
@@ -204,6 +204,19 @@
 	    }
 
       </script>
+
+    <!--Google Analytics-->
+    <script type="text/javascript">
+      var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+      try {
+        var pageTracker = _gat._getTracker("UA-9798979-1");
+        pageTracker._trackPageview();
+      }
+      catch(err) {}
+    </script>
 
 	]]>
   </Content>
