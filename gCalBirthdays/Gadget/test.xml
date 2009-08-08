@@ -22,8 +22,7 @@
   	<![CDATA[
 
 	<style>
-
-	#settingslink {
+	settingslink {
 	  cursor: pointer;
 	  float:right;
 	  font-size: 80%;
@@ -78,7 +77,7 @@
 	    //IE JScript 5.6 Compatibility
 	    // Constants
 	    var APP_NAME = 'gCalBirthdays';
-	    var APP_VERSION = '2.016';
+	    var APP_VERSION = '2.017';
 
         var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
@@ -114,9 +113,9 @@
 
 	    function fetchData() {
 	      var callback = function(response) {
-	      alert(response.oauthApprovalUrl);
+	      //alert(response.oauthApprovalUrl);
 	        if (response.oauthApprovalUrl) {
-				alert('1');
+				//alert('1');
 	          // TODO: Display "Sign in" link (response.oauthApprovalUrl contains the URL)
 
 	          // Create the popup handler. The onOpen function is called when the user
@@ -125,7 +124,7 @@
 	          var popup = shindig.oauth.popup({
 	            destination: response.oauthApprovalUrl,
 	            //windowOptions: null,
-	            windowOptions: 'height=600,width=800',
+	            windowOptions: 'height=600,width=800,status=no,depent=yes',
 	            onOpen: function() { showOneSection('waiting'); },
 	            onClose: function() { fetchData(); }
 	          });
@@ -142,7 +141,7 @@
 	          gadgets.window.adjustHeight();
 
 	        } else if (response.feed) {
-				alert('2');
+				//alert('2');
 	          // TODO: show results
 		      showOneSection('main');
 
@@ -150,7 +149,7 @@
 	          gadgets.window.adjustHeight();
 
 	        } else {
-			alert('3');
+			//alert('3');
 	          // TODO: handle the error
 
 	          // The response.oauthError and response.oauthErrorText values may help debug
