@@ -25,9 +25,9 @@
 		#settingslink {
 		  cursor: pointer;
 		  float: right;
-		  font-size: 8px;
+		  font-size: 10px;
 		  text-decoration: underline;
-		  padding: 0 5px 3px 0;
+		  color: blue;
 		}
 	  </style>
 
