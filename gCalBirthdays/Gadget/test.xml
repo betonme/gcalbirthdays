@@ -21,39 +21,35 @@
   <Content type="html">
   	<![CDATA[
 
-	<style>
-	settingslink {
-	  cursor: pointer;
-	  float:right;
-	  font-size: 80%;
-	  padding: 0 5px 3px 0;
-	}
-	</style>
+	  <style type="text/css">
+		#settingslink {
+		  cursor: pointer;
+		  float: right;
+		  font-size: 8px;
+		  text-decoration: underline;
+		  padding: 0 5px 3px 0;
+		}
+	  </style>
 
-  <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
-  <p id="versionID">Version</p>
-  <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
+	  <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
+	  <p id="versionID">Version</p>
+	  <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
 
-  <div id="main" style="display: none">
+	  <div id="main" style="display: none">
+	  </div>
 
-  </div>
+	  <div id="approval" style="display: none">
+	    <img src="http://gadget-doc-examples.googlecode.com/svn/trunk/images/new.gif">
+	    <a href="#" id="personalize">Personalize this gadget</a>
+	  </div>
 
-  <div id="approval" style="display: none">
-    <img src="http://gadget-doc-examples.googlecode.com/svn/trunk/images/new.gif">
-    <a href="#" id="personalize">Personalize this gadget</a>
-  </div>
+	  <div id="waiting" style="display: none">
+	    Please click
+	    <a href="#" id="approvaldone">I've approved access</a>
+	    once you've approved access to your data.
+	  </div>
 
-  <div id="waiting" style="display: none">
-    Please click
-    <a href="#" id="approvaldone">I've approved access</a>
-    once you've approved access to your data.
-  </div>
-
-      <span id="settingslink" onclick="showSettings()">
-        <u>
-          settings
-        </u>
-      </span>
+      <span id="settingslink" onclick="showSettings()">settings</span>
 
 
 	  <!--http://phpjs.org/packages/view/396/name:7d67fb58ff9ab58f4d0e4e55221b50e7-->
@@ -77,7 +73,7 @@
 	    //IE JScript 5.6 Compatibility
 	    // Constants
 	    var APP_NAME = 'gCalBirthdays';
-	    var APP_VERSION = '2.017';
+	    var APP_VERSION = '2.018';
 
         var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
