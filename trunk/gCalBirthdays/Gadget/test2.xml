@@ -67,7 +67,8 @@ div.wrap {
 <!-- make all links with the 'rel' attribute open overlays -->
 <script>
 
-$(function() {
+
+gadgets.util.registerOnLoadHandler($(function() {
 
 	// if the function argument is given to overlay, it is assumed to be the onBeforeLoad event listener
 	$("a[rel]").overlay(function() {
@@ -80,7 +81,7 @@ $(function() {
 			wrap.load(this.getTrigger().attr("href"));
 		}
 	});
-});
+}););
 
 </script>
 
