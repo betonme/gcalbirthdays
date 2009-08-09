@@ -81,7 +81,8 @@ gadgets.util.registerOnLoadHandler($(function() {
 			wrap.load(this.getTrigger().attr("href"));
 		}
 	});
-}););
+});
+);
 
 </script>
 
