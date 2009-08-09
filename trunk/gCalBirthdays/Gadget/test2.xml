@@ -49,7 +49,7 @@ div.wrap {
 
 
 <!-- external page is given in the href attribute (as it should be) -->
-<a href="www.google.com" rel="#overlay">
+<a href="http://www.google.com" rel="#overlay">
 
 	<!-- remember that you can use any element inside the anchor tag -->
 
