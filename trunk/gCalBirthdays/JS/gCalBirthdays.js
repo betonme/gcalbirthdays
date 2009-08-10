@@ -58,19 +58,16 @@
     var DATE_FORMAT_CALENDAR = 'yyyyMMdd';
     var DATE_FORMAT_YEAR = 'yyyy';
 
-    var ICAL_BREAK = '\r\n'; // '\n'
-
-    var REMINDER_DAYS = 14;
-
+    var GROUP_SEPARATOR = ',';
     var MAX_RESULT = 10;
+    var REMINDER_DAYS = 14;
+    var ICAL_BREAK = '\r\n'; // '\n'
 
     // Variables
     var contactService;
     var calendarService;
 
     // Shared Constants
-    var GROUP_SEPARATOR = ',';
-    var NOTDEF = 'undefined';
     var states = {setup:{}, fingroups:{}, fincalendars:{}, fincontacts:{}, finevents:{}, started:{}, canceled:{}, finished:{}};
 
     // Shared Variables
@@ -100,8 +97,8 @@
       groupList = new Array();
       calendarList = new Array();
 
-      handleGroupsFeed.state = 0;
-      handleCalendarsFeed.state = 0;
+      handleGroupsFeed.progress = 0;
+      handleCalendarsFeed.progress = 0;
 
       queryGroups();
       queryCalendars();
@@ -131,9 +128,9 @@
     function handleGroupsFeed(feedRoot){
       var groupFeed = feedRoot.feed;
       var groups = groupFeed.entry;
-      //var groupsLen = (NOTDEF != typeof groups) ? groups.length : 0;
-      //handleGroupsFeed.state = handleGroupsFeed.state + groupsLen;
-      //printConsole('Group(s) query state: ' + handleGroupsFeed.state + '/' + groupFeed.openSearch$totalResults.$t);
+      //var groupsLen = (undefined != groups) ? groups.length : 0;
+      //handleGroupsFeed.progress = handleGroupsFeed.progress + groupsLen;
+      //printConsole('Group(s) query progress: ' + handleGroupsFeed.progress + '/' + groupFeed.openSearch$totalResults.$t);
 
       // Replace 'System Group: ' with an identifier
       var id = 0;
@@ -162,12 +159,14 @@
       }
 
       // Get next page if it exists
-      if (NOTDEF != typeof groupFeed.link[5]) {
-        // link[5].rel = 'next'
-        var nextURL = groupFeed.link[5].href;
-        printConsole('Group NextURL: ' + nextURL);
-        return getGroups(nextURL);
-      }
+//      if (undefined != groupFeed.link[5]) {
+//        // link[5].rel = 'next'
+//        var nextURL = groupFeed.link[5].href;
+//        printConsole('Group NextURL: ' + nextURL);
+//        return getGroups(nextURL);
+//      }
+
+      printConsole ('Group(s): ' + groupList.length);
 
       // Next step: show groups
       showGroups(0);
@@ -195,9 +194,9 @@
     function handleCalendarsFeed(feedRoot){
       var calFeed = feedRoot.feed;
       var calendars = calFeed.getEntries();
-      //var calendarsLen = (NOTDEF != typeof calendars) ? calendars.length : 0;
-      //handleCalendarsFeed.state = handleCalendarsFeed.state + calendarsLen;
-      //printConsole('Calendars(s) query state: ' + handleCalendarsFeed.state + '/' + calFeed.openSearch$totalResults.$t);
+      //var calendarsLen = (undefined != calendars) ? calendars.length : 0;
+      //handleCalendarsFeed.progress = handleCalendarsFeed.progress + calendarsLen;
+      //printConsole('Calendars(s) query progress: ' + handleCalendarsFeed.progress + '/' + calFeed.openSearch$totalResults.$t);
 
       // Sort calendars
       calendars.sort(compareEntries);
@@ -214,8 +213,8 @@
 
         // Select first calendar which contains
         // [Birthdays|Geburtstag]
-        if (NOTDEF != calendar.getTitle()) {
-          if (NOTDEF != calendar.getTitle().getText()) {
+        if (undefined != calendar.getTitle()) {
+          if (undefined != calendar.getTitle().getText()) {
             if (-1 != calendar.getTitle().getText().search(/(Birthday|Geburtstag)/i)) {
               if (-1 == selId) {
                 selId = i;
@@ -227,12 +226,14 @@
       }
 
       // Get next page if it exists
-      if (NOTDEF != typeof calFeed.link[5]) {
-        // link[5].rel = 'next'
-        var nextURL = calFeed.link[5].href;
-        printConsole('Calendars NextURL: ' + nextURL);
-        return getCalendars(nextURL);
-      }
+//      if (undefined != calFeed.link[5]) {
+//        // link[5].rel = 'next'
+//        var nextURL = calFeed.link[5].href;
+//        printConsole('Calendars NextURL: ' + nextURL);
+//        return getCalendars(nextURL);
+//      }
+
+      printConsole ('Calendar(s): ' + calendarList.length);
 
       // Next step: show calendars
       showCalendars(selId);
@@ -288,27 +289,31 @@
       contactList = new Array();
       eventList = new Array();
 
-      handleContactsFeed.state = 0;
-      handleEventsFeed.state = 0;
+      handleContactsFeed.progress = 0;
+      handleEventsFeed.progress = 0;
 
-      checkBirthdays.contacts = false;
-      checkBirthdays.events = false;
+      transferBirthdays.contacts = false;
+      transferBirthdays.events = false;
 
       statemachine = states.started;
       printConsole('StateMachine: ' + 'started');
 
-      queryContacts(groupId);
+      resetProgress();
+
+      queryContacts(groupId.join(GROUP_SEPARATOR));
       queryEvents(calendarURL);
     }
 
     function queryContacts(groupId){
       printConsole('Query Contacts');
 
+      groupId = cleanupURL(groupId);
+
       // Query for all the contacts entry with this contact group
       var query = new google.gdata.client.Query(CONTACTS_FEED_URL_THIN);
 
       // Use query parameter to set the google contacts version
-      query.setParam(CONTACTS_VERSION_NAME, CONTACTS_VERSION_NUMBER);
+      query.setParam(VERSION_PARAMETER, CONTACTS_VERSION_NUMBER);
 
       // No groupId - get all contacts
       if ('' != groupId) {
@@ -331,25 +336,28 @@
     function handleContactsFeed(feedRoot){
       var conFeed = feedRoot.feed;
       var contacts = conFeed.entry;
-      var contactsLen = (NOTDEF != typeof contacts) ? contacts.length : 0;
-      handleContactsFeed.state = handleContactsFeed.state + contactsLen;
-      printConsole('Contact(s) query state: ' + handleContactsFeed.state + '/' + conFeed.openSearch$totalResults.$t);
+      var contactsLen = (undefined != contacts) ? contacts.length : 0;
+      handleContactsFeed.progress = handleContactsFeed.progress + contactsLen;
 
       // IE JScript 5.6 Compatibility
-      if (NOTDEF != typeof contacts) {
+      if (undefined != contacts) {
         var idl = contactList.length;
         for (var ie = 0; ie < contactsLen; ie++) {
           var contact = contacts[ie];
           // Push only if contact has a title
-          if (NOTDEF != typeof contact.title.$t) {
+          if (undefined != contact.title.$t) {
             // Push only if contact has a birthday
-            if (NOTDEF != typeof contact.gContact$birthday) {
+            if (undefined != contact.gContact$birthday) {
               // Complete push is not necessary becasue we need only the title and birthday
               contactList[idl++] = { title: html_entity_decode(contact.title.$t), birthday: contact.gContact$birthday.when };
             }
           }
         }
       }
+
+      // Set progress
+      setProgressContacts(calcProgress(handleContactsFeed.progress, parseInt(conFeed.openSearch$totalResults.$t)));
+      printConsole('Contact(s) query progress: ' + handleContactsFeed.progress + ' / ' + conFeed.openSearch$totalResults.$t);
 
       // Check statemachine
       if (states.canceled == statemachine) {
@@ -358,29 +366,59 @@
       }
 
       // Get next page if it exists
-      if (NOTDEF != typeof conFeed.link[5]) {
-        // link[5].rel = 'next'
-        var nextURL = conFeed.link[5].href;
-        printConsole('Contact NextURL: ' + nextURL);
-        return getContacts(nextURL);
+      // link[5|6].rel = 'next'
+      var len = conFeed.link.length;
+      for (var il = 0; il < len; il++) {
+        var link = conFeed.link[il];
+        if ( 'next' == link.rel ) {
+          return getContacts(link.href);
+        }
       }
 
       printConsole ('Contact(s) with Birthday: ' + contactList.length);
       if (0 == contactList.length) {
+        setProgressContacts(100, true);
+        setProgressEvents(100, true);
+        setProgressTransfer(100, true);
+   //TODO
         onclickStop();
         return;
       }
 
       // Next step: Check events
-      showContacts();
-      checkBirthdays(states.fincontacts);
+      printContacts();
+      transferBirthdays(states.fincontacts);
+    }
+
+    function printContacts(){
+      // IE JScript 5.6 Compatibility
+      var lconlist = contactList;
+      var len = lconlist.length;
+      for (var ie = 0; ie < len; ie++) {
+        var contact = lconlist[ie];
+        // ContactsService v3 GoogleService WorkAround
+        var text = contact.title + ' ' + contact.birthday;
+        printConsole('Contact: ' + text);
+      }
     }
 
     function queryEvents(calendarURL){
       printConsole('Query Events');
 
+      calendarURL = cleanupURL(calendarURL);
+
       // Query for all the events entry within given calendarid
       var query = new google.gdata.calendar.CalendarEventQuery(calendarURL);
+
+      // Use query parameter to set the google contacts version
+      //already set in calendar feed url
+      //query.setParam(VERSION_PARAMETER, CALENDAR_VERSION_NUMBER);
+
+      // There is no calendarid in the api
+      //if ('' != calendarId) {
+      //  // Use query parameter to set the groupId
+      //  query.setParam('calendar', calendarId);
+      //}
 
       // Set max results per query / items per page
       query.setMaxResults(MAX_RESULT);
@@ -399,18 +437,17 @@
       var eventFeed = feedRoot.feed;
       var events = eventFeed.entry;
       var eventsLen = events.length;
-      handleEventsFeed.state = handleEventsFeed.state + eventsLen;
-      printConsole('Event(s) query state: ' + handleEventsFeed.state + '/' + eventFeed.getTotalResults().$t);
+      handleEventsFeed.progress = handleEventsFeed.progress + eventsLen;
 
       // IE JScript 5.6 Compatibility
-      if (NOTDEF != typeof events) {
+      if (undefined != events) {
         for (var ie = 0; ie < eventsLen; ie++) {
           var event = events[ie];
           // Push only if event has a title
-          if (NOTDEF != typeof event.getTitle()) {
+          if (undefined != event.getTitle()) {
             // Push only if event has content
-            if (NOTDEF != typeof event.getContent()) {
-              if (NOTDEF != typeof event.getContent().getText()) {
+            if (undefined != event.getContent()) {
+              if (undefined != event.getContent().getText()) {
                 // Push only if event is created by us
                 if (-1 != event.getContent().getText().search(APP_NAME)) {
                   // Complete push is necessary becasue we need the whole event content
@@ -423,6 +460,10 @@
         }
       }
 
+      // Set progress
+      setProgressEvents(calcProgress(handleEventsFeed.progress, parseInt(eventFeed.getTotalResults().$t)));
+      printConsole('Event(s) query progress: ' + handleEventsFeed.progress + ' / ' + eventFeed.getTotalResults().$t);
+
       // Check statemachine
       if (states.canceled == statemachine) {
         printConsole('handleEventsFeed: ' + 'canceled');
@@ -430,97 +471,117 @@
       }
 
       // Get next page if it exists
-      if (NOTDEF != typeof eventFeed.getNextLink()) {
+      if (undefined != eventFeed.getNextLink()) {
         return getEvents(eventFeed.getNextLink().href);
       }
 
       // Get URL to post/add events
       // link[2].rel = 'http://schemas.google.com/g/2005#post'
       postURL = eventFeed.getEntryPostLink().href;
-      printConsole('Event PostURL: ' + postURL);
+      //printConsole('Event PostURL: ' + postURL);
 
       printConsole('Event(s) with Birthday: ' + eventList.length);
 
       // Next step: Check events
-      showEvents();
-      checkBirthdays(states.finevents);
+      printEvents();
+      transferBirthdays(states.finevents);
+    }
+
+    function printEvents(){
+      // IE JScript 5.6 Compatibility
+      var levlist = eventList;
+      var len = levlist.length;
+      for (var ie = 0; ie < len; ie++) {
+        var event = levlist[ie];
+        var text = event.getTitle().getText();
+        printConsole('Event: ' + text);
+      }
     }
 
     /**
-     * Compare contacts and events.
+     * Transfer birthdays:
+     *  Compare contacts and events:
+     *  - Add new birthdays
+     *  - Update wrong birthdays
+     *  - Skip correct birthdays
      */
-    function checkBirthdays(state){
+    function transferBirthdays(state){
       var lconlist = contactList;
       var levlist = eventList;
+      var progress = 0;
 
-        // Wait for both queries (queryContacts/queryEvents) finished
-        // Both lists (contactList/eventList) are filled
+      // Wait for both queries (queryContacts/queryEvents) finished
+      // Both lists (contactList/eventList) are filled
       if ( states.fincontacts == state) {
-        checkBirthdays.contacts = true;
+        transferBirthdays.contacts = true;
       }
       if ( states.finevents == state) {
-        checkBirthdays.events = true;
+        transferBirthdays.events = true;
       }
 
-      if (checkBirthdays.contacts && checkBirthdays.events) {
-          var exists = false;
-          // IE JScript 5.6 Compatibility
-          if (NOTDEF != typeof lconlist) {
-        var lencon = lconlist.length;
-            for (var iec = 0; iec < lencon; iec++) {
-              var contact = lconlist[iec];
-
-        if (states.canceled == statemachine) {
-            printConsole('handleEventsFeed: ' + 'canceled');
-          return;
-        }
-              exists = false;
-              var date = contact.birthday.replace(/-/g, '');
-
-              // IE JScript 5.6 Compatibility
-              if (NOTDEF != typeof levlist) {
-          var lenev = levlist.length;
-                for (var iee = 0; iee < lenev; iee++) {
-                  var event = levlist[iee];
-
-          if (states.canceled == statemachine) {
+      if (transferBirthdays.contacts && transferBirthdays.events) {
+        var exists = false;
+        // IE JScript 5.6 Compatibility
+        if (undefined != lconlist) {
+          var lencon = lconlist.length;
+          for (var iec = 0; iec < lencon; iec++) {
+            var contact = lconlist[iec];
+            if (states.canceled == statemachine) {
               printConsole('handleEventsFeed: ' + 'canceled');
-            return;
-          }
+              return;
+            }
+            exists = false;
+            var date = contact.birthday.replace(/-/g, '');
 
-                  // Search for contact title
-                  if (-1 != event.getTitle().getText().search(contact.title)) {
-                    exists = true;
+            // IE JScript 5.6 Compatibility
+            if (undefined != levlist) {
+              var lenev = levlist.length;
+              for (var iee = 0; iee < lenev; iee++) {
+                var event = levlist[iee];
 
-                    // Event found for given contact
-                    // Check date
-                    if (-1 != event.getRecurrence().getValue().search(date)) {
-                      // Date correct - do nothing
-                      printConsole('Event correct: ' + contact.title);
-            break;
-                    }
-                    else {
-                      // Date not correct - Update event
-                      printConsole('Event to update: ' + contact.title);
-                      updateEvent(event, contact, date);
-            break;
-                    }
+                if (states.canceled == statemachine) {
+                  printConsole('handleEventsFeed: ' + 'canceled');
+                  return;
+                }
+
+                // Search for contact title
+                if (-1 != event.getTitle().getText().search(contact.title)) {
+                  exists = true;
+
+                  // Event found for given contact
+                  // Check date
+                  if (-1 != event.getRecurrence().getValue().search(date)) {
+                    // Date correct - do nothing
+                    printConsole('Event correct: ' + contact.title);
+                    break;
+                  }
+                  else {
+                    // Date not correct - Update event
+                    printConsole('Event to update: ' + contact.title);
+                    updateEvent(event, contact, date);
+                    break;
                   }
                 }
               }
-              if (false == exists) {
-                // Event not found for given contact - Add/Create event
-                printConsole('Event to add: ' + contact.title);
-                insertEvent(postURL, contact, date);
-              }
             }
-          }
+            if (false == exists) {
+              // Event not found for given contact - Add/Create event
+              printConsole('Event to add: ' + contact.title);
+              insertEvent(postURL, contact, date);
+            }
 
-          // Finished
-          onfinishedSync();
-          printConsole('Finished!');
+            // Set progress
+            progress++;
+            setProgressTransfer(calcProgress(progress, lencon));
+            printConsole('Brithday(s) transfer progress: ' + progress + ' / ' + lencon);
+          }
         }
+
+        // Finished
+        onfinishedSync();
+        printConsole('Finished!');
       }
+    }
 
     /**
      * Event functions.
@@ -566,7 +627,7 @@
         // To comply with Java long date
         // (http://java.sun.com/j2se/1.3/docs/api/java/util/Date.html#Date(long))
         date = '1970' + date;
-        printConsole('Date set year 1970!');
+        printInfo('Date: No year specified - set to 1970!');
       }
       eventEntry.setTitle(google.gdata.Text.create(htmlentities(contact.title + EVENT_TITLE_SUFFIX + ' (Born ' + stringDate + ')')));
       eventEntry.setContent(google.gdata.Text.create(EVENT_SUMMARY_SUFFIX));
@@ -596,12 +657,12 @@
      * HTML Select helper functions.
      */
     function selectSetSelectedIndex(id, selId){
-      var elSel = document.getElementById(id);
+      var elSel = $(id);
       elSel.selectedIndex = selId>0 ? selId : 0;
     }
 
     function selectSetSizeOptions(id, selSize){
-      var elSel = document.getElementById(id);
+      var elSel = $(id);
       if ( null == selSize ) {
         selSize = elSel.length;
       }
@@ -609,11 +670,11 @@
     }
 
     function selectClearOptions(id){
-      document.getElementById(id).length = 0;
+      $(id).length = 0;
     }
 
     function selectInsertOption(id, text, value){
-      var elSel = document.getElementById(id);
+      var elSel = $(id);
       var elSelId;
       var len = elSel.length;
       for (elSelId = 0; elSelId < len; elSelId++) {
@@ -629,7 +690,7 @@
     }
 
     function selectAddOption(id, text, value, elSelId){
-      var elSel = document.getElementById(id);
+      var elSel = $(id);
       var elOptNew = document.createElement('option');
       elOptNew.text = text;
       elOptNew.value = value;
@@ -653,11 +714,57 @@
     }
 
     function compareStrings(a, b){
+      a = a.toLowerCase();
+      b = b.toLowerCase();
       return (b < a) - (a < b);
     }
 
     function compareEntries(a, b){
-      return compareStrings(a.title.$t.toLowerCase(), b.title.$t.toLowerCase());
+      return compareStrings(a.title.$t, b.title.$t);
+    }
+
+    /**
+     * Query cleanup helper functions.
+     */
+    function cleanupURL(url) {
+      return url.replace(/\?.*/gi,'');
+    }
+
+    /**
+     * ProgressBar helper functions.
+     */
+
+    function resetProgress(){
+      setProgressContacts(0, true);
+      setProgressEvents(0, true);
+      setProgressTransfer(0, true);
+    }
+
+    function calcProgress(progress, total){
+      total = total>0 ? total : 1;
+      progress = progress>0 ? progress : 1;
+      return ((progress/total)*100).toFixed(0);
+    }
+
+    function setProgressContacts(progress, clear){
+      // Check statemachine
+      if (states.started == statemachine) {
+        myJsProgressBarHandler.setPercentage('progressBarContactsId', progress, clear)
+      }
+    }
+
+    function setProgressEvents(progress, clear){
+      // Check statemachine
+      if (states.started == statemachine) {
+        myJsProgressBarHandler.setPercentage('progressBarEventsId', progress, clear)
+      }
+    }
+
+    function setProgressTransfer(progress, clear){
+      // Check statemachine
+      if (states.started == statemachine) {
+        myJsProgressBarHandler.setPercentage('progressBarTransferId', progress, clear)
+      }
     }
 
     /**
@@ -665,21 +772,74 @@
      * retrieving a feed or adding an event.
      */
     function handleError(e){
+      var warn = false;
+
       // Warnings
-    if (NOTDEF != e.message) {
-      if (-1 != e.message.search(/Invalid JSON format/i)) {
+      if (undefined != e.message) {
+        if (-1 != e.message.search(/Invalid JSON format/gi)) {
           // Query is not interrupted!
-        printConsole('Warning: ' + e.message);
+          warn = true;
+          printWarn('Warning: ' + e.message);
+        }
       }
-    }
-    // Errors
-    else {
-      printConsole('Error message:    ' + e.message);
-      printConsole('Error fileName:   ' + e.fileName);
-      printConsole('Error lineNumber: ' + e.lineNumber);
-      if (NOTDEF != typeof e.cause) {
-        printConsole('Error cause:      ' + e.cause ? e.cause.statusText : e.message);
-      }
-      //printConsole('Error stack:      'e.stack);
+
+      // Errors
+      if (!warn) {
+        var textArray = new Array();
+        textArray[0] = 'handleError';
+        textArray[1] = 'Error message:    ' + e.message;
+        textArray[2] = 'Error fileName:   ' + e.fileName;
+        textArray[3] = 'Error lineNumber: ' + e.lineNumber;
+        textArray[4] = 'Error cause:      ' + (e.cause!=undefined ? e.cause.statusText : '');
+        //textArray[5] = 'Error stack:      'e.stack;
+        printErrorGroup(textArray);
       }
     };
+
+    /**
+     * Print to Firebug Console.
+     */
+    function printConsole(text){
+      printLog(text);
+    }
+
+    function printDebug(text){
+      try {
+        console.debug(text);
+      }catch(err) {}
+    }
+
+    function printLog(text){
+      try {
+        console.log(text);
+      }catch(err) {}
+    }
+
+    function printInfo(text){
+      try {
+        console.info(text);
+      }catch(err) {}
+    }
+
+    function printWarn(text){
+      try {
+        console.warn(text);
+      }catch(err) {}
+    }
+
+    function printError(text){
+      try {
+        console.error(text);
+      }catch(err) {}
+    }
+
+    function printErrorGroup(textArray){
+      try {
+        console.group(textArray[0]);
+        var len = textArray.length;
+        for (var i = 1; i < len; i++) {
+          console.error(textArray[i]);
+        }
+        console.groupEnd();
+      }catch(err) {}
+    }
