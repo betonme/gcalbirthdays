@@ -12,18 +12,18 @@
     <OAuth>
       <Service name="google">
         <Access url="https://www.google.com/accounts/OAuthGetAccessToken" method="GET" />
-    	<Request url="https://www.google.com/accounts/OAuthGetRequestToken?scope=http://www.google.com/m8/feeds/%20http://www.google.com/calendar/feeds/" method="GET" />
+      <Request url="https://www.google.com/accounts/OAuthGetRequestToken?scope=http://www.google.com/m8/feeds/%20http://www.google.com/calendar/feeds/" method="GET" />
         <Authorization url="https://www.google.com/accounts/OAuthAuthorizeToken?oauth_callback=http://oauth.gmodules.com/gadgets/oauthcallback" />
       </Service>
     </OAuth>
     <UserPref name="test" display_name="Color" default_value="Yellow" datatype="hidden"/>
   </ModulePrefs>
   <Content type="html">
-  	<![CDATA[
+    <![CDATA[
 
 
 <!--
-	this file includes all tools together with the jQuery library
+  this file includes all tools together with the jQuery library
 -->
 <script src="http://cdn.jquerytools.org/1.0.2/jquery.tools.min.js"></script>
 
@@ -35,45 +35,52 @@
 
 /* use a semi-transparent image for the overlay */
 #overlay {
-	background-image:url(http://static.flowplayer.org/img/overlay/transparent.png);
-	color:#efefef;
+  background-image:url(http://static.flowplayer.org/img/overlay/transparent.png);
+  color:#efefef;
 }
 
 /* container for external content. uses vertical scrollbar, if needed */
 div.wrap {
-	height:441px;
-	overflow-y:auto;
+  height:441px;
+  overflow-y:auto;
 }
 </style>
 
 
 
-<!-- external page is given in the href attribute (as it should be) -->
-<a href="http://www.google.com" rel="#overlay">
+<button type="button" onClick="openOverlay()">Open overlay</button>
 
-	<!-- remember that you can use any element inside the anchor tag -->
-
-	<button type="button">Show external page in overlay</button>
-</a>
-
-<!-- overlayed element -->
-<div class="overlay" id="overlay">
-
-	<!-- the external content is loaded inside this tag -->
-	<div class="wrap"></div>
-
+<!-- overlayed element, which is styled with the overlay.css stylesheet -->
+<div class="overlay petrol" id="overlay">
+  <!-- here is the content for the overlay, can be anything -->
+  <h2 style="margin:10px 0">Here is my overlay</h2>
+  <p style="float: left; margin:0px 20px 0 0;">
+    <img src="http://static.flowplayer.org/img/title/eye192.png" />
+  </p>
 </div>
+
 
 <!-- make all links with the 'rel' attribute open overlays -->
 <script>
 
 
+  gadgets.util.registerOnLoadHandler(setupGadget);
 
-gadgets.util.registerOnLoadHandler(setup);
+    function setupGadget(){
+      $(function() {
+        var api = $("#overlay").overlay({api:true});
+
+        // define function that opens the overlay
+        window.openOverlay = function() {
+            api.load();
+        };
+      });
+    };
+
 
 </script>
 
 
-	]]>
+  ]]>
   </Content>
 </Module>
