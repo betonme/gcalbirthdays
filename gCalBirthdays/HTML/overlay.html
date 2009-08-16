@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!-- DOCTYPE is always recommended. see: http://www.quirksmode.org/css/quirksmode.html -->
+
+
+<!--
+  This is the jQuery Tools standalone demo, the fastest way to get started.
+  You can freely copy things on your site. All demos can be found here:
+
+  http://flowplayer.org/tools/demos/
+
+  - cdn.jquerytools.org is available until the end of 2010 for testing
+  - css files should not be referenced from flowplayer.org when in production
+
+  Enjoy!
+-->
+
+
+<!--
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+  <script src="http://cdn.jquerytools.org/1.0.2/jquery.tools.min.js"></script>
+-->
+
+  <script language="JavaScript" type="text/javascript" src="jquery-1.3.2.js"></script>
+  <script language="JavaScript" type="text/javascript" src="jquery.tools.min.overlay.1.0.4.js"></script>
+<!--
+  <link rel="stylesheet" type="text/css" href="overlay-minimal.css"/>
+-->
+
+
+<!--
+<style>
+/* use a semi-transparent image for the overlay */
+#overlay {
+  background-image:url(overlay_transparent.png);
+  color:#efefef;
+}
+/* container for external content. uses vertical scrollbar, if needed */
+div.wrap {
+  height:441px;
+  overflow-y:auto;
+}
+</style>
+-->
+<style>
+
+/* the overlayed element */
+div.overlay {
+
+  /* growing background image */
+  /* background-image:url(../img/overlay/white.png); */
+  /*background-image:url(overlay_transparent.png);*/
+    color:#efefef;
+
+  float:left;
+
+  /* dimensions after the growing animation finishes  */
+  width:600px;
+  height:470px;
+
+  /* initially overlay is hidden */
+  display:none;
+
+  /* some padding to layout nested elements nicely  */
+  padding:5px;
+}
+
+/* default close button positioned on upper right corner */
+div.overlay div.close {
+  /*background-image:url(../img/overlay/close.png);*/
+  position:absolute;
+  right:5px;
+  top:5px;
+  cursor:pointer;
+  height:35px;
+  width:35px;
+}
+
+
+/* black */
+div.overlay.black {
+  /*background:url(../img/overlay/transparent.png) no-repeat !important;*/
+  color:#fff;
+}
+
+/* petrol */
+div.overlay.petrol {
+  /*background:url(../img/overlay/petrol.png) no-repeat !important;*/
+  color:#fff;
+}
+
+div.black h2, div.petrol h2 {
+  color:#ddd;
+}
+</style>
+
+
+
+<!-- 1 a link that triggers the overlay
+<button type="button" onClick="openOverlay()">Open overlay</button>
+
+<div class="overlay" id="overlay">
+  <h2 style="margin:10px 0">Here is my overlay</h2>
+  <p style="float: left; margin:0px 20px 0 0;">
+    <img src="overlay_eye192.png" />
+  </p>
+</div>
+
+<script>
+// make all links with the 'rel' attribute open overlays
+// install overlay with default settings
+$(function() {
+    var api = $("#overlay").overlay({api:true});
+
+    // define function that opens the overlay
+    window.openOverlay = function() {
+        $("#overlay").overlay({api:true}).load();  //OK
+        //api.load();  //ORG
+    }
+});
+</script>
+-->
+
+
+
+<!-- 2 external page is given in the href attribute (as it should be) -->
+<a href="http://www.google.com" rel="#overlay">
+  <button type="button">Show external page in overlay</button>
+</a>
+<br>
+<div class="overlay" id="overlay">
+  <div class="wrap"></div>
+</div>
+
+<script>
+// make all links with the 'rel' attribute open overlays
+$(function() {
+  // if the function argument is given to overlay, it is assumed to be the onBeforeLoad event listener
+  $("a[rel]").overlay(function() {
+
+    // grab wrapper element inside content
+    var wrap = this.getContent().find("div.wrap");
+
+    // load only for the first time it is opened
+    if (wrap.is(":empty")) {
+      wrap.load(this.getTrigger().attr("href"));
+    }
+  });
+});
+</script>
+
+
+
+
+<!-- 3
+<button type="button" onClick="openOverlay()">Open overlay</button>
+<div class="overlay" id="overlay">
+  <h2 style="margin:10px 0">Here is my overlay</h2>
+  <p style="float: left; margin:0px 20px 0 0;">
+    <img src="overlay_eye192.png" />
+  </p>
+</div>
+
+<script>
+
+$(function(){
+       var ab = top.document.createElement('button');
+       //a.style.display = 'none';
+       //a.class = this.class;
+       ab.type = "button";
+       //ab.onClick = 'function(){		api.load();		};';
+       ab.onClick = "openOverlay()";
+       ab.innerHTML = "Open overlay";
+       //ab.top = top.document;
+       top.document.body.appendChild(ab);
+       //$(ab).overlay({api:true});
+
+    var api = $("#overlay",top.document).overlay({api:true});
+
+    // define function that opens the overlay
+    window.openOverlay = function(){
+      api.load();
+    }
+});
+</script>
+-->
+
+
+<!-- 4
+<button type="button" onClick="openOverlay()">Open overlay</button>
+
+<script>
+// make all links with the 'rel' attribute open overlays
+// install overlay with default settings
+function openOverlay (){
+        parent.openOverlay();
+};
+
+</script>
+-->
