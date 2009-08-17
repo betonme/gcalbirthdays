@@ -55,7 +55,7 @@
       //IE JScript 5.6 Compatibility
       // Constants
       var APP_NAME = 'gCalBirthdays';
-      var APP_VERSION = '2.025';
+      var APP_VERSION = '2.027';
 
       var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
@@ -86,7 +86,7 @@
       };
 
       function showSettings() {
-        showOneSection('busyLoader');
+        showOneSection('busyloader');
         //queryGroupsAndCalendars();
       }
 
@@ -156,9 +156,9 @@
 
       function fetchData() {
         var callback = function(response) {
-        //alert(response.oauthApprovalUrl);
+        alert(response.oauthApprovalUrl);
           if (response.oauthApprovalUrl) {
-        //alert('1');
+        alert('1');
             // TODO: Display "Sign in" link (response.oauthApprovalUrl contains the URL)
 
             // Create the popup handler. The onOpen function is called when the user
@@ -184,7 +184,7 @@
             gadgets.window.adjustHeight();
 
           } else if (response.feed) {
-        //alert('2');
+        alert('2');
             // TODO: show results
           showOneSection('main');
 
@@ -192,7 +192,7 @@
             gadgets.window.adjustHeight();
 
           } else {
-      //alert('3');
+      alert('3');
             // TODO: handle the error
 
             // The response.oauthError and response.oauthErrorText values may help debug
@@ -224,7 +224,7 @@
       //
       // Added settings section
       function showOneSection(toshow) {
-        var sections = [ 'main', 'approval', 'waiting', 'busyLoader', 'settings' ];
+        var sections = [ 'main', 'approval', 'waiting', 'busyloader', 'settings' ];
         for (var i=0; i < sections.length; ++i) {
           var s = sections[i];
           var el = document.getElementById(s);
@@ -259,7 +259,7 @@
     </div>
 
     <div id="approval" style="display:none">
-      <img src="http://gadget-doc-examples.googlecode.com/svn/trunk/images/new.gif">
+      <img src="https://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Images/popup.gif">
       <a href="#" id="personalize">Personalize this gadget</a>
     </div>
 
