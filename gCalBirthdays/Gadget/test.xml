@@ -21,61 +21,10 @@
   <Content type="html">
     <![CDATA[
 
-    <style type="text/css">
-      #settingslink {
-        cursor: pointer;
-        font-size: 10px;
-        text-decoration: underline;
-        color: blue;
-        float: right;
-        padding: 0 3px 3px 0;
-      }
-    </style>
-
-    <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
-    <span id="versionID">Version</span>
-    <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
-
-    <div id="main" style="display:none">
-      <span id="settingslink" onclick="showSettings()">settings</span>
-    </div>
-
-    <div id="approval" style="display:none">
-      <img src="http://gadget-doc-examples.googlecode.com/svn/trunk/images/new.gif">
-      <a href="#" id="personalize">Login</a>
-    </div>
-
-    <div id="waiting" style="display:none">
-      Please click
-      <a href="#" id="approvaldone">I've approved access</a>
-      once you've approved access to your data.
-    </div>
-
-    <div id="settings" style="display:none">
-      <table cellspacing="0" cellpadding="5">
-        <tr valign="bottom">
-          <td style="padding-right: 30px">Select Group(s):</td>
-          <td style="padding-right: 30px">Select Calendar:</td>
-        </tr>
-        <tr valign="top">
-          <td style="padding-right: 30px">
-            <select id="groupSelectID" multiple="multiple" size="4"></select>
-          </td>
-          <td style="padding-right: 30px">
-            <select id="calendarSelectID" size="1" onchange="onChangeCalendarSelect()"></select>
-          </td>
-        </tr>
-      </table>
-      <br>
-      <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
-      <input id="stopButtonID" type="button" value="Cancel" onclick="onclickStop()" disabled="true">
-      <br>
-    </div>
-
     <!--http://code.google.com/p/gdata-javascript-client/-->
     <!--V1.10-->
     <!--http://www.google.com/uds/modules/gdata/gdata.js-->
-    <!--<script type="text/javascript" src="http://www.google.com/jsapi"></script>-->
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
     <!--
     <script type="text/javascript" src="http://www.google.com/jsapi?autoload=%7Bmodules%3A%5B%7Bname%3Agdata%2Cversion%3A1.x%2Cpackages%3A%5Bcontacts%2Ccalendar%5D%7D%5D%7D"></script>
     -->
@@ -106,7 +55,7 @@
       //IE JScript 5.6 Compatibility
       // Constants
       var APP_NAME = 'gCalBirthdays';
-      var APP_VERSION = '2.021';
+      var APP_VERSION = '2.023';
 
       var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
@@ -115,27 +64,89 @@
       gadgets.util.registerOnLoadHandler(initGadget);
 
       function initGadget() {
-          // Load the Google data JS Client Library
-          //google.load('gdata', '1.x');
-          // Save overhead, only load the necessary service
-          google.load("gdata", "1.x", {packages: ['contacts', 'calendar']});
+        // Load the Google data JS Client Library
+        //google.load('gdata', '1.x');
+        // Save overhead, only load the necessary service
+        google.load("gdata", "1.x", {packages: ['contacts', 'calendar']});
 
         // Tells the google JS lib to call the init function once loaded
-        google.setOnLoadCallback(setupMyService);
+        google.setOnLoadCallback(setupGadget);
       }
 
-      function setupMyService(){
+      function setupGadget(){
         myService = new google.gdata.calendar.CalendarService(APP_NAME);
         myService.useOAuth('google');
 
-        document.getElementById('versionID').innerHTML = /*APP_NAME + ' ' +*/ 'Version: ' + APP_VERSION;
+        $('versionID').innerHTML = /*APP_NAME + ' ' +*/ 'Version: ' + APP_VERSION;
 
-        gadgets.window.adjustHeight();
+        setupService();
+        queryGroupsAndCalendars();
+
+        showOneSection('main');
       };
 
       function showSettings() {
-        //do reload
-        fetchData();
+        showOneSection('busyLoader');
+        //queryGroupsAndCalendars();
+      }
+
+
+      function showGroups(selId){
+        // Clear options
+        selectClearOptions('groupSelectID');
+
+        // Add all contacts option
+        selectAddOption('groupSelectID', ALL_CONTACTS, '');
+
+        // Iterate through the array of contact groups, and add them to
+        // drop down box
+        // IE JScript 5.6 Compatibility
+        var len = groupList.length;
+        for (var ie = 0; ie < len; ie++) {
+          var group = groupList[ie];
+          selectAddOption('groupSelectID', group.title, group.id);
+        }
+
+        // Set selection and size
+        selectSetSelectedIndex('groupSelectID', selId);
+        selectSetSizeOptions('groupSelectID');
+      }
+
+
+      function showCalendars(selId){
+        // Clear options
+        selectClearOptions('calendarSelectID');
+
+        // Iterate through the array of contact groups, and add them to
+        // drop down box
+        // IE JScript 5.6 Compatibility
+        var len = calendarList.length;
+        for (var ie = 0; ie < len; ie++) {
+          var calendar = calendarList[ie];
+          selectAddOption('calendarSelectID', calendar.title, calendar.url);
+        }
+
+        // Add new calendar option
+        selectAddOption('calendarSelectID', NEW_CALENDAR, '');
+
+        // Set selection and size
+        selectSetSelectedIndex('calendarSelectID', selId);
+        selectSetSizeOptions('calendarSelectID');
+      }
+
+      function showSettingsBlock(state){
+        // Wait for both queries (queryGroups/queryCalendars) finished
+        // Both select boxes (groupSelectID/calendarSelectID) are filled
+        if ( states.fingroups == state) {
+            showSettingsBlock.groups = true;
+        }
+        if ( states.fincalendars == state) {
+            showSettingsBlock.calendars = true;
+        }
+
+        if (showSettingsBlock.groups && showSettingsBlock.calendars) {
+          showOneSection('settings');
+        }
       }
 
       function onclickStart() {
@@ -208,20 +219,78 @@
       //
       // When the user confirms access, the fetchData() function is invoked again to
       // obtain and display the user's data.
+      //
+      // Added settings section
       function showOneSection(toshow) {
-        var sections = [ 'main', 'approval', 'waiting' ];
+        var sections = [ 'main', 'approval', 'waiting', 'busyLoader', 'settings' ];
         for (var i=0; i < sections.length; ++i) {
           var s = sections[i];
-          var el = document.getElementById(s);
+          var el = $(s);
           if (s === toshow) {
             el.style.display = "block";
           } else {
             el.style.display = "none";
           }
         }
+        gadgets.window.adjustHeight();
       }
 
-      </script>
+    </script>
+
+    <style type="text/css">
+      #settingslink {
+        cursor: pointer;
+        font-size: 10px;
+        text-decoration: underline;
+        color: blue;
+        float: right;
+        padding: 0 3px 3px 0;
+      }
+    </style>
+
+    <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
+    <span id="versionID">Version</span>
+    <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
+
+    <div id="main" style="display:none">
+      <span id="settingslink" onclick="showSettings()">settings</span>
+    </div>
+
+    <div id="approval" style="display:none">
+      <img src="http://gadget-doc-examples.googlecode.com/svn/trunk/images/new.gif">
+      <a href="#" id="personalize">Personalize this gadget</a>
+    </div>
+
+    <div id="waiting" style="display:none">
+      Please click
+      <a href="#" id="approvaldone">I've approved access</a>
+      once you've approved access to your data.
+    </div>
+
+    <div id="busyloader" style="display:none">
+      <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Images/busyLoader.gif" alt="BusyLoader Image">
+    </div>
+
+    <div id="settings" style="display:none">
+      <table cellspacing="0" cellpadding="5">
+        <tr valign="bottom">
+          <td style="padding-right: 30px">Select Group(s):</td>
+          <td style="padding-right: 30px">Select Calendar:</td>
+        </tr>
+        <tr valign="top">
+          <td style="padding-right: 30px">
+            <select id="groupSelectID" multiple="multiple" size="4"></select>
+          </td>
+          <td style="padding-right: 30px">
+            <select id="calendarSelectID" size="1" onchange="onChangeCalendarSelect()"></select>
+          </td>
+        </tr>
+      </table>
+      <br>
+      <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
+      <input id="stopButtonID" type="button" value="Cancel" onclick="onclickStop()" disabled="true">
+      <br>
+    </div>
 
     <!--Google Analytics-->
     <script type="text/javascript">
