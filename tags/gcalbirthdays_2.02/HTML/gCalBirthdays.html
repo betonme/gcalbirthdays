@@ -3,23 +3,23 @@
 <html>
   <head>
     <title>gCalBirthdays</title>
-	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <style type="text/css">
       .indent {
         margin: 30px 0px 0px 20px;
       }
     </style>
 
-	<!--http://phpjs.org/packages/view/396/name:7d67fb58ff9ab58f4d0e4e55221b50e7-->
-    <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/html_funcs.min.js"></script>
+  <!--http://phpjs.org/packages/view/396/name:7d67fb58ff9ab58f4d0e4e55221b50e7-->
+    <script type="text/javascript" src="/../JS/html_funcs.min.js"></script>
 
-	<!--http://code.google.com/p/gdata-javascript-client/-->
+  <!--http://code.google.com/p/gdata-javascript-client/-->
     <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 
-	<!--gCalBirthay Javascript functions for HTML and Gadget Version -->
-    <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/gCalBirthdays.js"></script>
+  <!--gCalBirthay Javascript functions for HTML and Gadget Version -->
+    <script type="text/javascript" src="/../JS/gCalBirthdays.js"></script>
 
-	<!--gCalBirthay HTML specific Javascript functions-->
+  <!--gCalBirthay HTML specific Javascript functions-->
     <script type="text/javascript">
 
     /*  Copyright (c) 2009 Frank Glaser
@@ -88,7 +88,7 @@
     var ALL_CONTACTS = 'All contacts';
     var NEW_CALENDAR = 'New calendar';
 
-	var GROUP_SEPARATOR = ',';
+  var GROUP_SEPARATOR = ',';
 
     var ICAL_BREAK = '\r\n'; // '\n'
 
@@ -96,14 +96,14 @@
 
     var MAX_RESULT = 10;
 
-	var NOTDEF = 'undefined';
+  var NOTDEF = 'undefined';
 
     var contactList;
     var eventList;
-	var postURL;
+  var postURL;
 
-	var states = {setup:{}, fingroups:{}, fincalendars:{}, fincontacts:{}, finevents:{}, started:{}, canceled:{}, finished:{}};
-	var statemachine = states.setup;
+  var states = {setup:{}, fingroups:{}, fincalendars:{}, fincontacts:{}, finevents:{}, started:{}, canceled:{}, finished:{}};
+  var statemachine = states.setup;
 
     // Load the Google data JS Client Library
     //google.load('gdata', '1.x');
@@ -125,9 +125,9 @@
         // User is loged in
         authButton.value = 'Logout';
         document.getElementById('loginNoticeID').style.display = 'none';
-		document.getElementById('consoleCheckboxFormID').style.display = 'block';
+    document.getElementById('consoleCheckboxFormID').style.display = 'block';
         setupService();
-		queryData();
+    queryData();
       }
       else {
         // User is loged out
@@ -135,7 +135,7 @@
         document.getElementById('loginNoticeID').style.display = 'block';
         document.getElementById('settingsFormID').style.display = 'none';
         document.getElementById('htmlConsoleID').style.display = 'none';
-		document.getElementById('consoleCheckboxFormID').style.display = 'none';
+    document.getElementById('consoleCheckboxFormID').style.display = 'none';
       }
     };
 
@@ -148,7 +148,7 @@
      * logged out to the app, it logs them in.
      */
     function onClickAuthButton(){
-	  printConsole('Button Auth');
+    printConsole('Button Auth');
       var token = google.accounts.user.checkLogin(GOOGLE_FEED_AUTH);
       if (token) {
         // User is loged in
@@ -156,7 +156,7 @@
       }
       else {
         // User is loged out
-		// Use AuthSub Authentication
+    // Use AuthSub Authentication
         token = google.accounts.user.login(GOOGLE_FEED_AUTH);
       }
       init();
@@ -175,7 +175,7 @@
       // Replace 'System Group: ' with an identifier
       var id = 0;
       // IE JScript 5.6 Compatibility
-	  var len = groups.length;
+    var len = groups.length;
       for (var ie = 0; ie < len; ie++) {
         var group = groups[ie];
         group.title.$t = group.title.$t.replace(/System Group/gi, id++);
@@ -197,13 +197,13 @@
         selectAddOption('groupSelectID', group.title.$t, group.id.$t);
       }
 
-	  // Get next page if it exists
-	  if (NOTDEF != typeof groupFeed.link[5]) {
-	  	// link[5].rel = 'next'
-		var nextURL = groupFeed.link[5].href;
-		printConsole('Group NextURL: ' + nextURL);
-		return getGroups(nextURL);
-	  }
+    // Get next page if it exists
+    if (NOTDEF != typeof groupFeed.link[5]) {
+      // link[5].rel = 'next'
+    var nextURL = groupFeed.link[5].href;
+    printConsole('Group NextURL: ' + nextURL);
+    return getGroups(nextURL);
+    }
 
       // Set selection and size
       selectSetSelectedIndex('groupSelectID', 0);
@@ -226,32 +226,32 @@
       var i = 0;
       var selId = -1;
       // IE JScript 5.6 Compatibility
-	  var len = calendars.length;
+    var len = calendars.length;
       for (var ie = 0; ie < len; ie++) {
-	  	var calendar = calendars[ie];
-	  	selectAddOption('calendarSelectID', calendar.getTitle().getText(), calendar.getLink().href);
+      var calendar = calendars[ie];
+      selectAddOption('calendarSelectID', calendar.getTitle().getText(), calendar.getLink().href);
 
-	  	// Select first calendar which contains
-		// [Birthdays|Geburtstag]
-	    if (NOTDEF != calendar.getTitle()) {
-		  if (NOTDEF != calendar.getTitle().getText()) {
-			if (-1 != calendar.getTitle().getText().search(/(Birthday|Geburtstag)/i)) {
-			  if (-1 == selId) {
-				selId = i;
-			  }
-		    }
-		  }
-		}
+      // Select first calendar which contains
+    // [Birthdays|Geburtstag]
+      if (NOTDEF != calendar.getTitle()) {
+      if (NOTDEF != calendar.getTitle().getText()) {
+      if (-1 != calendar.getTitle().getText().search(/(Birthday|Geburtstag)/i)) {
+        if (-1 == selId) {
+        selId = i;
+        }
+        }
+      }
+    }
         i++;
       }
 
-	  // Get next page if it exists
-	  if (NOTDEF != typeof calFeed.link[5]) {
-	  	// link[5].rel = 'next'
-		var nextURL = calFeed.link[5].href;
-		printConsole('Calendars NextURL: ' + nextURL);
-		return getCalendars(nextURL);
-	  }
+    // Get next page if it exists
+    if (NOTDEF != typeof calFeed.link[5]) {
+      // link[5].rel = 'next'
+    var nextURL = calFeed.link[5].href;
+    printConsole('Calendars NextURL: ' + nextURL);
+    return getCalendars(nextURL);
+    }
 //      if (NOTDEF != typeof calFeed.getNextLink()) {
 //        return getCalendars(calFeed.getNextLink().href);
 //      }
@@ -269,14 +269,14 @@
     function showSettingsBlock(state){
       // Wait for both queries (queryGroups/queryCalendars) finished
       // Both select boxes (groupSelectID/calendarSelectID) are filled
-	  if ( states.fingroups == state) {
-	  	showSettingsBlock.groups = true;
-	  }
-	  if ( states.fincalendars == state) {
-	  	showSettingsBlock.calendars = true;
-	  }
+    if ( states.fingroups == state) {
+      showSettingsBlock.groups = true;
+    }
+    if ( states.fincalendars == state) {
+      showSettingsBlock.calendars = true;
+    }
 
-	  if (showSettingsBlock.groups && showSettingsBlock.calendars) {
+    if (showSettingsBlock.groups && showSettingsBlock.calendars) {
         document.getElementById('settingsFormID').style.display = 'block';
       }
     }
@@ -285,7 +285,7 @@
      * Add new calendar.
      */
     function onChangeCalendarSelect(){
-	  var elSel = document.getElementById('calendarSelectID');
+    var elSel = document.getElementById('calendarSelectID');
       if (NEW_CALENDAR == elSel.options[elSel.selectedIndex].text) {
         var calendarName = prompt("Calendar name:", "Birthdays");
         if (calendarName != null && calendarName != "") {
@@ -306,102 +306,102 @@
      *  - Insert missing events
      */
     function onclickStart(){
-	  printConsole('Button Go');
+    printConsole('Button Go');
       contactList = new Array();
       eventList = new Array();
 
-	  statemachine = states.started;
-	  printConsole('StateMachine: ' + 'started');
+    statemachine = states.started;
+    printConsole('StateMachine: ' + 'started');
 
       handleEventsFeed.state = 0;
-	  handleContactsFeed.state = 0;
+    handleContactsFeed.state = 0;
 
-	  checkBirthdays.contacts = false;
-	  checkBirthdays.events = false;
+    checkBirthdays.contacts = false;
+    checkBirthdays.events = false;
 
-	  document.getElementById('startButtonID').disabled = true;
+    document.getElementById('startButtonID').disabled = true;
       document.getElementById('stopButtonID').disabled = false;
 
       // Retrieve Contacts
-	  var elSelGroup = document.getElementById('groupSelectID');
-	  var groupId;
-	  // Get all selected groups
-	  if (0 == elSelGroup.selectedIndex) {
-	  	// GroupId == All contacts
+    var elSelGroup = document.getElementById('groupSelectID');
+    var groupId;
+    // Get all selected groups
+    if (0 == elSelGroup.selectedIndex) {
+      // GroupId == All contacts
         printConsole('Query Contacts from: ' + elSelGroup.options[elSelGroup.selectedIndex].text);
-	    groupId = elSelGroup.options[elSelGroup.selectedIndex].value;
-	  }
-	  else {
-	  	// GroupId != All contacts
-		var len = elSelGroup.length;
+      groupId = elSelGroup.options[elSelGroup.selectedIndex].value;
+    }
+    else {
+      // GroupId != All contacts
+    var len = elSelGroup.length;
         for (var elSelId = 0; elSelId < len; elSelId++) {
-	  	  if (elSelGroup.options[elSelId].selected) {
-		  	printConsole('Query Contacts from: ' + elSelGroup.options[elSelId].text);
-		    groupId = groupId ? (groupId+GROUP_SEPARATOR+elSelGroup.options[elSelId].value) : elSelGroup.options[elSelId].value;
-		  }
+        if (elSelGroup.options[elSelId].selected) {
+        printConsole('Query Contacts from: ' + elSelGroup.options[elSelId].text);
+        groupId = groupId ? (groupId+GROUP_SEPARATOR+elSelGroup.options[elSelId].value) : elSelGroup.options[elSelId].value;
+      }
         }
       }
       queryContacts(groupId);
 
       // Retrieve Events
-	  var elSelCalendar = document.getElementById('calendarSelectID');
-	  printConsole('Query Events from: ' + elSelCalendar.options[elSelCalendar.selectedIndex].text);
-	  var calendarURL = elSelCalendar.options[elSelCalendar.selectedIndex].value;
+    var elSelCalendar = document.getElementById('calendarSelectID');
+    printConsole('Query Events from: ' + elSelCalendar.options[elSelCalendar.selectedIndex].text);
+    var calendarURL = elSelCalendar.options[elSelCalendar.selectedIndex].value;
       queryEvents(calendarURL);
     }
 
     function onfinishedSync(){
-	  statemachine = states.finished;
-	  printConsole('StateMachine: ' + 'finished');
-	  document.getElementById('startButtonID').disabled = false;
-	  document.getElementById('stopButtonID').disabled = true;
-	}
+    statemachine = states.finished;
+    printConsole('StateMachine: ' + 'finished');
+    document.getElementById('startButtonID').disabled = false;
+    document.getElementById('stopButtonID').disabled = true;
+  }
 
     function onclickStop(){
-	  printConsole('Button Cancel');
-	  statemachine = states.canceled;
-	  printConsole('StateMachine: ' + 'canceled');
-	  document.getElementById('startButtonID').disabled = false;
+    printConsole('Button Cancel');
+    statemachine = states.canceled;
+    printConsole('StateMachine: ' + 'canceled');
+    document.getElementById('startButtonID').disabled = false;
       document.getElementById('stopButtonID').disabled = true;
-	}
+  }
 
     function handleContactsFeed(feedRoot){
       var conFeed = feedRoot.feed;
       // ContactsService v3 GoogleService WorkAround
       var contacts = conFeed.entry;
-	  var contactsLen = (NOTDEF != typeof contacts) ? contacts.length : 0;
-	  handleContactsFeed.state = handleContactsFeed.state + contactsLen;
+    var contactsLen = (NOTDEF != typeof contacts) ? contacts.length : 0;
+    handleContactsFeed.state = handleContactsFeed.state + contactsLen;
       printConsole('Contact(s) query state: ' + handleContactsFeed.state + '/' + conFeed.openSearch$totalResults.$t);
 
       // IE JScript 5.6 Compatibility
-	  if (NOTDEF != typeof contacts) {
-	  	var idc = contactList.length;
+    if (NOTDEF != typeof contacts) {
+      var idc = contactList.length;
         for (var ie = 0; ie < contactsLen; ie++) {
           var contact = contacts[ie];
           // Push only if contact has a title
           if (NOTDEF != typeof contact.title.$t) {
             // Push only if contact has a birthday
             if (NOTDEF != typeof contact.gContact$birthday) {
-			  // Complete push is not necessary becasue we need only the title and birthday
-			  contactList[idc++] = { title: html_entity_decode(contact.title.$t), birthday: contact.gContact$birthday.when };
+        // Complete push is not necessary becasue we need only the title and birthday
+        contactList[idc++] = { title: html_entity_decode(contact.title.$t), birthday: contact.gContact$birthday.when };
             }
           }
         }
       }
 
-	  // Check statemachine
-	  if (states.canceled == statemachine) {
-  		printConsole('handleContactsFeed: ' + 'canceled');
-		return;
-	  }
+    // Check statemachine
+    if (states.canceled == statemachine) {
+      printConsole('handleContactsFeed: ' + 'canceled');
+    return;
+    }
 
-	  // Get next page if it exists
-	  if (NOTDEF != typeof conFeed.link[5]) {
-	  	// link[5].rel = 'next'
-		var nextURL = conFeed.link[5].href;
-		printConsole('Contact NextURL: ' + nextURL);
-		return getContacts(nextURL);
-	  }
+    // Get next page if it exists
+    if (NOTDEF != typeof conFeed.link[5]) {
+      // link[5].rel = 'next'
+    var nextURL = conFeed.link[5].href;
+    printConsole('Contact NextURL: ' + nextURL);
+    return getContacts(nextURL);
+    }
 
 //      // ContactsService v3 GoogleService WorkAround
 //      // IE JScript 5.6 Compatibility
@@ -414,10 +414,10 @@
 //      }
 
       printConsole ('Contact(s) with Birthday: ' + contactList.length);
-	  if (0 == contactList.length) {
-		onclickStop();
-		return;
-	  }
+    if (0 == contactList.length) {
+    onclickStop();
+    return;
+    }
 
       // Next step: Check events
       showContacts();
@@ -426,8 +426,8 @@
 
     function showContacts(){
       // IE JScript 5.6 Compatibility
-	  var lconlist = contactList;
-	  var len = lconlist.length;
+    var lconlist = contactList;
+    var len = lconlist.length;
       for (var ie = 0; ie < len; ie++) {
         var contact = lconlist[ie];
         // ContactsService v3 GoogleService WorkAround
@@ -439,46 +439,46 @@
     function handleEventsFeed(feedRoot){
       var eventFeed = feedRoot.feed;
       var events = eventFeed.entry;
-	  var eventsLen = events.length;
-	  handleEventsFeed.state = handleEventsFeed.state + eventsLen;
+    var eventsLen = events.length;
+    handleEventsFeed.state = handleEventsFeed.state + eventsLen;
       printConsole('Event(s) query state: ' + handleEventsFeed.state + '/' + eventFeed.getTotalResults().$t);
 
       // IE JScript 5.6 Compatibility
       if (NOTDEF != typeof events) {
         for (var ie = 0; ie < eventsLen; ie++) {
           var event = events[ie];
-		  // Push only if event has a title
-		  if (NOTDEF != typeof event.getTitle()) {
-		  	// Push only if event has content
-			if (NOTDEF != typeof event.getContent()) {
-			  if (NOTDEF != typeof event.getContent().getText()) {
-			  	// Push only if event is created by us
-				if (-1 != event.getContent().getText().search(APP_NAME)) {
-				  // Complete push is necessary becasue we need the whole event content
-				  event.setTitle(google.gdata.Text.create(html_entity_decode(event.getTitle().getText())));
-				  eventList.push(event);
-				}
-			  }
-			}
-		  }
+      // Push only if event has a title
+      if (NOTDEF != typeof event.getTitle()) {
+        // Push only if event has content
+      if (NOTDEF != typeof event.getContent()) {
+        if (NOTDEF != typeof event.getContent().getText()) {
+          // Push only if event is created by us
+        if (-1 != event.getContent().getText().search(APP_NAME)) {
+          // Complete push is necessary becasue we need the whole event content
+          event.setTitle(google.gdata.Text.create(html_entity_decode(event.getTitle().getText())));
+          eventList.push(event);
+        }
+        }
+      }
+      }
         }
       }
 
-	  // Check statemachine
-	  if (states.canceled == statemachine) {
-  	    printConsole('handleEventsFeed: ' + 'canceled');
-	    return;
-	  }
+    // Check statemachine
+    if (states.canceled == statemachine) {
+        printConsole('handleEventsFeed: ' + 'canceled');
+      return;
+    }
 
-	  // Get next page if it exists
+    // Get next page if it exists
       if (NOTDEF != typeof eventFeed.getNextLink()) {
         return getEvents(eventFeed.getNextLink().href);
       }
 
-	  // Get URL to post/add events
-	  // link[2].rel = 'http://schemas.google.com/g/2005#post'
-	  postURL = eventFeed.getEntryPostLink().href;
-	  printConsole('Event PostURL: ' + postURL);
+    // Get URL to post/add events
+    // link[2].rel = 'http://schemas.google.com/g/2005#post'
+    postURL = eventFeed.getEntryPostLink().href;
+    printConsole('Event PostURL: ' + postURL);
 
 //	  // ContactsService v3 GoogleService WorkAround
 //      // IE JScript 5.6 Compatibility
@@ -501,8 +501,8 @@
 
     function showEvents(){
       // IE JScript 5.6 Compatibility
-	  var levlist = eventList;
-	  var len = levlist.length;
+    var levlist = eventList;
+    var len = levlist.length;
       for (var ie = 0; ie < len; ie++) {
         var event = levlist[ie];
         var text = event.getTitle().getText();
@@ -511,43 +511,43 @@
     }
 
     function checkBirthdays(state){
-	  var lconlist = contactList;
-	  var levlist = eventList;
+    var lconlist = contactList;
+    var levlist = eventList;
 
       // Wait for both queries (queryContacts/queryEvents) finished
       // Both lists (contactList/eventList) are filled
-	  if ( states.fincontacts == state) {
-	  	checkBirthdays.contacts = true;
-	  }
-	  if ( states.finevents == state) {
-	  	checkBirthdays.events = true;
-	  }
+    if ( states.fincontacts == state) {
+      checkBirthdays.contacts = true;
+    }
+    if ( states.finevents == state) {
+      checkBirthdays.events = true;
+    }
 
-	  if (checkBirthdays.contacts && checkBirthdays.events) {
+    if (checkBirthdays.contacts && checkBirthdays.events) {
         var exists = false;
         // IE JScript 5.6 Compatibility
         if (NOTDEF != typeof lconlist) {
-		  var lencon = lconlist.length;
+      var lencon = lconlist.length;
           for (var iec = 0; iec < lencon; iec++) {
             var contact = lconlist[iec];
 
-			if (states.canceled == statemachine) {
-		  	  printConsole('handleEventsFeed: ' + 'canceled');
-			  return;
-			}
+      if (states.canceled == statemachine) {
+          printConsole('handleEventsFeed: ' + 'canceled');
+        return;
+      }
             exists = false;
             var date = contact.birthday.replace(/-/g, '');
 
             // IE JScript 5.6 Compatibility
             if (NOTDEF != typeof levlist) {
-			  var lenev = levlist.length;
+        var lenev = levlist.length;
               for (var iee = 0; iee < lenev; iee++) {
                 var event = levlist[iee];
 
-				if (states.canceled == statemachine) {
-			  	  printConsole('handleEventsFeed: ' + 'canceled');
-				  return;
-				}
+        if (states.canceled == statemachine) {
+            printConsole('handleEventsFeed: ' + 'canceled');
+          return;
+        }
 
                 // Search for contact title
                 if (-1 != event.getTitle().getText().search(contact.title)) {
@@ -558,13 +558,13 @@
                   if (-1 != event.getRecurrence().getValue().search(date)) {
                     // Date correct - do nothing
                     printConsole('Event correct: ' + contact.title);
-					break;
+          break;
                   }
                   else {
                     // Date not correct - Update event
                     printConsole('Event to update: ' + contact.title);
                     updateEvent(event, contact, date);
-					break;
+          break;
                   }
                 }
               }
@@ -586,15 +586,15 @@
     /**
      * Enable Console Output.
      */
-	function onenableConsoleCheckbox(){
-	  printConsole('Toggle Console');
+  function onenableConsoleCheckbox(){
+    printConsole('Toggle Console');
       if (document.getElementById('consoleCheckboxID').checked) {
         document.getElementById('htmlConsoleID').style.display = 'block';
       }
-	  else {
-	    document.getElementById('htmlConsoleID').style.display = 'none';
-	  }
-	}
+    else {
+      document.getElementById('htmlConsoleID').style.display = 'none';
+    }
+  }
 
     /**
      * Debug print function.
@@ -642,11 +642,11 @@
       </p>
 
       <form id="settingsFormID" style="display:none">
-      	<table cellspacing="0" cellpadding="5">
-		  <tr valign="bottom">
+        <table cellspacing="0" cellpadding="5">
+      <tr valign="bottom">
             <td>Select Group(s):</td>
             <td>Select Calendar:</td>
-		  </tr>
+      </tr>
           <tr valign="top">
             <td>
               <select id="groupSelectID" multiple="multiple" size="4"></select>
@@ -655,17 +655,17 @@
               <select id="calendarSelectID" size="1" onchange="onChangeCalendarSelect()"></select>
             </td>
           </tr>
-		</table>
+    </table>
         <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
-		<input id="stopButtonID" type="button" value="Cancel" onclick="onclickStop()" disabled="true">
+    <input id="stopButtonID" type="button" value="Cancel" onclick="onclickStop()" disabled="true">
       </form>
 
-	  <form id="consoleCheckboxFormID" style="display:none">
-	  	Console:
-		<input id="consoleCheckboxID" type="checkbox" name="console_output" value="console_outputenable"  onclick="onenableConsoleCheckbox()">
-		<br>
-		<div id="htmlConsoleID" style="display:none"></div>
-	  </form>
+    <form id="consoleCheckboxFormID" style="display:none">
+      Console:
+    <input id="consoleCheckboxID" type="checkbox" name="console_output" value="console_outputenable"  onclick="onenableConsoleCheckbox()">
+    <br>
+    <div id="htmlConsoleID" style="display:none"></div>
+    </form>
     </div>
 
     <!--Google Analytics-->
