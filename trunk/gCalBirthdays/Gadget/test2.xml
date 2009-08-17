@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Module>
   <ModulePrefs
-    title="gCalBirthdaysTest2"
+    title="gCalBirthdays"
     title_url="http://gcalbirthdays.googlecode.com"
     author="Frank Glaser"
     author_email="GlaserFrank@gmail.com"
@@ -32,7 +32,7 @@
       }
     </style>
 
-    <img src="gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
+    <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
     <span id="versionID">Version</span>
     <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
 
@@ -49,6 +49,10 @@
       Please click
       <a href="#" id="approvaldone">I've approved access</a>
       once you've approved access to your data.
+    </div>
+
+    <div id="busyloader" style="display:none">
+      <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Images/busyLoader.gif" alt="BusyLoader Image">
     </div>
 
     <div id="settings" style="display:none">
@@ -75,8 +79,10 @@
     <!--http://code.google.com/p/gdata-javascript-client/-->
     <!--V1.10-->
     <!--http://www.google.com/uds/modules/gdata/gdata.js-->
-    <!--<script type="text/javascript" src="http://www.google.com/jsapi"></script>-->
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <!--
     <script type="text/javascript" src="http://www.google.com/jsapi?autoload=%7Bmodules%3A%5B%7Bname%3Agdata%2Cversion%3A1.x%2Cpackages%3A%5Bcontacts%2Ccalendar%5D%7D%5D%7D"></script>
+    -->
 
     <!--http://code.google.com/p/gdata-javascript-client/-->
     <!--V1.6.0.3-->
@@ -90,7 +96,7 @@
     <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/jsProgressBarHandler.js"></script>
 
     <!--http://phpjs.org/packages/view/396/name:7d67fb58ff9ab58f4d0e4e55221b50e7/-->
-    <!--V2.8.5-->
+    <!--V2.8.6-->
     <!--http://phpjs.org/packages/download/396/name:html_funcs.min.js-->
     <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/html_funcs.min.js"></script>
 
@@ -104,7 +110,7 @@
       //IE JScript 5.6 Compatibility
       // Constants
       var APP_NAME = 'gCalBirthdays';
-      var APP_VERSION = '2.020';
+      var APP_VERSION = '2.022';
 
       var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
@@ -113,27 +119,89 @@
       gadgets.util.registerOnLoadHandler(initGadget);
 
       function initGadget() {
-          // Load the Google data JS Client Library
-          //google.load('gdata', '1.x');
-          // Save overhead, only load the necessary service
-          //google.load("gdata", "1.x", {packages: ['contacts', 'calendar']});
+        // Load the Google data JS Client Library
+        //google.load('gdata', '1.x');
+        // Save overhead, only load the necessary service
+        google.load("gdata", "1.x", {packages: ['contacts', 'calendar']});
 
         // Tells the google JS lib to call the init function once loaded
-        google.setOnLoadCallback(setupMyService);
+        google.setOnLoadCallback(setupGadget);
       }
 
-      function setupMyService(){
+      function setupGadget(){
         myService = new google.gdata.calendar.CalendarService(APP_NAME);
         myService.useOAuth('google');
 
-        document.getElementById('versionID').innerHTML = /*APP_NAME + ' ' +*/ 'Version: ' + APP_VERSION;
+        $('versionID').innerHTML = /*APP_NAME + ' ' +*/ 'Version: ' + APP_VERSION;
 
-        gadgets.window.adjustHeight();
+        setupService();
+        queryGroupsAndCalendars();
+
+        showOneSection('main');
       };
 
       function showSettings() {
-        //do reload
-        fetchData();
+        showOneSection('busyLoader');
+        //queryGroupsAndCalendars();
+      }
+
+
+      function showGroups(selId){
+        // Clear options
+        selectClearOptions('groupSelectID');
+
+        // Add all contacts option
+        selectAddOption('groupSelectID', ALL_CONTACTS, '');
+
+        // Iterate through the array of contact groups, and add them to
+        // drop down box
+        // IE JScript 5.6 Compatibility
+        var len = groupList.length;
+        for (var ie = 0; ie < len; ie++) {
+          var group = groupList[ie];
+          selectAddOption('groupSelectID', group.title, group.id);
+        }
+
+        // Set selection and size
+        selectSetSelectedIndex('groupSelectID', selId);
+        selectSetSizeOptions('groupSelectID');
+      }
+
+
+      function showCalendars(selId){
+        // Clear options
+        selectClearOptions('calendarSelectID');
+
+        // Iterate through the array of contact groups, and add them to
+        // drop down box
+        // IE JScript 5.6 Compatibility
+        var len = calendarList.length;
+        for (var ie = 0; ie < len; ie++) {
+          var calendar = calendarList[ie];
+          selectAddOption('calendarSelectID', calendar.title, calendar.url);
+        }
+
+        // Add new calendar option
+        selectAddOption('calendarSelectID', NEW_CALENDAR, '');
+
+        // Set selection and size
+        selectSetSelectedIndex('calendarSelectID', selId);
+        selectSetSizeOptions('calendarSelectID');
+      }
+
+      function showSettingsBlock(state){
+        // Wait for both queries (queryGroups/queryCalendars) finished
+        // Both select boxes (groupSelectID/calendarSelectID) are filled
+        if ( states.fingroups == state) {
+            showSettingsBlock.groups = true;
+        }
+        if ( states.fincalendars == state) {
+            showSettingsBlock.calendars = true;
+        }
+
+        if (showSettingsBlock.groups && showSettingsBlock.calendars) {
+          showOneSection('settings');
+        }
       }
 
       function onclickStart() {
@@ -206,17 +274,20 @@
       //
       // When the user confirms access, the fetchData() function is invoked again to
       // obtain and display the user's data.
+      //
+      // Added settings section
       function showOneSection(toshow) {
-        var sections = [ 'main', 'approval', 'waiting' ];
+        var sections = [ 'main', 'approval', 'waiting', 'busyLoader', 'settings' ];
         for (var i=0; i < sections.length; ++i) {
           var s = sections[i];
-          var el = document.getElementById(s);
+          var el = $(s);
           if (s === toshow) {
             el.style.display = "block";
           } else {
             el.style.display = "none";
           }
         }
+        gadgets.window.adjustHeight();
       }
 
       </script>
