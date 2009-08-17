@@ -1,8 +1,0 @@
-Google Data API - Release Notes
-
-Notes for v1.00
------------------
-July 03, 2009
-o  Initial release
-o  Working command line java version.
-   gCalBirthdays.jar username password
