@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Module>
   <ModulePrefs
-    title="gCalBirthdays"
+    title="gCalBirthdaysTest2"
     title_url="http://gcalbirthdays.googlecode.com"
     author="Frank Glaser"
     author_email="GlaserFrank@gmail.com"
@@ -21,97 +21,218 @@
   <Content type="html">
     <![CDATA[
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
-<script src="http://cdn.jquerytools.org/1.0.2/jquery.tools.min.js"></script>
+    <style type="text/css">
+      #settingslink {
+        cursor: pointer;
+        font-size: 10px;
+        text-decoration: underline;
+        color: blue;
+        float: right;
+        padding: 0 3px 3px 0;
+      }
+    </style>
 
-<style>
+    <img src="gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
+    <span id="versionID">Version</span>
+    <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
 
-/* the overlayed element */
-div.overlay {
+    <div id="main" style="display:none">
+      <span id="settingslink" onclick="showSettings()">settings</span>
+    </div>
 
-  /* growing background image */
-  /* background-image:url(../img/overlay/white.png); */
-  background-image:url(overlay_transparent.png);
-    color:#efefef;
+    <div id="approval" style="display:none">
+      <img src="http://gadget-doc-examples.googlecode.com/svn/trunk/images/new.gif">
+      <a href="#" id="personalize">Login</a>
+    </div>
 
-  /* dimensions after the growing animation finishes  */
-  width:600px;
-  height:470px;
+    <div id="waiting" style="display:none">
+      Please click
+      <a href="#" id="approvaldone">I've approved access</a>
+      once you've approved access to your data.
+    </div>
 
-  /* initially overlay is hidden */
-  display:none;
+    <div id="settings" style="display:none">
+      <table cellspacing="0" cellpadding="5">
+        <tr valign="bottom">
+          <td style="padding-right: 30px">Select Group(s):</td>
+          <td style="padding-right: 30px">Select Calendar:</td>
+        </tr>
+        <tr valign="top">
+          <td style="padding-right: 30px">
+            <select id="groupSelectID" multiple="multiple" size="4"></select>
+          </td>
+          <td style="padding-right: 30px">
+            <select id="calendarSelectID" size="1" onchange="onChangeCalendarSelect()"></select>
+          </td>
+        </tr>
+      </table>
+      <br>
+      <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
+      <input id="stopButtonID" type="button" value="Cancel" onclick="onclickStop()" disabled="true">
+      <br>
+    </div>
 
-  /* some padding to layout nested elements nicely  */
-  padding:55px;
-}
+    <!--http://code.google.com/p/gdata-javascript-client/-->
+    <!--V1.10-->
+    <!--http://www.google.com/uds/modules/gdata/gdata.js-->
+    <!--<script type="text/javascript" src="http://www.google.com/jsapi"></script>-->
+    <script type="text/javascript" src="http://www.google.com/jsapi?autoload=%7Bmodules%3A%5B%7Bname%3Agdata%2Cversion%3A1.x%2Cpackages%3A%5Bcontacts%2Ccalendar%5D%7D%5D%7D"></script>
 
-/* default close button positioned on upper right corner */
-div.overlay div.close {
-  background-image:url(../img/overlay/close.png);
-  position:absolute;
-  right:5px;
-  top:5px;
-  cursor:pointer;
-  height:35px;
-  width:35px;
-}
+    <!--http://code.google.com/p/gdata-javascript-client/-->
+    <!--V1.6.0.3-->
+    <!--http://www.prototypejs.org/assets/2009/6/16/prototype.js-->
+    <!--http://www.prototypejs.org/assets/2008/9/29/prototype-1.6.0.3.js-->
+    <script src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js"></script>
 
+    <!--http://www.bram.us/projects/js_bramus/jsprogressbarhandler/-->
+    <!--V0.3.3-->
+    <!--http://www.bram.us/demo/projects/jsprogressbarhandler/js/bramus/jsProgressBarHandler.js-->
+    <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/jsProgressBarHandler.js"></script>
 
-/* black */
-div.overlay.black {
-  background:url(../img/overlay/transparent.png) no-repeat !important;
-  color:#fff;
-}
+    <!--http://phpjs.org/packages/view/396/name:7d67fb58ff9ab58f4d0e4e55221b50e7/-->
+    <!--V2.8.5-->
+    <!--http://phpjs.org/packages/download/396/name:html_funcs.min.js-->
+    <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/html_funcs.min.js"></script>
 
-/* petrol */
-div.overlay.petrol {
-  background:url(../img/overlay/petrol.png) no-repeat !important;
-  color:#fff;
-}
+    <!--gCalBirthay Javascript functions for HTML and Gadget Version-->
+    <!--V1.10-->
+    <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/gCalBirthdays.js"></script>
 
-div.black h2, div.petrol h2 {
-  color:#ddd;
-}
-</style>
+    <!--gCalBirthay Gadget specific Javascript functions-->
+    <script type="text/javascript">
 
+      //IE JScript 5.6 Compatibility
+      // Constants
+      var APP_NAME = 'gCalBirthdays';
+      var APP_VERSION = '2.020';
 
-<a href="http://www.google.de" rel="#overlay">
-  <button type="button">Show external page in overlay</button>
-</a>
-<br>
-<div class="overlay" id="overlay">
-  <div class="wrap"></div>
-</div>
+      var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
+      // The gadget containers request that we do NOT run any JS inline.
+      // Instead, register a callback handler.
+      gadgets.util.registerOnLoadHandler(initGadget);
 
+      function initGadget() {
+          // Load the Google data JS Client Library
+          //google.load('gdata', '1.x');
+          // Save overhead, only load the necessary service
+          //google.load("gdata", "1.x", {packages: ['contacts', 'calendar']});
 
-<!-- make all links with the 'rel' attribute open overlays -->
-<script>
+        // Tells the google JS lib to call the init function once loaded
+        google.setOnLoadCallback(setupMyService);
+      }
 
-  gadgets.util.registerOnLoadHandler(setupGadget);
+      function setupMyService(){
+        myService = new google.gdata.calendar.CalendarService(APP_NAME);
+        myService.useOAuth('google');
 
-    function setupGadget(){
+        document.getElementById('versionID').innerHTML = /*APP_NAME + ' ' +*/ 'Version: ' + APP_VERSION;
 
-      $(function() {
-        // if the function argument is given to overlay, it is assumed to be the onBeforeLoad event listener
-        $("a[rel]").overlay(function() {
+        gadgets.window.adjustHeight();
+      };
 
-          // grab wrapper element inside content
-          var wrap = this.getContent().find("div.wrap");
+      function showSettings() {
+        //do reload
+        fetchData();
+      }
 
-          // load only for the first time it is opened
-          if (wrap.is(":empty")) {
-            wrap.load(this.getTrigger().attr("href"));
+      function onclickStart() {
+        fetchData();
+      }
+
+      function fetchData() {
+        var callback = function(response) {
+          if (response.oauthApprovalUrl) {
+
+            // TODO: Display "Sign in" link (response.oauthApprovalUrl contains the URL)
+
+            // Create the popup handler. The onOpen function is called when the user
+            // opens the popup window. The onClose function is called when the popup
+            // window is closed.
+            var popup = shindig.oauth.popup({
+              destination: response.oauthApprovalUrl,
+              //windowOptions: null,
+              windowOptions: 'height=600,width=800,status=no,depent=yes',
+              onOpen: function() { showOneSection('waiting'); },
+              onClose: function() { fetchData(); }
+            });
+            // Use the popup handler to attach onclick handlers to UI elements.  The
+            // createOpenerOnClick() function returns an onclick handler to open the
+            // popup window.  The createApprovedOnClick function returns an onclick
+            // handler that will close the popup window and attempt to fetch the user's
+            // data again.
+            var personalize = document.getElementById('personalize');
+            personalize.onclick = popup.createOpenerOnClick();
+            var approvaldone = document.getElementById('approvaldone');
+            approvaldone.onclick = popup.createApprovedOnClick();
+            showOneSection('approval');
+            gadgets.window.adjustHeight();
+
+          } else if (response.feed) {
+
+            // TODO: show results
+            showOneSection('main');
+
+            document.getElementById('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
+            gadgets.window.adjustHeight();
+
+          } else {
+
+            // TODO: handle the error
+
+            // The response.oauthError and response.oauthErrorText values may help debug
+            // problems with your gadget.
+            var main = document.getElementById('main');
+            var err = document.createTextNode('OAuth error: ' +
+              response.oauthError + ': ' + response.oauthErrorText);
+            main.appendChild(err);
+            showOneSection('main');
           }
-        });
-      });
+        };
+
+        myService.getOwnCalendarsFeed('http://www.google.com/calendar/feeds/default/owncalendars/full', callback, callback);
+      }
 
 
-    };
+      // Display UI depending on OAuth access state of the gadget (see <divs> above).
+      // If user hasn't approved access to data, provide a "Personalize this gadget" link
+      // that contains the oauthApprovalUrl returned from makeRequest.
+      //
+      // If the user has opened the popup window but hasn't yet approved access, display
+      // text prompting the user to confirm that s/he approved access to data.  The user
+      // may not ever need to click this link, if the gadget is able to automatically
+      // detect when the user has approved access, but showing the link gives users
+      // an option to fetch their data even if the automatic detection fails.
+      //
+      // When the user confirms access, the fetchData() function is invoked again to
+      // obtain and display the user's data.
+      function showOneSection(toshow) {
+        var sections = [ 'main', 'approval', 'waiting' ];
+        for (var i=0; i < sections.length; ++i) {
+          var s = sections[i];
+          var el = document.getElementById(s);
+          if (s === toshow) {
+            el.style.display = "block";
+          } else {
+            el.style.display = "none";
+          }
+        }
+      }
 
+      </script>
 
-</script>
-
+    <!--Google Analytics-->
+    <script type="text/javascript">
+      var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+      try {
+        var pageTracker = _gat._getTracker("UA-9798979-1");
+        pageTracker._trackPageview();
+      }
+      catch(err) {}
+    </script>
 
   ]]>
   </Content>
