@@ -21,61 +21,6 @@
   <Content type="html">
     <![CDATA[
 
-    <style type="text/css">
-      #settingslink {
-        cursor: pointer;
-        font-size: 10px;
-        text-decoration: underline;
-        color: blue;
-        float: right;
-        padding: 0 3px 3px 0;
-      }
-    </style>
-
-    <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
-    <span id="versionID">Version</span>
-    <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
-
-    <div id="main" style="display:none">
-      <span id="settingslink" onclick="showSettings()">settings</span>
-    </div>
-
-    <div id="approval" style="display:none">
-      <img src="http://gadget-doc-examples.googlecode.com/svn/trunk/images/new.gif">
-      <a href="#" id="personalize">Login</a>
-    </div>
-
-    <div id="waiting" style="display:none">
-      Please click
-      <a href="#" id="approvaldone">I've approved access</a>
-      once you've approved access to your data.
-    </div>
-
-    <div id="busyloader" style="display:none">
-      <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Images/busyLoader.gif" alt="BusyLoader Image">
-    </div>
-
-    <div id="settings" style="display:none">
-      <table cellspacing="0" cellpadding="5">
-        <tr valign="bottom">
-          <td style="padding-right: 30px">Select Group(s):</td>
-          <td style="padding-right: 30px">Select Calendar:</td>
-        </tr>
-        <tr valign="top">
-          <td style="padding-right: 30px">
-            <select id="groupSelectID" multiple="multiple" size="4"></select>
-          </td>
-          <td style="padding-right: 30px">
-            <select id="calendarSelectID" size="1" onchange="onChangeCalendarSelect()"></select>
-          </td>
-        </tr>
-      </table>
-      <br>
-      <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
-      <input id="stopButtonID" type="button" value="Cancel" onclick="onclickStop()" disabled="true">
-      <br>
-    </div>
-
     <!--http://code.google.com/p/gdata-javascript-client/-->
     <!--V1.10-->
     <!--http://www.google.com/uds/modules/gdata/gdata.js-->
@@ -110,7 +55,7 @@
       //IE JScript 5.6 Compatibility
       // Constants
       var APP_NAME = 'gCalBirthdays';
-      var APP_VERSION = '2.022';
+      var APP_VERSION = '2.024';
 
       var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
@@ -210,8 +155,9 @@
 
       function fetchData() {
         var callback = function(response) {
+        //alert(response.oauthApprovalUrl);
           if (response.oauthApprovalUrl) {
-
+        //alert('1');
             // TODO: Display "Sign in" link (response.oauthApprovalUrl contains the URL)
 
             // Create the popup handler. The onOpen function is called when the user
@@ -237,15 +183,15 @@
             gadgets.window.adjustHeight();
 
           } else if (response.feed) {
-
+        //alert('2');
             // TODO: show results
-            showOneSection('main');
+          showOneSection('main');
 
-            document.getElementById('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
+        document.getElementById('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
             gadgets.window.adjustHeight();
 
           } else {
-
+      //alert('3');
             // TODO: handle the error
 
             // The response.oauthError and response.oauthErrorText values may help debug
@@ -280,7 +226,7 @@
         var sections = [ 'main', 'approval', 'waiting', 'busyLoader', 'settings' ];
         for (var i=0; i < sections.length; ++i) {
           var s = sections[i];
-          var el = $(s);
+          var el = document.getElementById(s);
           if (s === toshow) {
             el.style.display = "block";
           } else {
@@ -290,7 +236,62 @@
         gadgets.window.adjustHeight();
       }
 
-      </script>
+    </script>
+
+    <style type="text/css">
+      #settingslink {
+        cursor: pointer;
+        font-size: 10px;
+        text-decoration: underline;
+        color: blue;
+        float: right;
+        padding: 0 3px 3px 0;
+      }
+    </style>
+
+    <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
+    <span id="versionID">Version</span>
+    <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
+
+    <div id="main" style="display:none">
+      <span id="settingslink" onclick="showSettings()">settings</span>
+    </div>
+
+    <div id="approval" style="display:none">
+      <img src="http://gadget-doc-examples.googlecode.com/svn/trunk/images/new.gif">
+      <a href="#" id="personalize">Personalize this gadget</a>
+    </div>
+
+    <div id="waiting" style="display:none">
+      Please click
+      <a href="#" id="approvaldone">I've approved access</a>
+      once you've approved access to your data.
+    </div>
+
+    <div id="busyloader" style="display:none">
+      <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Images/busyLoader.gif" alt="BusyLoader Image">
+    </div>
+
+    <div id="settings" style="display:none">
+      <table cellspacing="0" cellpadding="5">
+        <tr valign="bottom">
+          <td style="padding-right: 30px">Select Group(s):</td>
+          <td style="padding-right: 30px">Select Calendar:</td>
+        </tr>
+        <tr valign="top">
+          <td style="padding-right: 30px">
+            <select id="groupSelectID" multiple="multiple" size="4"></select>
+          </td>
+          <td style="padding-right: 30px">
+            <select id="calendarSelectID" size="1" onchange="onChangeCalendarSelect()"></select>
+          </td>
+        </tr>
+      </table>
+      <br>
+      <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
+      <input id="stopButtonID" type="button" value="Cancel" onclick="onclickStop()" disabled="true">
+      <br>
+    </div>
 
     <!--Google Analytics-->
     <script type="text/javascript">
