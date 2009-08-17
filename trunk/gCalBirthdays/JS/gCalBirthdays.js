@@ -1,5 +1,7 @@
 /*  gCalBirthdays.js
  *
+ *  This is version: 1.10
+ *
  *  Shared JavaScript functions for HTML and Gadget Version of gCalBirthdays
  *
  *  Copyright (c) 2009 Frank Glaser
@@ -91,6 +93,22 @@
     }
 
     /**
+     * AuthSub is only used by the html version.
+     */
+    function useAuthSub(){
+      // Nothing todo
+    }
+
+    /**
+     * OAuth is only used by the gadget version.
+     */
+    function useOAuth(){
+      contactService.useOAuth(APP_NAME);
+      calendarService.useOAuth(APP_NAME);
+    }
+
+
+    /**
      * Query groups and calendars function.
      */
     function queryGroupsAndCalendars() {
@@ -128,9 +146,6 @@
     function handleGroupsFeed(feedRoot){
       var groupFeed = feedRoot.feed;
       var groups = groupFeed.entry;
-      //var groupsLen = (undefined != groups) ? groups.length : 0;
-      //handleGroupsFeed.progress = handleGroupsFeed.progress + groupsLen;
-      //printConsole('Group(s) query progress: ' + handleGroupsFeed.progress + '/' + groupFeed.openSearch$totalResults.$t);
 
       // Replace 'System Group: ' with an identifier
       var id = 0;
@@ -157,14 +172,6 @@
         var group = groups[ie];
         groupList[idl++] = { title: html_entity_decode(group.title.$t), id: group.id.$t };
       }
-
-      // Get next page if it exists
-//      if (undefined != groupFeed.link[5]) {
-//        // link[5].rel = 'next'
-//        var nextURL = groupFeed.link[5].href;
-//        printConsole('Group NextURL: ' + nextURL);
-//        return getGroups(nextURL);
-//      }
 
       printConsole ('Group(s): ' + groupList.length);
 
@@ -194,9 +201,6 @@
     function handleCalendarsFeed(feedRoot){
       var calFeed = feedRoot.feed;
       var calendars = calFeed.getEntries();
-      //var calendarsLen = (undefined != calendars) ? calendars.length : 0;
-      //handleCalendarsFeed.progress = handleCalendarsFeed.progress + calendarsLen;
-      //printConsole('Calendars(s) query progress: ' + handleCalendarsFeed.progress + '/' + calFeed.openSearch$totalResults.$t);
 
       // Sort calendars
       calendars.sort(compareEntries);
@@ -224,14 +228,6 @@
         }
         i++;
       }
-
-      // Get next page if it exists
-//      if (undefined != calFeed.link[5]) {
-//        // link[5].rel = 'next'
-//        var nextURL = calFeed.link[5].href;
-//        printConsole('Calendars NextURL: ' + nextURL);
-//        return getCalendars(nextURL);
-//      }
 
       printConsole ('Calendar(s): ' + calendarList.length);
 
@@ -380,8 +376,10 @@
         setProgressContacts(100, true);
         setProgressEvents(100, true);
         setProgressTransfer(100, true);
-   //TODO
-        onclickStop();
+        printConsole('Cancel no birthdays');
+        statemachine = states.canceled;
+        printConsole('StateMachine: ' + 'canceled');
+        stopTransfer();
         return;
       }
 
@@ -409,16 +407,6 @@
 
       // Query for all the events entry within given calendarid
       var query = new google.gdata.calendar.CalendarEventQuery(calendarURL);
-
-      // Use query parameter to set the google contacts version
-      //already set in calendar feed url
-      //query.setParam(VERSION_PARAMETER, CALENDAR_VERSION_NUMBER);
-
-      // There is no calendarid in the api
-      //if ('' != calendarId) {
-      //  // Use query parameter to set the groupId
-      //  query.setParam('calendar', calendarId);
-      //}
 
       // Set max results per query / items per page
       query.setMaxResults(MAX_RESULT);
@@ -579,7 +567,6 @@
 
         // Finished
         onfinishedSync();
-        printConsole('Finished!');
       }
     }
 
