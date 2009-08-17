@@ -55,7 +55,7 @@
       //IE JScript 5.6 Compatibility
       // Constants
       var APP_NAME = 'gCalBirthdays';
-      var APP_VERSION = '2.024';
+      var APP_VERSION = '2.026';
 
       var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
@@ -80,13 +80,13 @@
         $('versionID').innerHTML = /*APP_NAME + ' ' +*/ 'Version: ' + APP_VERSION;
 
         setupService();
-        queryGroupsAndCalendars();
+        //queryGroupsAndCalendars();
 
         showOneSection('main');
       };
 
       function showSettings() {
-        showOneSection('busyLoader');
+        showOneSection('busyloader');
         //queryGroupsAndCalendars();
       }
 
@@ -150,6 +150,7 @@
       }
 
       function onclickStart() {
+        showOneSection('main');
         fetchData();
       }
 
@@ -223,7 +224,7 @@
       //
       // Added settings section
       function showOneSection(toshow) {
-        var sections = [ 'main', 'approval', 'waiting', 'busyLoader', 'settings' ];
+        var sections = [ 'main', 'approval', 'waiting', 'busyloader', 'settings' ];
         for (var i=0; i < sections.length; ++i) {
           var s = sections[i];
           var el = document.getElementById(s);
