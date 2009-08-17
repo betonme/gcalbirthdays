@@ -55,7 +55,7 @@
       //IE JScript 5.6 Compatibility
       // Constants
       var APP_NAME = 'gCalBirthdays';
-      var APP_VERSION = '2.023';
+      var APP_VERSION = '2.025';
 
       var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
@@ -80,7 +80,7 @@
         $('versionID').innerHTML = /*APP_NAME + ' ' +*/ 'Version: ' + APP_VERSION;
 
         setupService();
-        queryGroupsAndCalendars();
+        //queryGroupsAndCalendars();
 
         showOneSection('main');
       };
@@ -150,13 +150,15 @@
       }
 
       function onclickStart() {
+        showOneSection('main');
         fetchData();
       }
 
       function fetchData() {
         var callback = function(response) {
+        //alert(response.oauthApprovalUrl);
           if (response.oauthApprovalUrl) {
-
+        //alert('1');
             // TODO: Display "Sign in" link (response.oauthApprovalUrl contains the URL)
 
             // Create the popup handler. The onOpen function is called when the user
@@ -182,15 +184,15 @@
             gadgets.window.adjustHeight();
 
           } else if (response.feed) {
-
+        //alert('2');
             // TODO: show results
-            showOneSection('main');
+          showOneSection('main');
 
-            document.getElementById('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
+        document.getElementById('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
             gadgets.window.adjustHeight();
 
           } else {
-
+      //alert('3');
             // TODO: handle the error
 
             // The response.oauthError and response.oauthErrorText values may help debug
@@ -225,7 +227,7 @@
         var sections = [ 'main', 'approval', 'waiting', 'busyLoader', 'settings' ];
         for (var i=0; i < sections.length; ++i) {
           var s = sections[i];
-          var el = $(s);
+          var el = document.getElementById(s);
           if (s === toshow) {
             el.style.display = "block";
           } else {
