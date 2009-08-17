@@ -1,0 +1,91 @@
+Installing gCalBirthdays
+========================================
+
+Table of Contents
+------------------
+  1. Package Contents
+  2. Execute Runnable JAR
+  3. Requirements
+  4. Installation
+
+
+PACKAGE CONTENTS:
+-----------------
+gCalBirthdays
+  1. Precompile runnable java libraries under "gCalBirthdays/bin".
+  2. Third party dependencies under "gCalBirthdays/third_party".
+  3. Java source code under "gCalBirthdays/src".
+  4. Eclipse project files under "gCalBirthdays".
+
+
+EXECUTE RUNNABLE JAR:
+---------------------
+ 1. No separate jar files are necessary to run "gCalBirthdays.jar".
+ 2. Run: java.exe -jar gCalBirthdays.jar username password
+         i.e.: "c:\Program Files (x86)\Java\jre1.6.0_06\bin\java.exe" -jar gCalBirthdays.jar username password
+
+
+REQUIREMENTS:
+-------------
+gCalBirthdays depends on following tools/platforms.
+ 1. Java Development Kit version 5.0 or greater.  Latest version of JDK
+    available for download from http://java.sun.com.
+ 2. Apache ANT version 1.7 or greater.  Apache's ANT binary is available for
+    download from http://ant.apache.org.
+
+Following third_party dependency libraries are required to compile/run the
+samples.
+ 1. Google data APIs ("GData" for short)
+    provide a simple protocol for reading and writing data on the web.
+	* gdata-calendar-2.0.jar
+	* gdata-client-1.0.jar
+	* gdata-contacts-3.0.jar
+	* gdata-core-1.0.jar
+	* gdata-photos-1.0.jar (not yet necessary) 
+	The GData Java Client Library provides a library and source code 
+    that make it easy to access data through Google Data APIs. 
+    GData can be downloaded from 
+    "http://code.google.com/p/gdata-java-client/".
+ 2. google-collect-1.0-rc2.jar in Google Collections Library 1.0. 
+    It is a set of new collection types, 
+    implementations and related goodness for Java 5 and higher, 
+    brought to you by Google. It is a natural extension of the 
+    Java Collections Framework you already know and love. 
+	Can be downloaded from "http://code.google.com/p/google-collections/".
+ 3. gdataplugin.jar in Google Eclipse GData Plugin 1.0.0.
+    Can be downloaded from 
+    "http://code.google.com/p/gdata-java-client-eclipse-plugin/" ) 
+ 4. mail.jar in Sun's JavaMail API (version 1.4 or greater).
+    Sun's JavaMail package available for download from
+    "http://java.sun.com/products/javamail/downloads/index.html". This is only
+    required for media specific APIs including Google Base data API,
+    Document List data API, Picasa Web Album API and YouTube data API.
+ 5. activation.jar in Sun's JavaBeans Activation Framewrok.
+    This is required only if using JDK version 1.5.
+    Sun's JavaBeansActivationFramework is available for download from
+    "http://java.sun.com/javase/technologies/desktop/javabeans/jaf/downloads/index.html".
+    This is only required for media specific APIs including
+    Google Base data API, Document List data API, Picasa Web Album API and
+    YouTube data API.
+ 6. servlet.jar in Sun's Servlet API (version 2.3 or greater).
+    This is required only if executing code samples in 'sample.authsub' or
+    'sample.gbase.recipe' packages. Sun's Servlet API package can be
+    downloaded from "http://java.sun.com/products/servlet/download.html".
+ 7. jsr-305.jar 
+    This project contains reference implementations, test cases, 
+    and other documents under source code control for 
+    Java Specification Request 305: Annotations for Software Defect Detection.
+    Can be downloaded from "http://code.google.com/p/jsr-305/"
+ 
+Download above mentioned third_party jar files and save under
+"gCalBirthdays/third_party".
+
+
+INSTALLATION:
+-------------
+ 1. Unpack gCalBirthdays_V1.00.zip package to local folder.
+    Do not change folder structure.
+    Project resource paths are all declared relative.
+ 2. To build/run a specific sample, execute the ant run target corresponding to the
+    sample.  For example to execute calendar sample, run command
+    "ant -f build-samples.xml sample.calendar.run" from folder "gdata/java".
