@@ -10,7 +10,7 @@
     <Require feature="dynamic-height"/>
     <Require feature="setprefs"/>
     <OAuth>
-      <Service name="google">
+      <Service name="gCalBirthdays">
         <Access url="https://www.google.com/accounts/OAuthGetAccessToken" method="GET" />
       <Request url="https://www.google.com/accounts/OAuthGetRequestToken?scope=http://www.google.com/m8/feeds/%20http://www.google.com/calendar/feeds/" method="GET" />
         <Authorization url="https://www.google.com/accounts/OAuthAuthorizeToken?oauth_callback=http://oauth.gmodules.com/gadgets/oauthcallback" />
@@ -59,10 +59,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_NAME = 'gCalBirthdays';
-        var APP_VERSION = '2.028';
-
-        var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
+        var APP_VERSION = '2.032';
 
         // The gadget containers request that we do NOT run any JS inline.
         // Instead, register a callback handler.
@@ -80,19 +77,19 @@
 
         function setupGadget(){
           myService = new google.gdata.calendar.CalendarService(APP_NAME);
-          myService.useOAuth('google');
+          myService.useOAuth(APP_NAME);
 
           $('versionID').innerHTML = /*APP_NAME + ' ' +*/ 'Version: ' + APP_VERSION;
 
           setupService();
-          //queryGroupsAndCalendars();
+          useOAuth();
 
           showOneSection('main');
         };
 
         function showSettings() {
           showOneSection('busyloader');
-          //queryGroupsAndCalendars();
+          queryGroupsAndCalendars();
         }
 
 
@@ -161,9 +158,8 @@
 
         function fetchData() {
           var callback = function(response) {
-          alert(response.oauthApprovalUrl);
             if (response.oauthApprovalUrl) {
-          alert('1');
+              printConsole('OAuthApprovalUrl: ' + response.oauthApprovalUrl);
               // TODO: Display "Sign in" link (response.oauthApprovalUrl contains the URL)
 
               // Create the popup handler. The onOpen function is called when the user
@@ -171,7 +167,6 @@
               // window is closed.
               var popup = shindig.oauth.popup({
                 destination: response.oauthApprovalUrl,
-                //windowOptions: null,
                 windowOptions: 'height=600,width=800,status=no,depent=yes',
                 onOpen: function() { showOneSection('waiting'); },
                 onClose: function() { fetchData(); }
@@ -181,32 +176,28 @@
               // popup window.  The createApprovedOnClick function returns an onclick
               // handler that will close the popup window and attempt to fetch the user's
               // data again.
-              var personalize = document.getElementById('personalize');
+              var personalize = $('personalize');
               personalize.onclick = popup.createOpenerOnClick();
-              var approvaldone = document.getElementById('approvaldone');
+              var approvaldone = $('approvaldone');
               approvaldone.onclick = popup.createApprovedOnClick();
               showOneSection('approval');
               gadgets.window.adjustHeight();
 
             } else if (response.feed) {
-          alert('2');
+              printConsole('Feed');
               // TODO: show results
-            showOneSection('main');
+              showOneSection('main');
 
-          document.getElementById('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
+              $('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
               gadgets.window.adjustHeight();
 
             } else {
-        alert('3');
+              printConsole('Error');
               // TODO: handle the error
 
               // The response.oauthError and response.oauthErrorText values may help debug
               // problems with your gadget.
-              var main = document.getElementById('main');
-              var err = document.createTextNode('OAuth error: ' +
-                response.oauthError + ': ' + response.oauthErrorText);
-              main.appendChild(err);
-              showOneSection('main');
+              printError('OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText);
             }
           };
 
@@ -264,7 +255,7 @@
       </div>
 
       <div id="approval" style="display:none">
-        <img src="https://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Images/popup.gif">
+        <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Images/popup.gif">
         <a href="#" id="personalize">Login</a>
       </div>
 
