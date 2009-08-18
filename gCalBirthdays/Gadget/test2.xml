@@ -6,13 +6,12 @@
     author="Frank Glaser"
     author_email="GlaserFrank@gmail.com"
     scrolling="true">
-    <Require feature="google.calendar-0.5"/>
     <Require feature="dynamic-height"/>
     <Require feature="setprefs"/>
     <OAuth>
       <Service name="gCalBirthdays">
         <Access url="https://www.google.com/accounts/OAuthGetAccessToken" method="GET" />
-      <Request url="https://www.google.com/accounts/OAuthGetRequestToken?scope=http://www.google.com/m8/feeds/%20http://www.google.com/calendar/feeds/" method="GET" />
+        <Request url="https://www.google.com/accounts/OAuthGetRequestToken?scope=http://www.google.com/m8/feeds/%20http://www.google.com/calendar/feeds/" method="GET" />
         <Authorization url="https://www.google.com/accounts/OAuthAuthorizeToken?oauth_callback=http://oauth.gmodules.com/gadgets/oauthcallback" />
       </Service>
     </OAuth>
@@ -59,7 +58,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.032';
+        var APP_VERSION = '2.034';
 
         // The gadget containers request that we do NOT run any JS inline.
         // Instead, register a callback handler.
@@ -79,11 +78,10 @@
           myService = new google.gdata.calendar.CalendarService(APP_NAME);
           myService.useOAuth(APP_NAME);
 
-          $('versionID').innerHTML = /*APP_NAME + ' ' +*/ 'Version: ' + APP_VERSION;
-
           setupService();
           useOAuth();
 
+          $('versionID').innerHTML = /*APP_NAME + ' ' +*/ 'Version: ' + APP_VERSION;
           showOneSection('main');
         };
 
@@ -91,7 +89,6 @@
           showOneSection('busyloader');
           queryGroupsAndCalendars();
         }
-
 
         function showGroups(selId){
           // Clear options
@@ -236,6 +233,16 @@
       </script>
 
       <style type="text/css">
+        #main {
+          font-size: 10px;
+          color: green;
+        }
+
+        #settings {
+          font-size: 10px;
+          color: red;
+        }
+
         #settingslink {
           cursor: pointer;
           font-size: 10px;
@@ -270,16 +277,16 @@
       </div>
 
       <div id="settings" style="display:none">
-        <table cellspacing="0" cellpadding="5">
-          <tr valign="bottom">
-            <td style="padding-right: 30px">Select Group(s):</td>
-            <td style="padding-right: 30px">Select Calendar:</td>
-          </tr>
-          <tr valign="top">
-            <td style="padding-right: 30px">
+        <table>
+          <tr>
+            <td>Select Group(s):</td>
+            <td>
               <select id="groupSelectID" multiple="multiple" size="4"></select>
             </td>
-            <td style="padding-right: 30px">
+          </tr>
+          <tr>
+            <td>Select Calendar:</td>
+            <td>
               <select id="calendarSelectID" size="1" onchange="onChangeCalendarSelect()"></select>
             </td>
           </tr>
