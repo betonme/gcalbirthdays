@@ -31,11 +31,12 @@
       <script type="text/javascript" src="http://www.google.com/jsapi?autoload=%7Bmodules%3A%5B%7Bname%3Agdata%2Cversion%3A1.x%2Cpackages%3A%5Bcontacts%2Ccalendar%5D%7D%5D%7D"></script>
       -->
 
-      <!--http://code.google.com/p/gdata-javascript-client/-->
-      <!--V1.6.0.3-->
+      <!--http://www.prototypejs.org/-->
+      <!--V1.6.0.3 - 1.6.1_rc3-->
       <!--http://www.prototypejs.org/assets/2009/6/16/prototype.js-->
       <!--http://www.prototypejs.org/assets/2008/9/29/prototype-1.6.0.3.js-->
-      <script src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js"></script>
+      <!--script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js"></script-->
+      <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/prototype.js"></script>
 
       <!--http://www.bram.us/projects/js_bramus/jsprogressbarhandler/-->
       <!--V0.3.3-->
@@ -61,7 +62,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.046';
+        var APP_VERSION = '2.047';
 
         // The gadget containers request that we do NOT run any JS inline.
         // Instead, register a callback handler.
