@@ -59,10 +59,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_NAME = 'gCalBirthdays';
-        var APP_VERSION = '2.031';
-
-        var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
+        var APP_VERSION = '2.033';
 
         // The gadget containers request that we do NOT run any JS inline.
         // Instead, register a callback handler.
@@ -82,11 +79,10 @@
           myService = new google.gdata.calendar.CalendarService(APP_NAME);
           myService.useOAuth(APP_NAME);
 
-          $('versionID').innerHTML = /*APP_NAME + ' ' +*/ 'Version: ' + APP_VERSION;
-
           setupService();
           useOAuth();
 
+          $('versionID').innerHTML = /*APP_NAME + ' ' +*/ 'Version: ' + APP_VERSION;
           showOneSection('main');
         };
 
