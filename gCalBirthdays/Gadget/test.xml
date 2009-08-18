@@ -57,7 +57,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.037';
+        var APP_VERSION = '2.038';
 
         // The gadget containers request that we do NOT run any JS inline.
         // Instead, register a callback handler.
@@ -240,7 +240,7 @@
             var box = doc.getBoxObjectFor(element);
             return box.height;
           } else {
-            return element.offsetHeight;
+            return element.clientHeight;
           }
         }
 
