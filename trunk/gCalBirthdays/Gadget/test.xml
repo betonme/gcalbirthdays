@@ -58,7 +58,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.043';
+        var APP_VERSION = '2.044';
 
         // The gadget containers request that we do NOT run any JS inline.
         // Instead, register a callback handler.
@@ -143,9 +143,13 @@
           }
 
           if (showSettingsBlock.groups && showSettingsBlock.calendars) {
-            showOneSection('settings');
             var desiredHeight = nodeHeight($('settings')) + nodeHeight($('logo'));
-            gadgets.window.adjustHeight(120);
+            desiredHeight = 200;
+            var zones = document.getElementById('settings');
+            zones.style.overflowY = 'scroll';
+            zones.style.height = desiredHeight;
+            showOneSection('settings');
+            gadgets.window.adjustHeight(desiredHeight);
           }
         }
 
