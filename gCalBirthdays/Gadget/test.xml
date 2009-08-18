@@ -5,9 +5,12 @@
     title_url="http://gcalbirthdays.googlecode.com"
     author="Frank Glaser"
     author_email="GlaserFrank@gmail.com"
-    height="100">
+    height="100"
+    scrolling="true">
     <Require feature="dynamic-height"/>
     <Require feature="setprefs"/>
+    <Optional feature="google.calendar-0.5"/>
+    <Optional feature="google.calendar-0.5.read"/>
     <OAuth>
       <Service name="gCalBirthdays">
         <Access url="https://www.google.com/accounts/OAuthGetAccessToken" method="GET" />
@@ -58,7 +61,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.044';
+        var APP_VERSION = '2.045';
 
         // The gadget containers request that we do NOT run any JS inline.
         // Instead, register a callback handler.
@@ -82,6 +85,7 @@
           useOAuth();
 
           $('version').innerHTML = /*APP_NAME + ' ' +*/ 'Version: ' + APP_VERSION;
+          gadgets.window.adjustHeight(150);
           showOneSection('main');
         };
 
