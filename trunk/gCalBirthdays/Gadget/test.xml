@@ -4,7 +4,8 @@
     title="gCalBirthdays"
     title_url="http://gcalbirthdays.googlecode.com"
     author="Frank Glaser"
-    author_email="GlaserFrank@gmail.com">
+    author_email="GlaserFrank@gmail.com"
+    height="100">
     <Require feature="dynamic-height"/>
     <Require feature="setprefs"/>
     <OAuth>
@@ -57,7 +58,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.040';
+        var APP_VERSION = '2.041';
 
         // The gadget containers request that we do NOT run any JS inline.
         // Instead, register a callback handler.
