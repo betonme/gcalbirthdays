@@ -7,6 +7,7 @@
     author_email="GlaserFrank@gmail.com"
     height="100">
     <Require feature="dynamic-height"/>
+    <Require feature="google.calendar-0.5"/>
     <Require feature="setprefs"/>
     <OAuth>
       <Service name="gCalBirthdays">
@@ -58,7 +59,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.041';
+        var APP_VERSION = '2.042';
 
         // The gadget containers request that we do NOT run any JS inline.
         // Instead, register a callback handler.
@@ -144,7 +145,8 @@
 
           if (showSettingsBlock.groups && showSettingsBlock.calendars) {
             showOneSection('settings');
-            gadgets.window.adjustHeight( nodeHeight($('settings')) + nodeHeight($('logo')) );
+            var desiredHeight = nodeHeight($('settings')) + nodeHeight($('logo'));
+            gadgets.window.adjustHeight(desiredHeight);
           }
         }
 
@@ -226,7 +228,7 @@
               el.style.display = "none";
             }
           }
-          gadgets.window.adjustHeight();
+          //gadgets.window.adjustHeight();
         }
 
         /**
