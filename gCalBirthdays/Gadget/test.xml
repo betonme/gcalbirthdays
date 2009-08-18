@@ -10,7 +10,7 @@
     <Require feature="dynamic-height"/>
     <Require feature="setprefs"/>
     <OAuth>
-      <Service name="google">
+      <Service name="gCalBirthdays">
         <Access url="https://www.google.com/accounts/OAuthGetAccessToken" method="GET" />
       <Request url="https://www.google.com/accounts/OAuthGetRequestToken?scope=http://www.google.com/m8/feeds/%20http://www.google.com/calendar/feeds/" method="GET" />
         <Authorization url="https://www.google.com/accounts/OAuthAuthorizeToken?oauth_callback=http://oauth.gmodules.com/gadgets/oauthcallback" />
@@ -60,7 +60,7 @@
         //IE JScript 5.6 Compatibility
         // Constants
         var APP_NAME = 'gCalBirthdays';
-        var APP_VERSION = '2.030';
+        var APP_VERSION = '2.031';
 
         var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
 
