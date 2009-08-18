@@ -33,6 +33,10 @@
  */
 
     // Constants
+    var APP_NAME = 'gCalBirthdays';
+
+    var GOOGLE_FEED_AUTH = 'http://www.google.com/m8/feeds/ http://www.google.com/calendar/feeds/';
+
     var GROUP_FEED_URL_THIN = 'http://www.google.com/m8/feeds/groups/default/thin';
     var GROUP_FEED_URL_FULL = 'http://www.google.com/m8/feeds/groups/default/full'; //not used
 
@@ -55,6 +59,9 @@
 
     var CALENDAR_HIDDEN = false;
     var CALENDAR_SELECTED = true;
+
+    var ALL_CONTACTS = 'All contacts';
+    var NEW_CALENDAR = 'New calendar';
 
     var DATE_FORMAT_CONTACTS = 'yyyy-MM-dd';
     var DATE_FORMAT_CALENDAR = 'yyyyMMdd';
@@ -96,7 +103,7 @@
      * AuthSub is only used by the html version.
      */
     function useAuthSub(){
-      // Nothing todo
+      // Do nothing - authsub is the default
     }
 
     /**
