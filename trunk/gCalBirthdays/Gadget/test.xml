@@ -258,7 +258,7 @@
       </div>
 
       <div id="approval" style="display:none">
-        <img src="https://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Images/popup.gif">
+        <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Images/popup.gif">
         <a href="#" id="personalize">Login</a>
       </div>
 
