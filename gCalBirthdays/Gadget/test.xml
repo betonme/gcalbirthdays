@@ -57,7 +57,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.038';
+        var APP_VERSION = '2.039';
 
         // The gadget containers request that we do NOT run any JS inline.
         // Instead, register a callback handler.
@@ -144,7 +144,7 @@
 
           if (showSettingsBlock.groups && showSettingsBlock.calendars) {
             showOneSection('settings');
-            gadgets.window.adjustHeight( nodeHeight('settings') + nodeHeight('logo') );
+            gadgets.window.adjustHeight( nodeHeight($('settings')) + nodeHeight($('logo')) );
           }
         }
 
@@ -240,7 +240,7 @@
             var box = doc.getBoxObjectFor(element);
             return box.height;
           } else {
-            return element.clientHeight;
+            return element.offsetHeight;
           }
         }
 
