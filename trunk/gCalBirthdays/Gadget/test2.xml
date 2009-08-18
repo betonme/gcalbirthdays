@@ -4,8 +4,7 @@
     title="gCalBirthdays"
     title_url="http://gcalbirthdays.googlecode.com"
     author="Frank Glaser"
-    author_email="GlaserFrank@gmail.com"
-    scrolling="true">
+    author_email="GlaserFrank@gmail.com">
     <Require feature="dynamic-height"/>
     <Require feature="setprefs"/>
     <OAuth>
@@ -58,7 +57,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.034';
+        var APP_VERSION = '2.035';
 
         // The gadget containers request that we do NOT run any JS inline.
         // Instead, register a callback handler.
@@ -81,7 +80,7 @@
           setupService();
           useOAuth();
 
-          $('versionID').innerHTML = /*APP_NAME + ' ' +*/ 'Version: ' + APP_VERSION;
+          $('version').innerHTML = /*APP_NAME + ' ' +*/ 'Version: ' + APP_VERSION;
           showOneSection('main');
         };
 
@@ -185,7 +184,6 @@
               // TODO: show results
               showOneSection('main');
 
-              $('versionID').innerHTML = APP_NAME + ' Version: ' + APP_VERSION;
               gadgets.window.adjustHeight();
 
             } else {
@@ -233,7 +231,7 @@
       </script>
 
       <style type="text/css">
-        #main {
+        #version {
           font-size: 10px;
           color: green;
         }
@@ -241,6 +239,7 @@
         #settings {
           font-size: 10px;
           color: red;
+          margin: 5px;
         }
 
         #settingslink {
@@ -254,7 +253,7 @@
       </style>
 
       <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
-      <span id="versionID">Version</span>
+      <span id="version">Version</span>
       <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
 
       <div id="main" style="display:none">
@@ -280,12 +279,16 @@
         <table>
           <tr>
             <td>Select Group(s):</td>
+          </tr>
+          <tr>
             <td>
               <select id="groupSelectID" multiple="multiple" size="4"></select>
             </td>
           </tr>
           <tr>
             <td>Select Calendar:</td>
+          </tr>
+          <tr>
             <td>
               <select id="calendarSelectID" size="1" onchange="onChangeCalendarSelect()"></select>
             </td>
