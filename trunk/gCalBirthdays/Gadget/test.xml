@@ -57,7 +57,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.036';
+        var APP_VERSION = '2.037';
 
         // The gadget containers request that we do NOT run any JS inline.
         // Instead, register a callback handler.
@@ -144,6 +144,7 @@
 
           if (showSettingsBlock.groups && showSettingsBlock.calendars) {
             showOneSection('settings');
+            gadgets.window.adjustHeight( nodeHeight('settings') + nodeHeight('logo') );
           }
         }
 
@@ -228,6 +229,21 @@
           gadgets.window.adjustHeight();
         }
 
+        /**
+         * Get the height of an HTMLElement
+         * @param {Element} element The element in question.
+         * @return {number} The height of that element.
+         */
+        function nodeHeight(element) {
+          var doc = element.ownerDocument;
+          if (doc && doc.getBoxObjectFor) {
+            var box = doc.getBoxObjectFor(element);
+            return box.height;
+          } else {
+            return element.offsetHeight;
+          }
+        }
+
       </script>
 
       <style type="text/css">
@@ -252,11 +268,12 @@
         }
       </style>
 
-      <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
-      <span id="version">Version</span>
-      <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
+      <img id='logo' src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
+
 
       <div id="main" style="display:none">
+        <span id="version">Version</span>
+        <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
         <span id="settingslink" onclick="showSettings()">settings</span>
       </div>
 
