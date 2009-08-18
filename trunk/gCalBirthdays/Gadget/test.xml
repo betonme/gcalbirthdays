@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Module>
   <ModulePrefs
     title="gCalBirthdays"
@@ -61,7 +61,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.045';
+        var APP_VERSION = '2.046';
 
         // The gadget containers request that we do NOT run any JS inline.
         // Instead, register a callback handler.
@@ -158,8 +158,9 @@
         }
 
         function onclickStart() {
-          showOneSection('main');
-          fetchData();
+          //showOneSection('main');
+          //fetchData();
+          gadgets.window.adjustHeight();
         }
 
         function fetchData() {
@@ -279,7 +280,6 @@
 
       <img id='logo' src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
 
-
       <div id="main" style="display:none">
         <span id="version">Version</span>
         <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
@@ -302,6 +302,7 @@
       </div>
 
       <div id="settings" style="display:none">
+        <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
         <table>
           <tr>
             <td>Select Group(s):</td>
