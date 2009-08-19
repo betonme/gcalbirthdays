@@ -59,7 +59,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.051';
+        var APP_VERSION = '2.052';
 
         // The gadget containers request that we do NOT run any JS inline.
         // Instead, register a callback handler.
@@ -148,10 +148,12 @@
           }
         }
 
-        function onclickStart() {
-          //showOneSection('main');
-          //fetchData();
-          adjustHeight();
+        function onclickSave() {
+          showOneSection('main');
+        }
+
+        function onclickCancel() {
+          showOneSection('main');
         }
 
         function fetchData() {
@@ -268,7 +270,10 @@
           text-decoration: underline;
           color: blue;
           float: right;
-          padding: 0 3px 3px 0;
+        }
+
+        #text {
+          font-size: 80%;
         }
       </style>
 
@@ -277,7 +282,6 @@
 
         <div id="main" style="display:none">
           <span id="version">Version</span>
-          <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
           <span id="settingslink" onclick="showSettings()">settings</span>
         </div>
 
@@ -297,10 +301,9 @@
         </div>
 
         <div id="settings" style="display:none">
-          <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
           <table>
             <tr>
-              <td>Select Group(s):</td>
+              <td id="text">Select Group(s):</td>
             </tr>
             <tr>
               <td>
@@ -308,17 +311,16 @@
               </td>
             </tr>
             <tr>
-              <td>Select Calendar:</td>
+              <td id="text">Select Calendar:</td>
             </tr>
             <tr>
               <td>
-                <select id="calendarSelectID" size="1" onchange="onChangeCalendarSelect()" style="display:none"></select>
+                <select id="calendarSelectID" size="1" onchange="onChangeCalendarSelect()"></select>
               </td>
             </tr>
           </table>
-          <br>
-          <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
-          <input id="stopButtonID" type="button" value="Cancel" onclick="onclickStop()" disabled="true">
+          <input id="save" type="button" value="Save" onclick="onclickSave()">
+          <input id="cancel" type="button" value="Cancel" onclick="onclickCancel()">
           <br>
         </div>
       </div>
