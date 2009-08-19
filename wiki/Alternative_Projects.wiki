@@ -4,7 +4,7 @@
 == Online: ==
 || *URL* || *Calendar Name* || *Sync* || *Reminders* ||
 || http://birthdaycal.appspot.com/ || My Contacts (My) || Dynamic || Yes       ||
-|| http://contact-birthdays.appspot.com/ || Contact Birthdays (Other) || Static ||Yes ||
+|| http://contact-birthdays.appspot.com/ || Contact Birthdays (Other) || Dynamic ||Yes ||
 || http://www.google.com/support/calendar/bin/answer.py?answer=37098 ||Contacts' birthdays and events (Other) || Dynamic || No ||
 
 == Stand-Alone Executable: ==
