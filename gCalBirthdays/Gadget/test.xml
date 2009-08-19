@@ -59,7 +59,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.050';
+        var APP_VERSION = '2.051';
 
         // The gadget containers request that we do NOT run any JS inline.
         // Instead, register a callback handler.
@@ -83,7 +83,6 @@
           useOAuth();
 
           $('version').innerHTML = /*APP_NAME + ' ' +*/ 'Version: ' + APP_VERSION;
-          gadgets.window.adjustHeight(150);
           showOneSection('main');
         };
 
@@ -145,20 +144,14 @@
           }
 
           if (showSettingsBlock.groups && showSettingsBlock.calendars) {
-            var desiredHeight = nodeHeight($('settings')) + nodeHeight($('logo'));
-            desiredHeight = 200;
-            var zones = document.getElementById('settings');
-            zones.style.overflowY = 'scroll';
-            zones.style.height = desiredHeight;
             showOneSection('settings');
-            gadgets.window.adjustHeight(desiredHeight);
           }
         }
 
         function onclickStart() {
           //showOneSection('main');
           //fetchData();
-          gadgets.window.adjustHeight();
+          adjustHeight();
         }
 
         function fetchData() {
@@ -186,15 +179,11 @@
               var approvaldone = $('approvaldone');
               approvaldone.onclick = popup.createApprovedOnClick();
               showOneSection('approval');
-              gadgets.window.adjustHeight();
 
             } else if (response.feed) {
               printConsole('Feed');
               // TODO: show results
               showOneSection('main');
-
-              gadgets.window.adjustHeight();
-
             } else {
               printConsole('Error');
               // TODO: handle the error
@@ -234,7 +223,14 @@
               el.style.display = "none";
             }
           }
-          //gadgets.window.adjustHeight();
+          adjustHeight();
+        }
+
+        /**
+         * Adjust the height of the gadget
+         */
+        function adjustHeight(element) {
+          gadgets.window.adjustHeight(nodeHeight($('gadget')));
         }
 
         /**
@@ -276,53 +272,55 @@
         }
       </style>
 
-      <img id='logo' src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
+      <div id="gadget">
+        <img id='logo' src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
 
-      <div id="main" style="display:none">
-        <span id="version">Version</span>
-        <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
-        <span id="settingslink" onclick="showSettings()">settings</span>
-      </div>
+        <div id="main" style="display:none">
+          <span id="version">Version</span>
+          <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
+          <span id="settingslink" onclick="showSettings()">settings</span>
+        </div>
 
-      <div id="approval" style="display:none">
-        <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Images/popup.gif">
-        <a href="#" id="personalize">Login</a>
-      </div>
+        <div id="approval" style="display:none">
+          <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Images/popup.gif">
+          <a href="#" id="personalize">Login</a>
+        </div>
 
-      <div id="waiting" style="display:none">
-        Please click
-        <a href="#" id="approvaldone">I've approved access</a>
-        once you've approved access to your data.
-      </div>
+        <div id="waiting" style="display:none">
+          Please click
+          <a href="#" id="approvaldone">I've approved access</a>
+          once you've approved access to your data.
+        </div>
 
-      <div id="busyloader" style="display:none">
-        <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Images/busyLoader.gif" alt="BusyLoader Image">
-      </div>
+        <div id="busyloader" style="display:none">
+          <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Images/busyLoader.gif" alt="BusyLoader Image">
+        </div>
 
-      <div id="settings" style="display:none">
-        <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
-        <table>
-          <tr>
-            <td>Select Group(s):</td>
-          </tr>
-          <tr>
-            <td>
-              <select id="groupSelectID" multiple="multiple" size="4"></select>
-            </td>
-          </tr>
-          <tr>
-            <td>Select Calendar:</td>
-          </tr>
-          <tr>
-            <td>
-              <select id="calendarSelectID" size="1" onchange="onChangeCalendarSelect()" style="display:none"></select>
-            </td>
-          </tr>
-        </table>
-        <br>
-        <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
-        <input id="stopButtonID" type="button" value="Cancel" onclick="onclickStop()" disabled="true">
-        <br>
+        <div id="settings" style="display:none">
+          <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
+          <table>
+            <tr>
+              <td>Select Group(s):</td>
+            </tr>
+            <tr>
+              <td>
+                <select id="groupSelectID" multiple="multiple" size="4"></select>
+              </td>
+            </tr>
+            <tr>
+              <td>Select Calendar:</td>
+            </tr>
+            <tr>
+              <td>
+                <select id="calendarSelectID" size="1" onchange="onChangeCalendarSelect()" style="display:none"></select>
+              </td>
+            </tr>
+          </table>
+          <br>
+          <input id="startButtonID" type="button" value="Go" onclick="onclickStart()">
+          <input id="stopButtonID" type="button" value="Cancel" onclick="onclickStop()" disabled="true">
+          <br>
+        </div>
       </div>
 
       <!--Google Analytics-->
