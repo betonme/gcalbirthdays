@@ -1,5 +1,0 @@
-#summary One-sentence summary of this page.
-
-= Introduction =
-
-http://www.google.com/calendar/render?gadgeturl=http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/test.xml
