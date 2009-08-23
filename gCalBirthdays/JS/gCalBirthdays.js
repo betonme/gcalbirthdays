@@ -1,6 +1,6 @@
 /*  gCalBirthdays.js
  *
- *  This is version: 1.11
+ *  This is version: 1.12
  *
  *  Shared JavaScript functions for HTML and Gadget Version of gCalBirthdays
  *
@@ -161,6 +161,31 @@
       calendarService.useOAuth(APP_NAME);
     }
 
+    function handleOAuth(oauthApprovalUrl){
+      // Display "Sign in" link (response.oauthApprovalUrl contains the URL)
+      printConsole('OAuthApprovalUrl: ' + response.oauthApprovalUrl);
+
+      // Create the popup handler. The onOpen function is called when the user
+      // opens the popup window. The onClose function is called when the popup
+      // window is closed.
+      var popup = shindig.oauth.popup({
+        destination: response.oauthApprovalUrl,
+        windowOptions: 'height=600,width=800,status=no,depent=yes',
+        onOpen: function() { showOneSection('waiting'); },
+        onClose: function() { fetchData(); }
+      });
+
+      // Use the popup handler to attach onclick handlers to UI elements.  The
+      // createOpenerOnClick() function returns an onclick handler to open the
+      // popup window.  The createApprovedOnClick function returns an onclick
+      // handler that will close the popup window and attempt to fetch the user's
+      // data again.
+      var personalize = $('personalize');
+      personalize.onclick = popup.createOpenerOnClick();
+      var approvaldone = $('approvaldone');
+      approvaldone.onclick = popup.createApprovedOnClick();
+      showOneSection('approval');
+    }
 
     /**
      * Query groups and calendars function.
@@ -209,65 +234,44 @@
 
     function handleGroupsFeed(response){
       if (response.oauthApprovalUrl) {
-        // Display "Sign in" link (response.oauthApprovalUrl contains the URL)
-        printConsole('OAuthApprovalUrl: ' + response.oauthApprovalUrl);
-
-        // Create the popup handler. The onOpen function is called when the user
-        // opens the popup window. The onClose function is called when the popup
-        // window is closed.
-        var popup = shindig.oauth.popup({
-          destination: response.oauthApprovalUrl,
-          windowOptions: 'height=600,width=800,status=no,depent=yes',
-          onOpen: function() { showOneSection('waiting'); },
-          onClose: function() { fetchData(); }
-        });
-
-        // Use the popup handler to attach onclick handlers to UI elements.  The
-        // createOpenerOnClick() function returns an onclick handler to open the
-        // popup window.  The createApprovedOnClick function returns an onclick
-        // handler that will close the popup window and attempt to fetch the user's
-        // data again.
-        var personalize = $('personalize');
-        personalize.onclick = popup.createOpenerOnClick();
-        var approvaldone = $('approvaldone');
-        approvaldone.onclick = popup.createApprovedOnClick();
-        showOneSection('approval');
+        handleOAuth(response.oauthApprovalUrl);
       }
+      else {
+        var groupFeed = response.feed;
+        var groups = groupFeed.entry;
 
-      var groupFeed = response.feed;
-      var groups = groupFeed.entry;
+        // Replace 'System Group: ' with an identifier
+        var id = 0;
+        // IE JScript 5.6 Compatibility
+        var len = groups.length;
+        for (var ie = 0; ie < len; ie++) {
+          var group = groups[ie];
+          group.title.$t = group.title.$t.replace(/System Group/gi, id++);
+        }
+        // Sort groups
+        groups.sort(compareEntries);
+        // Remove identifier
+        // IE JScript 5.6 Compatibility
+        for (var ie = 0; ie < len; ie++) {
+          var group = groups[ie];
+          group.title.$t = group.title.$t.replace(/^.: /gi, '');
+        }
 
-      // Replace 'System Group: ' with an identifier
-      var id = 0;
-      // IE JScript 5.6 Compatibility
-      var len = groups.length;
-      for (var ie = 0; ie < len; ie++) {
-        var group = groups[ie];
-        group.title.$t = group.title.$t.replace(/System Group/gi, id++);
+        // Iterate through the array of contact groups, and add them to
+        // drop down box
+        // IE JScript 5.6 Compatibility
+        var idl = groupList.length;
+        for (var ie = 0; ie < len; ie++) {
+          var group = groups[ie];
+          groupList[idl++] = { title: html_entity_decode(group.title.$t), id: group.id.$t };
+        }
+
+        printConsole ('Group(s): ' + groupList.length);
+
+        // Next step: show groups
+        showGroups(0);
+        showSettingsSection(states.fingroups);
       }
-      // Sort groups
-      groups.sort(compareEntries);
-      // Remove identifier
-      // IE JScript 5.6 Compatibility
-      for (var ie = 0; ie < len; ie++) {
-        var group = groups[ie];
-        group.title.$t = group.title.$t.replace(/^.: /gi, '');
-      }
-
-      // Iterate through the array of contact groups, and add them to
-      // drop down box
-      // IE JScript 5.6 Compatibility
-      var idl = groupList.length;
-      for (var ie = 0; ie < len; ie++) {
-        var group = groups[ie];
-        groupList[idl++] = { title: html_entity_decode(group.title.$t), id: group.id.$t };
-      }
-
-      printConsole ('Group(s): ' + groupList.length);
-
-      // Next step: show groups
-      showGroups(0);
-      showSettingsSection(states.fingroups);
     }
 
     function showGroups(selId){
@@ -310,41 +314,46 @@
     }
 
     function handleCalendarsFeed(response){
-      var calFeed = response.feed;
-      var calendars = calFeed.getEntries();
+      if (response.oauthApprovalUrl) {
+        handleOAuth(response.oauthApprovalUrl);
+      }
+      else {
+        var calFeed = response.feed;
+        var calendars = calFeed.getEntries();
 
-      // Sort calendars
-      calendars.sort(compareEntries);
+        // Sort calendars
+        calendars.sort(compareEntries);
 
-      // Iterate through the array of calendars, and add them to drop down box
-      var i = 0;
-      var selId = -1;
-      // IE JScript 5.6 Compatibility
-      var idl = calendarList.length;
-      var len = calendars.length;
-      for (var ie = 0; ie < len; ie++) {
-        var calendar = calendars[ie];
-        calendarList[idl++] = { title: html_entity_decode(calendar.getTitle().getText()), url: calendar.getLink().href };
+        // Iterate through the array of calendars, and add them to drop down box
+        var i = 0;
+        var selId = -1;
+        // IE JScript 5.6 Compatibility
+        var idl = calendarList.length;
+        var len = calendars.length;
+        for (var ie = 0; ie < len; ie++) {
+          var calendar = calendars[ie];
+          calendarList[idl++] = { title: html_entity_decode(calendar.getTitle().getText()), url: calendar.getLink().href };
 
-        // Select first calendar which contains
-        // [Birthdays|Geburtstag]
-        if (undefined != calendar.getTitle()) {
-          if (undefined != calendar.getTitle().getText()) {
-            if (-1 != calendar.getTitle().getText().search(/(Birthday|Geburtstag)/i)) {
-              if (-1 == selId) {
-                selId = i;
+          // Select first calendar which contains
+          // [Birthdays|Geburtstag]
+          if (undefined != calendar.getTitle()) {
+            if (undefined != calendar.getTitle().getText()) {
+              if (-1 != calendar.getTitle().getText().search(/(Birthday|Geburtstag)/i)) {
+                if (-1 == selId) {
+                  selId = i;
+                }
               }
             }
           }
+          i++;
         }
-        i++;
+
+        printConsole ('Calendar(s): ' + calendarList.length);
+
+        // Next step: show calendars
+        showCalendars(selId);
+        showSettingsSection(states.fincalendars);
       }
-
-      printConsole ('Calendar(s): ' + calendarList.length);
-
-      // Next step: show calendars
-      showCalendars(selId);
-      showSettingsSection(states.fincalendars);
     }
 
     function showCalendars(selId){
@@ -534,62 +543,67 @@
     }
 
     function handleContactsFeed(response){
-      var conFeed = response.feed;
-      var contacts = conFeed.entry;
-      var contactsLen = (undefined != contacts) ? contacts.length : 0;
-      handleContactsFeed.progress = handleContactsFeed.progress + contactsLen;
+      if (response.oauthApprovalUrl) {
+        handleOAuth(response.oauthApprovalUrl);
+      }
+      else {
+        var conFeed = response.feed;
+        var contacts = conFeed.entry;
+        var contactsLen = (undefined != contacts) ? contacts.length : 0;
+        handleContactsFeed.progress = handleContactsFeed.progress + contactsLen;
 
-      // IE JScript 5.6 Compatibility
-      if (undefined != contacts) {
-        var idl = contactList.length;
-        for (var ie = 0; ie < contactsLen; ie++) {
-          var contact = contacts[ie];
-          // Push only if contact has a title
-          if (undefined != contact.title.$t) {
-            // Push only if contact has a birthday
-            if (undefined != contact.gContact$birthday) {
-              // Complete push is not necessary becasue we need only the title and birthday
-              contactList[idl++] = { title: html_entity_decode(contact.title.$t), birthday: contact.gContact$birthday.when };
+        // IE JScript 5.6 Compatibility
+        if (undefined != contacts) {
+          var idl = contactList.length;
+          for (var ie = 0; ie < contactsLen; ie++) {
+            var contact = contacts[ie];
+            // Push only if contact has a title
+            if (undefined != contact.title.$t) {
+              // Push only if contact has a birthday
+              if (undefined != contact.gContact$birthday) {
+                // Complete push is not necessary becasue we need only the title and birthday
+                contactList[idl++] = { title: html_entity_decode(contact.title.$t), birthday: contact.gContact$birthday.when };
+              }
             }
           }
         }
-      }
 
-      // Set progress
-      setProgressContacts(calcProgress(handleContactsFeed.progress, parseInt(conFeed.openSearch$totalResults.$t)));
-      printConsole('Contact(s) query progress: ' + handleContactsFeed.progress + ' / ' + conFeed.openSearch$totalResults.$t);
+        // Set progress
+        setProgressContacts(calcProgress(handleContactsFeed.progress, parseInt(conFeed.openSearch$totalResults.$t)));
+        printConsole('Contact(s) query progress: ' + handleContactsFeed.progress + ' / ' + conFeed.openSearch$totalResults.$t);
 
-      // Check statemachine
-      if (states.canceled == statemachine) {
-        printConsole('handleContactsFeed: ' + 'canceled');
-        return;
-      }
-
-      // Get next page if it exists
-      // link[5|6].rel = 'next'
-      var len = conFeed.link.length;
-      for (var il = 0; il < len; il++) {
-        var link = conFeed.link[il];
-        if ( 'next' == link.rel ) {
-          return getContacts(link.href);
+        // Check statemachine
+        if (states.canceled == statemachine) {
+          printConsole('handleContactsFeed: ' + 'canceled');
+          return;
         }
-      }
 
-      printConsole ('Contact(s) with Birthday: ' + contactList.length);
-      if (0 == contactList.length) {
-        setProgressContacts(100, true);
-        setProgressEvents(100, true);
-        setProgressTransfer(100, true);
-        printConsole('Cancel no birthdays');
-        statemachine = states.canceled;
-        printConsole('StateMachine: ' + 'canceled');
-        stopTransfer();
-        return;
-      }
+        // Get next page if it exists
+        // link[5|6].rel = 'next'
+        var len = conFeed.link.length;
+        for (var il = 0; il < len; il++) {
+          var link = conFeed.link[il];
+          if ( 'next' == link.rel ) {
+            return getContacts(link.href);
+          }
+        }
 
-      // Next step: Check events
-      printContacts();
-      transferBirthdays(states.fincontacts);
+        printConsole ('Contact(s) with Birthday: ' + contactList.length);
+        if (0 == contactList.length) {
+          setProgressContacts(100, true);
+          setProgressEvents(100, true);
+          setProgressTransfer(100, true);
+          printConsole('Cancel no birthdays');
+          statemachine = states.canceled;
+          printConsole('StateMachine: ' + 'canceled');
+          stopTransfer();
+          return;
+        }
+
+        // Next step: Check events
+        printContacts();
+        transferBirthdays(states.fincontacts);
+      }
     }
 
     function printContacts(){
@@ -626,57 +640,62 @@
 
 
     function handleEventsFeed(response){
-      var eventFeed = response.feed;
-      var events = eventFeed.entry;
-      var eventsLen = events.length;
-      handleEventsFeed.progress = handleEventsFeed.progress + eventsLen;
+      if (response.oauthApprovalUrl) {
+        handleOAuth(response.oauthApprovalUrl);
+      }
+      else {
+        var eventFeed = response.feed;
+        var events = eventFeed.entry;
+        var eventsLen = events.length;
+        handleEventsFeed.progress = handleEventsFeed.progress + eventsLen;
 
-      // IE JScript 5.6 Compatibility
-      if (undefined != events) {
-        for (var ie = 0; ie < eventsLen; ie++) {
-          var event = events[ie];
-          // Push only if event has a title
-          if (undefined != event.getTitle()) {
-            // Push only if event has content
-            if (undefined != event.getContent()) {
-              if (undefined != event.getContent().getText()) {
-                // Push only if event is created by us
-                if (-1 != event.getContent().getText().search(APP_NAME)) {
-                  // Complete push is necessary becasue we need the whole event content
-                  event.setTitle(google.gdata.Text.create(html_entity_decode(event.getTitle().getText())));
-                  eventList.push(event);
+        // IE JScript 5.6 Compatibility
+        if (undefined != events) {
+          for (var ie = 0; ie < eventsLen; ie++) {
+            var event = events[ie];
+            // Push only if event has a title
+            if (undefined != event.getTitle()) {
+              // Push only if event has content
+              if (undefined != event.getContent()) {
+                if (undefined != event.getContent().getText()) {
+                  // Push only if event is created by us
+                  if (-1 != event.getContent().getText().search(APP_NAME)) {
+                    // Complete push is necessary becasue we need the whole event content
+                    event.setTitle(google.gdata.Text.create(html_entity_decode(event.getTitle().getText())));
+                    eventList.push(event);
+                  }
                 }
               }
             }
           }
         }
+
+        // Set progress
+        setProgressEvents(calcProgress(handleEventsFeed.progress, parseInt(eventFeed.getTotalResults().$t)));
+        printConsole('Event(s) query progress: ' + handleEventsFeed.progress + ' / ' + eventFeed.getTotalResults().$t);
+
+        // Check statemachine
+        if (states.canceled == statemachine) {
+          printConsole('handleEventsFeed: ' + 'canceled');
+          return;
+        }
+
+        // Get next page if it exists
+        if (undefined != eventFeed.getNextLink()) {
+          return getEvents(eventFeed.getNextLink().href);
+        }
+
+        // Get URL to post/add events
+        // link[2].rel = 'http://schemas.google.com/g/2005#post'
+        postURL = eventFeed.getEntryPostLink().href;
+        //printConsole('Event PostURL: ' + postURL);
+
+        printConsole('Event(s) with Birthday: ' + eventList.length);
+
+        // Next step: Check events
+        printEvents();
+        transferBirthdays(states.finevents);
       }
-
-      // Set progress
-      setProgressEvents(calcProgress(handleEventsFeed.progress, parseInt(eventFeed.getTotalResults().$t)));
-      printConsole('Event(s) query progress: ' + handleEventsFeed.progress + ' / ' + eventFeed.getTotalResults().$t);
-
-      // Check statemachine
-      if (states.canceled == statemachine) {
-        printConsole('handleEventsFeed: ' + 'canceled');
-        return;
-      }
-
-      // Get next page if it exists
-      if (undefined != eventFeed.getNextLink()) {
-        return getEvents(eventFeed.getNextLink().href);
-      }
-
-      // Get URL to post/add events
-      // link[2].rel = 'http://schemas.google.com/g/2005#post'
-      postURL = eventFeed.getEntryPostLink().href;
-      //printConsole('Event PostURL: ' + postURL);
-
-      printConsole('Event(s) with Birthday: ' + eventList.length);
-
-      // Next step: Check events
-      printEvents();
-      transferBirthdays(states.finevents);
     }
 
     function printEvents(){
