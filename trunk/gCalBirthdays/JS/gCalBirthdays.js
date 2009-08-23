@@ -180,7 +180,7 @@
 
       getPreferences(); // nothing stored handling ?
     //TODO setuserprefs function
-      reminder = $('reminderinput').value;
+      $('reminderinput').value = reminder;
 
       queryGroups();
       queryCalendars();
