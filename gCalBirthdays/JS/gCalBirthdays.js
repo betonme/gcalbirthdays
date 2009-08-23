@@ -1,6 +1,6 @@
 /*  gCalBirthdays.js
  *
- *  This is version: 1.10
+ *  This is version: 1.11
  *
  *  Shared JavaScript functions for HTML and Gadget Version of gCalBirthdays
  *
@@ -69,22 +69,31 @@
 
     var GROUP_SEPARATOR = ',';
     var MAX_RESULT = 10;
-    var REMINDER_DAYS = 14;
+    var REMINDER_DAYS_DEFAULT = 14;
     var ICAL_BREAK = '\r\n'; // '\n'
+
+    var BOXIMAGE = '/../Images/percentImage.png';
+    var BARIMAGE = '/../Images/percentImage_back.png';
 
     // Variables
     var contactService;
     var calendarService;
+    var contactsProgressbar;
+    var eventsProgressbar;
+    var transferProgressbar;
+    var postURL;
+    var reminder;
+
+    // Arrays
+    var groupList = new Array();
+    var calendarList = new Array();
+    var contactList = new Array();
+    var eventList = new Array();
 
     // Shared Constants
     var states = {setup:{}, fingroups:{}, fincalendars:{}, fincontacts:{}, finevents:{}, started:{}, canceled:{}, finished:{}};
 
     // Shared Variables
-    var groupList = new Array();
-    var calendarList = new Array();
-    var contactList = new Array();
-    var eventList = new Array();
-    var postURL;
     var statemachine = states.setup;
 
 
@@ -97,6 +106,44 @@
 
       // CalendarService v2
       calendarService = new google.gdata.calendar.CalendarService(APP_NAME);
+
+      // setup progress bars
+      contactsProgressbar = new JS_BRAMUS.jsProgressBar(
+        $('contactsprogressbar'),
+        0,
+        {
+          animate   : true,
+          showText  : true,
+          width     : 120,
+          boxImage  : BOXIMAGE,
+          barImage  : BARIMAGE,
+          height    : 12,
+        }
+      );
+      eventsProgressbar = new JS_BRAMUS.jsProgressBar(
+        $('eventsprogressbar'),
+        0,
+        {
+          animate   : true,
+          showText  : true,
+          width     : 120,
+          boxImage  : BOXIMAGE,
+          barImage  : BARIMAGE,
+          height    : 12,
+        }
+      );
+      transferProgressbar = new JS_BRAMUS.jsProgressBar(
+        $('transferprogressbar'),
+        0,
+        {
+          animate   : true,
+          showText  : true,
+          width     : 120,
+          boxImage  : BOXIMAGE,
+          barImage  : BARIMAGE,
+          height    : 12,
+        }
+      );
     }
 
     /**
@@ -125,6 +172,16 @@
       handleGroupsFeed.progress = 0;
       handleCalendarsFeed.progress = 0;
 
+      // Set default values
+      // Default reminder:
+      reminder = REMINDER_DAYS_DEFAULT;
+      // Default group: all contacts is selected automatically
+      // Default calendar: first birthday calendar is selected automatically
+
+      getPreferences(); // nothing stored handling ?
+    //TODO setuserprefs function
+      reminder = $('reminderinput').value;
+
       queryGroups();
       queryCalendars();
     }
@@ -150,8 +207,34 @@
       contactService.getFeed(groupURL, handleGroupsFeed, handleError);
     }
 
-    function handleGroupsFeed(feedRoot){
-      var groupFeed = feedRoot.feed;
+    function handleGroupsFeed(response){
+      if (response.oauthApprovalUrl) {
+        // Display "Sign in" link (response.oauthApprovalUrl contains the URL)
+        printConsole('OAuthApprovalUrl: ' + response.oauthApprovalUrl);
+
+        // Create the popup handler. The onOpen function is called when the user
+        // opens the popup window. The onClose function is called when the popup
+        // window is closed.
+        var popup = shindig.oauth.popup({
+          destination: response.oauthApprovalUrl,
+          windowOptions: 'height=600,width=800,status=no,depent=yes',
+          onOpen: function() { showOneSection('waiting'); },
+          onClose: function() { fetchData(); }
+        });
+
+        // Use the popup handler to attach onclick handlers to UI elements.  The
+        // createOpenerOnClick() function returns an onclick handler to open the
+        // popup window.  The createApprovedOnClick function returns an onclick
+        // handler that will close the popup window and attempt to fetch the user's
+        // data again.
+        var personalize = $('personalize');
+        personalize.onclick = popup.createOpenerOnClick();
+        var approvaldone = $('approvaldone');
+        approvaldone.onclick = popup.createApprovedOnClick();
+        showOneSection('approval');
+      }
+
+      var groupFeed = response.feed;
       var groups = groupFeed.entry;
 
       // Replace 'System Group: ' with an identifier
@@ -184,7 +267,28 @@
 
       // Next step: show groups
       showGroups(0);
-      showSettingsBlock(states.fingroups);
+      showSettingsSection(states.fingroups);
+    }
+
+    function showGroups(selId){
+      // Clear options
+      selectClearOptions('groupselect');
+
+      // Add all contacts option
+      selectAddOption('groupselect', ALL_CONTACTS, '');
+
+      // Iterate through the array of contact groups, and add them to
+      // drop down box
+      // IE JScript 5.6 Compatibility
+      var len = groupList.length;
+      for (var ie = 0; ie < len; ie++) {
+        var group = groupList[ie];
+        selectAddOption('groupselect', group.title, group.id);
+      }
+
+      // Set selection and size
+      selectSetSelectedIndex('groupselect', selId);
+      selectSetSizeOptions('groupselect');
     }
 
     function queryCalendars(){
@@ -205,8 +309,8 @@
       calendarService.getEventsFeed(calendarURL, handleCalendarsFeed, handleError);
     }
 
-    function handleCalendarsFeed(feedRoot){
-      var calFeed = feedRoot.feed;
+    function handleCalendarsFeed(response){
+      var calFeed = response.feed;
       var calendars = calFeed.getEntries();
 
       // Sort calendars
@@ -240,7 +344,71 @@
 
       // Next step: show calendars
       showCalendars(selId);
-      showSettingsBlock(states.fincalendars);
+      showSettingsSection(states.fincalendars);
+    }
+
+    function showCalendars(selId){
+      // Clear options
+      selectClearOptions('calendarselect');
+
+      // Iterate through the array of contact groups, and add them to
+      // drop down box
+      // IE JScript 5.6 Compatibility
+      var len = calendarList.length;
+      for (var ie = 0; ie < len; ie++) {
+        var calendar = calendarList[ie];
+        selectAddOption('calendarselect', calendar.title, calendar.url);
+      }
+
+      // Add new calendar option
+      selectAddOption('calendarselect', NEW_CALENDAR, '');
+
+      // Set selection and size
+      selectSetSelectedIndex('calendarselect', selId);
+      selectSetSizeOptions('calendarselect');
+    }
+
+    function showSettingsSection(state){
+      // Wait for both queries (queryGroups/queryCalendars) finished
+      // Both select boxes (groupselect/calendarselect) are filled
+      if ( states.fingroups == state) {
+        showSettingsSection.groups = true;
+      }
+      if ( states.fincalendars == state) {
+        showSettingsSection.calendars = true;
+      }
+
+      if (showSettingsSection.groups && showSettingsSection.calendars) {
+        showOneSection('settings');
+      }
+    }
+
+    /**
+     * Only numbers are allowed for the reminder.
+     */
+    function isNumberKey(evt)
+    {
+       var charCode = (evt.which) ? evt.which : event.keyCode
+       if (charCode > 31 && (charCode < 48 || charCode > 57))
+          return false;
+       return true;
+    }
+
+    /**
+     * If NEW_CALENDAR is selected:
+     * Add new calendar.
+     */
+    function changeCalendar(){
+      var elSel = $('calendarselect');
+      if (NEW_CALENDAR == elSel.options[elSel.selectedIndex].text) {
+        var calendarName = prompt("Calendar name:", "Birthdays");
+        if (calendarName != null && calendarName != "") {
+          insertCalendar(calendarName);
+        }
+        else {
+          selectSetSelectedIndex('calendarselect', 0);
+        }
+      }
     }
 
     /**
@@ -278,17 +446,22 @@
       // successful insertion from insertEntry()
       var insertCalendarCallback = function(result){
         printConsole('Calendar added: ' + html_entity_decode(result.entry.getTitle().getText()));
-        var elSelId = selectInsertOption('calendarSelectID', result.entry.getTitle().getText(), result.entry.getLink().href);
-        selectSetSelectedIndex('calendarSelectID', elSelId);
+        var elSelId = selectInsertOption('calendarselect', result.entry.getTitle().getText(), result.entry.getLink().href);
+        selectSetSelectedIndex('calendarselect', elSelId);
       }
       // Submit the request using the calendar service object
       calendarService.insertEntry(CALENDAR_FEED_URL_FULL, calendarEntry, insertCalendarCallback, handleError, google.gdata.calendar.CalendarEntry);
     }
 
     /**
-     * Query contacts and events function.
+     * Query user contacts and events.
+     * The queries are processed parallel,
+     * they were transfered within transferBirthdays.
+     * Compare both:
+     *  - Update outdated events
+     *  - Insert missing events
      */
-    function queryContactsAndEvents(groupId, calendarURL) {
+    function queryContactsAndEvents() {
       contactList = new Array();
       eventList = new Array();
 
@@ -303,7 +476,31 @@
 
       resetProgress();
 
+      // Retrieve Contacts
+      var elSelGroup = $('groupselect');
+      var groupId = new Array();
+      // Get all selected groups
+      if (0 == elSelGroup.selectedIndex) {
+        // GroupId == All contacts
+        printConsole('Query Contacts from: ' + elSelGroup.options[elSelGroup.selectedIndex].text);
+        groupId[0] = elSelGroup.options[elSelGroup.selectedIndex].value;
+      }
+      else {
+        // GroupId != All contacts
+        var len = elSelGroup.length;
+        for (var gid=0,elSelId=0; elSelId < len; elSelId++) {
+          if (elSelGroup.options[elSelId].selected) {
+            printConsole('Query Contacts from: ' + elSelGroup.options[elSelId].text);
+            groupId[gid++] = elSelGroup.options[elSelId].value;
+          }
+        }
+      }
       queryContacts(groupId.join(GROUP_SEPARATOR));
+
+      // Retrieve Events
+      var elSelCalendar = $('calendarselect');
+      printConsole('Query Events from: ' + elSelCalendar.options[elSelCalendar.selectedIndex].text);
+      var calendarURL = elSelCalendar.options[elSelCalendar.selectedIndex].value;
       queryEvents(calendarURL);
     }
 
@@ -336,8 +533,8 @@
       contactService.getFeed(contactURL, handleContactsFeed, handleError);
     }
 
-    function handleContactsFeed(feedRoot){
-      var conFeed = feedRoot.feed;
+    function handleContactsFeed(response){
+      var conFeed = response.feed;
       var contacts = conFeed.entry;
       var contactsLen = (undefined != contacts) ? contacts.length : 0;
       handleContactsFeed.progress = handleContactsFeed.progress + contactsLen;
@@ -428,8 +625,8 @@
     }
 
 
-    function handleEventsFeed(feedRoot){
-      var eventFeed = feedRoot.feed;
+    function handleEventsFeed(response){
+      var eventFeed = response.feed;
       var events = eventFeed.entry;
       var eventsLen = events.length;
       handleEventsFeed.progress = handleEventsFeed.progress + eventsLen;
@@ -743,21 +940,36 @@
     function setProgressContacts(progress, clear){
       // Check statemachine
       if (states.started == statemachine) {
-        myJsProgressBarHandler.setPercentage('progressBarContactsId', progress, clear)
+        contactsProgressbar.setPercentage(progress, clear);
       }
     }
 
     function setProgressEvents(progress, clear){
       // Check statemachine
       if (states.started == statemachine) {
-        myJsProgressBarHandler.setPercentage('progressBarEventsId', progress, clear)
+        eventsProgressbar.setPercentage(progress, clear);
       }
     }
 
     function setProgressTransfer(progress, clear){
       // Check statemachine
       if (states.started == statemachine) {
-        myJsProgressBarHandler.setPercentage('progressBarTransferId', progress, clear)
+        transferProgressbar.setPercentage(progress, clear);
+      }
+    }
+
+    /**
+     * Get the height of an HTMLElement
+     * @param {Element} element The element in question.
+     * @return {number} The height of that element.
+     */
+    function nodeHeight(element) {
+      var doc = element.ownerDocument;
+      if (doc && doc.getBoxObjectFor) {
+        var box = doc.getBoxObjectFor(element);
+        return box.height;
+      } else {
+        return element.offsetHeight;
       }
     }
 
