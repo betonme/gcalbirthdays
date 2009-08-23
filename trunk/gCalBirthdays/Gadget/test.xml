@@ -59,7 +59,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.053';
+        var APP_VERSION = '2.054';
 
         // The gadget containers request that we do NOT run any JS inline.
         // Instead, register a callback handler.
@@ -200,6 +200,22 @@
           </table>
           <input id="save" type="button" value="Save" onclick="onclickSave()">
           <input id="cancel" type="button" value="Cancel" onclick="onclickCancel()">
+        </div>
+        <div id="progress" style="display:none">
+          <table>
+            <tr>
+              <td>Load Contacts:</td>
+              <td><span id="contactsprogressbar">0%</span></td>
+            </tr>
+            <tr>
+              <td>Load Events:</td>
+              <td><span id="eventsprogressbar" class="progressBar">0%</span></td>
+            </tr>
+            <tr>
+              <td>Transfer Birthdays:</td>
+              <td><span id="transferprogressbar" class="progressBar">0%</span></td>
+            </tr>
+          </table>
         </div>
       </div>
 
