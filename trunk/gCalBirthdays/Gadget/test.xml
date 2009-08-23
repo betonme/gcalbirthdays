@@ -59,7 +59,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.054';
+        var APP_VERSION = '2.055';
 
         // The gadget containers request that we do NOT run any JS inline.
         // Instead, register a callback handler.
@@ -181,6 +181,13 @@
 
         <div id="settings" style="display:none">
           <table>
+            <tr>
+              <td id="text" style="padding-right: 30px">Set Reminder:</td>
+              <td>
+                <input id="reminderinput" maxlength="2" style="width:30px" onkeypress="return isNumberKey(event)"/>
+                day(s)
+              </td>
+            </tr>
             <tr>
               <td id="text">Select Group(s):</td>
             </tr>
