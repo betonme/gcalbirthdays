@@ -72,8 +72,8 @@
     var REMINDER_DAYS_DEFAULT = 14;
     var ICAL_BREAK = '\r\n'; // '\n'
 
-    var BOXIMAGE = '/../Images/percentImage.png';
-    var BARIMAGE = '/../Images/percentImage_back.png';
+    var BOXIMAGE = 'http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Images/percentImage.png';
+    var BARIMAGE = 'http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Images/percentImage_back.png';
 
     // Variables
     var contactService;
