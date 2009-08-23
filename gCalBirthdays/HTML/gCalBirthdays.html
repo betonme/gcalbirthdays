@@ -82,6 +82,7 @@
           authButton.value = 'Logout';
           setupService();
           useAuthSub();
+          showOneSection('busyloader');
           queryGroupsAndCalendars();
         }
         else {
@@ -121,7 +122,6 @@
         $('startbutton').disabled = true;
         $('stopbutton').disabled = false;
 
-        showOneSection('busyloader');
         queryContactsAndEvents();
       }
 
