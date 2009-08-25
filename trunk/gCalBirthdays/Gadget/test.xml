@@ -59,7 +59,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.058';
+        var APP_VERSION = '2.059';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -130,7 +130,7 @@
         function adjustHeight() {
           var height = nodeHeight($('gadget'));
           if ( MAX_HEIGHT < height) {
-            height = MAX_HEIGHT - nodeHeight('logo');
+            height = MAX_HEIGHT - nodeHeight($('logo'));
 
             // Put a scrollbar back on the gadget.
             var sections = $('sections');
