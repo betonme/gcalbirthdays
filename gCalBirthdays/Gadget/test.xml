@@ -59,7 +59,8 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.055';
+        var APP_VERSION = '2.056';
+        var MAX_HEIGHT = 200;
 
         // The gadget containers request that we do NOT run any JS inline.
         // Instead, register a callback handler.
@@ -127,7 +128,16 @@
          * Adjust the height of the gadget
          */
         function adjustHeight(element) {
-          gadgets.window.adjustHeight(nodeHeight($('gadget')));
+          var height = nodeHeight($('gadget');
+          if ( MAX_HEIGHT < height) {
+            height = MAX_HEIGHT;
+
+            // Put a scrollbar back on the gadget.
+            var sections = $('sections');
+            sections.style.overflowY = 'scroll';
+            sections.style.height = MAX_HEIGHT;
+          }
+          gadgets.window.adjustHeight(height));
         }
       </script>
 
@@ -159,70 +169,74 @@
       <div id="gadget">
         <img id='logo' src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
 
-        <div id="main" style="display:none">
-          <span id="version">Version</span>
-          <span id="settingslink" onclick="showSettings()">settings</span>
-        </div>
+        <div id="sections">
+          <div id="main" style="display:none">
+            <span id="version">Version</span>
+            <span id="settingslink" onclick="showSettings()">settings</span>
+          </div>
 
-        <div id="approval" style="display:none">
-          <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Images/popup.gif">
-          <a href="#" id="personalize">Login</a>
-        </div>
+          <div id="approval" style="display:none">
+            <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Images/popup.gif">
+            <a href="#" id="personalize">Login</a>
+          </div>
 
-        <div id="waiting" style="display:none">
-          Please click
-          <a href="#" id="approvaldone">I've approved access</a>
-          once you've approved access to your data.
-        </div>
+          <div id="waiting" style="display:none">
+            Please click
+            <a href="#" id="approvaldone">I've approved access</a>
+            once you've approved access to your data.
+          </div>
 
-        <div id="busyloader" style="display:none">
-          <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Images/busyLoader.gif" alt="BusyLoader Image">
-        </div>
+          <div id="busyloader" style="display:none">
+            <img src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Images/busyLoader.gif" alt="BusyLoader Image">
+          </div>
 
-        <div id="settings" style="display:none">
-          <table>
-            <tr>
-              <td id="text" style="padding-right: 30px">Set Reminder:</td>
-              <td>
-                <input id="reminderinput" maxlength="2" style="width:30px" onkeypress="return isNumberKey(event)"/>
-                day(s)
-              </td>
-            </tr>
-            <tr>
-              <td id="text">Select Group(s):</td>
-            </tr>
-            <tr>
-              <td>
-                <select id="groupselect" multiple="multiple" size="4"></select>
-              </td>
-            </tr>
-            <tr>
-              <td id="text">Select Calendar:</td>
-            </tr>
-            <tr>
-              <td>
-                <select id="calendarselect" size="1" onchange="changeCalendar()"></select>
-              </td>
-            </tr>
-          </table>
-          <input id="save" type="button" value="Save" onclick="onclickSave()">
-          <input id="cancel" type="button" value="Cancel" onclick="onclickCancel()">
-        </div>
-        <div id="progress" style="display:none">
-          <table>
-            <tr>
-              <td>Load Contacts:</td>
-              <td><span id="contactsprogressbar">0%</span></td>
-            </tr>
-            <tr>
-              <td>Load Events:</td>
-              <td><span id="eventsprogressbar" class="progressBar">0%</span></td>
-            </tr>
-            <tr>
-              <td>Transfer Birthdays:</td>
-              <td><span id="transferprogressbar" class="progressBar">0%</span></td>
-            </tr>
-          </table>
+          <div id="settings" style="display:none">
+            <table>
+              <tr>
+                <td id="text">Set Reminder:</td>
+              </tr>
+              <tr>
+                <td id="text">
+                  <input id="reminderinput" maxlength="2" style="width:30px" onkeypress="return isNumberKey(event)"/>
+                  day(s)
+                </td>
+              </tr>
+              <tr>
+                <td id="text">Select Group(s):</td>
+              </tr>
+              <tr>
+                <td>
+                  <select id="groupselect" multiple="multiple" size="4"></select>
+                </td>
+              </tr>
+              <tr>
+                <td id="text">Select Calendar:</td>
+              </tr>
+              <tr>
+                <td>
+                  <select id="calendarselect" size="1" onchange="changeCalendar()"></select>
+                </td>
+              </tr>
+            </table>
+            <input id="save" type="button" value="Save" onclick="onclickSave()">
+            <input id="cancel" type="button" value="Cancel" onclick="onclickCancel()">
+          </div>
+          <div id="progress" style="display:none">
+            <table>
+              <tr>
+                <td>Load Contacts:</td>
+                <td><span id="contactsprogressbar">0%</span></td>
+              </tr>
+              <tr>
+                <td>Load Events:</td>
+                <td><span id="eventsprogressbar" class="progressBar">0%</span></td>
+              </tr>
+              <tr>
+                <td>Transfer Birthdays:</td>
+                <td><span id="transferprogressbar" class="progressBar">0%</span></td>
+              </tr>
+            </table>
+          </div>
         </div>
       </div>
 
