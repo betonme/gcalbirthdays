@@ -163,13 +163,13 @@
 
     function handleOAuth(oauthApprovalUrl){
       // Display "Sign in" link (response.oauthApprovalUrl contains the URL)
-      printConsole('OAuthApprovalUrl: ' + response.oauthApprovalUrl);
+      printConsole('OAuthApprovalUrl: ' + oauthApprovalUrl);
 
       // Create the popup handler. The onOpen function is called when the user
       // opens the popup window. The onClose function is called when the popup
       // window is closed.
       var popup = shindig.oauth.popup({
-        destination: response.oauthApprovalUrl,
+        destination: oauthApprovalUrl,
         windowOptions: 'height=600,width=800,status=no,depent=yes',
         onOpen: function() { showOneSection('waiting'); },
         onClose: function() { fetchData(); }
