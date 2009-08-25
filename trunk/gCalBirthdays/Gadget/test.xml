@@ -59,7 +59,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.062';
+        var APP_VERSION = '2.063';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -129,7 +129,7 @@
          */
         function adjustHeight() {
           var sections = $('sections');
-          $('sections').removeAttribute('style');
+          //sections.removeAttribute('style');
 
           var height = nodeHeight($('gadget'));
           if ( MAX_HEIGHT < height) {
@@ -137,7 +137,7 @@
 
             // Put a scrollbar back on the gadget.
             sections.style.height = height - nodeHeight($('logo'));
-            sections.style.overflowY = 'scroll';
+            //sections.style.overflowY = 'scroll';
           }
           gadgets.window.adjustHeight(height);
         }
@@ -168,7 +168,7 @@
         }
       </style>
 
-      <div id="gadget">
+      <div id="gadget" style="overflowY:auto">
         <img id='logo' src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.gif" alt="gCalBirthdays Logo"/>
 
         <div id="sections">
