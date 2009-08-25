@@ -137,7 +137,7 @@
             sections.style.overflowY = 'scroll';
             sections.style.height = MAX_HEIGHT;
           }
-          gadgets.window.adjustHeight(height));
+          gadgets.window.adjustHeight(height);
         }
       </script>
 
