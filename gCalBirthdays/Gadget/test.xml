@@ -59,8 +59,8 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.056';
-        var MAX_HEIGHT = 200;
+        var APP_VERSION = '2.057';
+        var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
         // Instead, register a callback handler.
@@ -128,7 +128,7 @@
          * Adjust the height of the gadget
          */
         function adjustHeight(element) {
-          var height = nodeHeight($('gadget');
+          var height = nodeHeight($('gadget'));
           if ( MAX_HEIGHT < height) {
             height = MAX_HEIGHT;
 
