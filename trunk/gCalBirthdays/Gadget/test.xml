@@ -59,7 +59,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.064';
+        var APP_VERSION = '2.065';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -144,21 +144,16 @@
       </script>
 
       <style type="text/css">
-        #settings {
-          font-size: 12px;
-          color: red;
-        }
-
         #settingslink {
           cursor: pointer;
-          font-size: 12px;
+          font-size: 11px;
           text-decoration: underline;
           color: blue;
           float: right;
         }
 
         div {
-          font-size: 12px;
+          font-size: 11px;
         }
       </style>
 
