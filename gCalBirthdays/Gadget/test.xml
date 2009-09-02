@@ -88,7 +88,6 @@
         };
 
         function showSettings() {
-          showOneSection('busyloader');
           queryGroupsAndCalendars();
         }
 
@@ -150,10 +149,12 @@
           text-decoration: underline;
           color: blue;
           float: right;
+					padding: 0 3px 0 3px;
         }
 
         div {
           font-size: 11px;
+					padding: 0 3px 0 3px;
         }
       </style>
 
@@ -163,7 +164,7 @@
         <div id="sections">
           <div id="main" style="display:none">
             <span id="version">Version</span>
-            <span id="settingslink" onclick="showSettings()">settings</span>
+            <span id="settingslink" onclick="showSettings()">Settings</span>
           </div>
 
           <div id="approval" style="display:none">
