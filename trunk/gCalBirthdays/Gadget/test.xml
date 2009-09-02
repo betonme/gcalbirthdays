@@ -59,7 +59,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.065';
+        var APP_VERSION = '2.066';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -87,7 +87,34 @@
           showOneSection('main');
         };
 
+        function handleOAuth(oauthApprovalUrl){
+          // Display "Sign in" link (response.oauthApprovalUrl contains the URL)
+          printConsole('OAuthApprovalUrl: ' + oauthApprovalUrl);
+
+          // Create the popup handler. The onOpen function is called when the user
+          // opens the popup window. The onClose function is called when the popup
+          // window is closed.
+          var popup = shindig.oauth.popup({
+            destination: oauthApprovalUrl,
+            windowOptions: 'height=600,width=800,status=no,depent=yes',
+            onOpen: function() { showOneSection('waiting'); },
+            onClose: function() { showSettings(); }
+          });
+
+          // Use the popup handler to attach onclick handlers to UI elements.  The
+          // createOpenerOnClick() function returns an onclick handler to open the
+          // popup window.  The createApprovedOnClick function returns an onclick
+          // handler that will close the popup window and attempt to fetch the user's
+          // data again.
+          var personalize = $('personalize');
+          personalize.onclick = popup.createOpenerOnClick();
+          var approvaldone = $('approvaldone');
+          approvaldone.onclick = popup.createApprovedOnClick();
+          showOneSection('approval');
+        }
+
         function showSettings() {
+          showOneSection('busyloader');
           queryGroupsAndCalendars();
         }
 
@@ -149,12 +176,12 @@
           text-decoration: underline;
           color: blue;
           float: right;
-					padding: 0 3px 0 3px;
+          padding: 0 3px 0 3px;
         }
 
         div {
           font-size: 11px;
-					padding: 0 3px 0 3px;
+          padding: 0 3px 0 3px;
         }
       </style>
 
