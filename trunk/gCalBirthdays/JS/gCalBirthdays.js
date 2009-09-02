@@ -1,6 +1,6 @@
 /*  gCalBirthdays.js
  *
- *  This is version: 1.13
+ *  This is version: 1.14
  *
  *  Shared JavaScript functions for HTML and Gadget Version of gCalBirthdays
  *
@@ -161,32 +161,6 @@
       calendarService.useOAuth(APP_NAME);
     }
 
-    function handleOAuth(oauthApprovalUrl){
-      // Display "Sign in" link (response.oauthApprovalUrl contains the URL)
-      printConsole('OAuthApprovalUrl: ' + oauthApprovalUrl);
-
-      // Create the popup handler. The onOpen function is called when the user
-      // opens the popup window. The onClose function is called when the popup
-      // window is closed.
-      var popup = shindig.oauth.popup({
-        destination: oauthApprovalUrl,
-        windowOptions: 'height=600,width=800,status=no,depent=yes',
-        onOpen: function() { showOneSection('waiting'); },
-        onClose: function() { queryGroupsAndCalendars(); }
-      });
-
-      // Use the popup handler to attach onclick handlers to UI elements.  The
-      // createOpenerOnClick() function returns an onclick handler to open the
-      // popup window.  The createApprovedOnClick function returns an onclick
-      // handler that will close the popup window and attempt to fetch the user's
-      // data again.
-      var personalize = $('personalize');
-      personalize.onclick = popup.createOpenerOnClick();
-      var approvaldone = $('approvaldone');
-      approvaldone.onclick = popup.createApprovedOnClick();
-      showOneSection('approval');
-    }
-
     /**
      * Query groups and calendars function.
      */
@@ -196,8 +170,6 @@
 
       handleGroupsFeed.progress = 0;
       handleCalendarsFeed.progress = 0;
-
-      showOneSection('busyloader');
 
       // Set default values
       // Default reminder:
