@@ -1,6 +1,6 @@
 /*  gCalBirthdays.js
  *
- *  This is version: 1.12
+ *  This is version: 1.13
  *
  *  Shared JavaScript functions for HTML and Gadget Version of gCalBirthdays
  *
@@ -172,7 +172,7 @@
         destination: oauthApprovalUrl,
         windowOptions: 'height=600,width=800,status=no,depent=yes',
         onOpen: function() { showOneSection('waiting'); },
-        onClose: function() { fetchData(); }
+        onClose: function() { queryGroupsAndCalendars(); }
       });
 
       // Use the popup handler to attach onclick handlers to UI elements.  The
@@ -196,6 +196,8 @@
 
       handleGroupsFeed.progress = 0;
       handleCalendarsFeed.progress = 0;
+
+      showOneSection('busyloader');
 
       // Set default values
       // Default reminder:
