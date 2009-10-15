@@ -830,7 +830,7 @@
 
       // Create a Reminder object that will be attached to the
       var reminder = new google.gdata.Reminder();
-      reminder.setDays(REMINDER_DAYS);
+      reminder.setDays(REMINDER_DAYS_DEFAULT);
       reminder.setMethod(google.gdata.Reminder.METHOD_ALERT);
       eventEntry.addReminder(reminder);
 
