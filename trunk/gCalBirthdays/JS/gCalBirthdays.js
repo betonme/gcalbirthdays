@@ -1,6 +1,6 @@
 /*  gCalBirthdays.js
  *
- *  This is version: 1.14
+ *  This is version: 1.15
  *
  *  Shared JavaScript functions for HTML and Gadget Version of gCalBirthdays
  *
