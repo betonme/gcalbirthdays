@@ -18,7 +18,7 @@
         <Authorization url="https://www.google.com/accounts/OAuthAuthorizeToken?oauth_callback=http://oauth.gmodules.com/gadgets/oauthcallback" />
       </Service>
     </OAuth>
-    <UserPref name="PrefsReminderDays" default_value="14" datatype="hidden"/>
+    <UserPref name="prefsreminderdays" default_value="14" datatype="hidden"/>
   </ModulePrefs>
   <Content type="html">
     <![CDATA[
@@ -59,7 +59,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.075';
+        var APP_VERSION = '2.076';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -132,14 +132,14 @@
 
         function getPreferences() {
           var prefs = new gadgets.Prefs();
-          var rem = prefs.getInt("PrefsReminderDays");
+          var rem = prefs.getInt("prefsreminderdays");
           setReminder(rem);
         }
 
         function setPreferences() {
           var prefs =  new gadgets.Prefs();
           var rem = getReminder();
-          prefs.set("PrefsReminderDays", rem);
+          prefs.set("prefsreminderdays", rem);
         }
 
         function showOneSection(toshow) {
