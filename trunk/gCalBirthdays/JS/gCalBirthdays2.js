@@ -404,10 +404,10 @@
       var calendarEntry = new google.gdata.calendar.CalendarEntry();
 
       // Set the calendar title
-      calendarEntry.setTitle(google.gdata.Text.create(calendarName));
+      calendarEntry.setTitle(google.gdata.atom.Text.create(calendarName));
 
       // Set the calendar summary
-      calendarEntry.setSummary(google.gdata.Text.create(CALENDAR_SUMMARY));
+      calendarEntry.setSummary(google.gdata.atom.Text.create(CALENDAR_SUMMARY));
 
       // Set the color that represent this calendar in the Google
       // Calendar UI
@@ -635,7 +635,7 @@
                   // Push only if event is created by us
                   if (-1 != event.getContent().getText().search(APP_NAME)) {
                     // Complete push is necessary becasue we need the whole event content
-                    event.setTitle(google.gdata.Text.create(html_entity_decode(event.getTitle().getText())));
+                    event.setTitle(google.gdata.atom.Text.create(html_entity_decode(event.getTitle().getText())));
                     eventList.push(event);
                   }
                 }
@@ -813,8 +813,8 @@
         date = '1970' + date;
         printInfo('Date: No year specified - set to 1970!');
       }
-      eventEntry.setTitle(google.gdata.Text.create(htmlentities(contact.title + EVENT_TITLE_SUFFIX + ' (Born ' + stringDate + ')')));
-      eventEntry.setContent(google.gdata.Text.create(EVENT_SUMMARY_SUFFIX));
+      eventEntry.setTitle(google.gdata.atom.Text.create(htmlentities(contact.title + EVENT_TITLE_SUFFIX + ' (Born ' + stringDate + ')')));
+      eventEntry.setContent(google.gdata.atom.Text.create(EVENT_SUMMARY_SUFFIX));
 
       // Set the calendar time zone
       // Set the calendar location
