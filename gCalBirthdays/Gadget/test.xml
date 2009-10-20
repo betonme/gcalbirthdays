@@ -24,7 +24,7 @@
     <![CDATA[
 
       <!--http://code.google.com/p/gdata-javascript-client/-->
-      <!--V1.10-->
+      <!--V2.00-->
       <!--http://www.google.com/uds/modules/gdata/gdata.js-->
       <script type="text/javascript" src="http://www.google.com/jsapi"></script>
       <!--script type="text/javascript" src="http://www.google.com/jsapi?autoload=%7Bmodules%3A%5B%7Bname%3Agdata%2Cversion%3A1.x%2Cpackages%3A%5Bcontacts%2Ccalendar%5D%7D%5D%7D"></script-->
@@ -51,7 +51,7 @@
       <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/popup.js"></script>
 
       <!--gCalBirthay Javascript functions for HTML and Gadget Version-->
-      <!--V1.12-->
+      <!--V1.16-->
       <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/gCalBirthdays.js"></script>
 
       <!--gCalBirthay Gadget specific Javascript functions-->
@@ -59,7 +59,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.067';
+        var APP_VERSION = '2.068';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -68,9 +68,9 @@
 
         function initGadget() {
           // Load the Google data JS Client Library
-          //google.load('gdata', '1.x');
+          //google.load('gdata', '2.x');
           // Save overhead, only load the necessary service
-          google.load("gdata", "1.x", {packages: ['contacts', 'calendar']});
+          google.load("gdata", "2.x", {packages: ['contacts', 'calendar']});
 
           // Tells the google JS lib to call the init function once loaded
           google.setOnLoadCallback(setupGadget);
@@ -187,6 +187,14 @@
         div {
           font-size: 11px;
           padding: 0 3px 0 3px;
+        }
+
+        input {
+          font-size: 11px;
+        }
+
+        select {
+          font-size: 11px;
         }
       </style>
 
