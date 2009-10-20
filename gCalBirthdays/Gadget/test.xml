@@ -18,7 +18,7 @@
         <Authorization url="https://www.google.com/accounts/OAuthAuthorizeToken?oauth_callback=http://oauth.gmodules.com/gadgets/oauthcallback" />
       </Service>
     </OAuth>
-    <UserPref name="test" display_name="Color" default_value="Yellow" datatype="hidden"/>
+    <UserPref name="Reminder_Days" display_name="Reminder_Days" default_value="14" datatype="hidden"/>
   </ModulePrefs>
   <Content type="html">
     <![CDATA[
@@ -59,7 +59,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.068';
+        var APP_VERSION = '2.069';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -115,6 +115,7 @@
 
         function showSettings() {
           showOneSection('busyloader');
+          getPreferences();
           queryGroupsAndCalendars();
         }
 
@@ -129,11 +130,13 @@
         }
 
         function getPreferences() {
-          // get saved data
+          var prefs = new _IG_Prefs();
+          reminder = prefs.getInt("Reminder_Days");
         }
 
         function setPreferences() {
-          // save data
+          var prefs = new _IG_Prefs();
+          prefs.set("Reminder_Days", reminder);
         }
 
         function showOneSection(toshow) {

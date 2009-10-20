@@ -82,7 +82,7 @@
     var eventsProgressbar;
     var transferProgressbar;
     var postURL;
-    var reminder;
+    var reminder = REMINDER_DAYS_DEFAULT;
 
     // Arrays
     var groupList = new Array();
@@ -172,13 +172,10 @@
       handleCalendarsFeed.progress = 0;
 
       // Set default values
-      // Default reminder:
-      reminder = REMINDER_DAYS_DEFAULT;
+      // Default reminder: is set on init
       // Default group: all contacts is selected automatically
       // Default calendar: first birthday calendar is selected automatically
 
-      getPreferences(); // nothing stored handling ?
-    //TODO setuserprefs function
       $('reminderinput').value = reminder;
 
       queryGroups();
@@ -821,18 +818,18 @@
       // Set show me as to available or busy
 
       // Set up the recurring details using an ical string
-      var recurrence = new google.gdata.Recurrence();
+      var recurrenceObj = new google.gdata.Recurrence();
       var recurrenceString = 'DTSTART;VALUE=DATE:' + date + ICAL_BREAK +
                    'DTEND;VALUE=DATE:' + date + ICAL_BREAK +
                    'RRULE:FREQ=YEARLY';
-      recurrence.setValue(recurrenceString);
-      eventEntry.setRecurrence(recurrence);
+      recurrenceObj.setValue(recurrenceString);
+      eventEntry.setRecurrence(recurrenceObj);
 
       // Create a Reminder object that will be attached to the
-      var reminder = new google.gdata.Reminder();
-      reminder.setDays(REMINDER_DAYS_DEFAULT);
-      reminder.setMethod(google.gdata.Reminder.METHOD_ALERT);
-      eventEntry.addReminder(reminder);
+      var reminderObj = new google.gdata.Reminder();
+      reminderObj.setDays(reminder);
+      reminderObj.setMethod(google.gdata.Reminder.METHOD_ALERT);
+      eventEntry.addReminder(reminderObj);
 
       return eventEntry;
     }
