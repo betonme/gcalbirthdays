@@ -82,7 +82,6 @@
     var eventsProgressbar;
     var transferProgressbar;
     var postURL;
-    var reminder = REMINDER_DAYS_DEFAULT;
 
     // Arrays
     var groupList = new Array();
@@ -144,6 +143,8 @@
           height    : 12,
         }
       );
+
+      setReminder(REMINDER_DAYS_DEFAULT);
     }
 
     /**
@@ -175,8 +176,6 @@
       // Default reminder: is set on init
       // Default group: all contacts is selected automatically
       // Default calendar: first birthday calendar is selected automatically
-
-      $('reminderinput').value = reminder;
 
       queryGroups();
       queryCalendars();
@@ -961,6 +960,17 @@
       } else {
         return element.offsetHeight;
       }
+    }
+
+    /**
+     * Set Get Reminder functions.
+     */
+    function setReminder(rem){
+      $('reminderinput').value = rem;
+    }
+
+    function getReminder(){
+      return $('reminderinput').value;
     }
 
     /**
