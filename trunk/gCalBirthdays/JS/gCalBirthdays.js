@@ -970,7 +970,8 @@
     }
 
     function getReminder(){
-      return $('reminderinput').value;
+      var rem = $('reminderinput').value;
+      return rem;
     }
 
     /**
