@@ -59,7 +59,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.079';
+        var APP_VERSION = '2.080';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -126,13 +126,21 @@
           showOneSection('main');
         }
 
+        function onclickCancel() {
+          showOneSection('main');
+        }
+
         function onclickSync() {
           setPreferences();
           gadgets.window.adjustHeight();
           showOneSection('progress');
+          queryContactsAndEvents();
         }
 
-        function onclickCancel() {
+        function onfinishedSync(){
+          statemachine = states.finished;
+          printConsole('StateMachine: ' + 'finished');
+          printConsole('Finished!');
           showOneSection('main');
         }
 
@@ -147,7 +155,7 @@
         }
 
         function showOneSection(toshow) {
-          var sections = [ 'main', 'approval', 'waiting', 'busyloader', 'settings' ];
+          var sections = [ 'main', 'approval', 'waiting', 'busyloader', 'settings', 'progress' ];
           for (var i=0; i < sections.length; ++i) {
             var s = sections[i];
             var el = $(s);
