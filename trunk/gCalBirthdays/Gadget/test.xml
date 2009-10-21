@@ -59,7 +59,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.080';
+        var APP_VERSION = '2.081';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -135,6 +135,13 @@
           gadgets.window.adjustHeight();
           showOneSection('progress');
           queryContactsAndEvents();
+        }
+
+        function onclickStop(){
+          printConsole('Button Cancel');
+          statemachine = states.canceled;
+          printConsole('StateMachine: ' + 'canceled');
+          showOneSection('main');
         }
 
         function onfinishedSync(){
@@ -276,18 +283,25 @@
           <div id="progress" style="display:none">
             <table>
               <tr>
-                <td>Load Contacts:</td>
+                <td id="text">Load Contacts:</td>
+              </tr>
+              <tr>
                 <td><span id="contactsprogressbar">0%</span></td>
               </tr>
               <tr>
-                <td>Load Events:</td>
+                <td id="text">Load Events:</td>
+              </tr>
+              <tr>
                 <td><span id="eventsprogressbar" class="progressBar">0%</span></td>
               </tr>
               <tr>
-                <td>Transfer Birthdays:</td>
+                <td id="text">Transfer Birthdays:</td>
+              </tr>
+              <tr>
                 <td><span id="transferprogressbar" class="progressBar">0%</span></td>
               </tr>
             </table>
+            <input id="stop" type="button" value="Cancel" onclick="onclickStop()">
           </div>
         </div>
       </div>
