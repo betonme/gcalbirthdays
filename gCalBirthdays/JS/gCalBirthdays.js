@@ -1,6 +1,6 @@
 /*  gCalBirthdays.js
  *
- *  This is version: 1.17
+ *  This is version: 1.18
  *
  *  Shared JavaScript functions for HTML and Gadget Version of gCalBirthdays
  *
@@ -839,6 +839,11 @@
     function selectSetSelectedIndex(id, selId){
       var elSel = $(id);
       elSel.selectedIndex = selId>0 ? selId : 0;
+    }
+
+    function selectGetSelectedIndex(id){
+      var elSel = $(id);
+      return elSel.selectedIndex;
     }
 
     function selectSetSizeOptions(id, selSize){
