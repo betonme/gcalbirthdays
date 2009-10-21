@@ -26,7 +26,7 @@
     <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/html_funcs.min.js"></script>
 
     <!--gCalBirthay Javascript functions for HTML and Gadget Version-->
-    <!--V1.16-->
+    <!--V1.17-->
     <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/gCalBirthdays.js"></script>
 
     <!--gCalBirthay HTML specific Javascript functions-->
@@ -118,10 +118,7 @@
 
       function onclickStart(){
         printConsole('Button Go');
-
-        $('startbutton').disabled = true;
-        $('stopbutton').disabled = false;
-
+        startTransfer();
         queryContactsAndEvents();
       }
 
@@ -129,17 +126,22 @@
         statemachine = states.finished;
         printConsole('StateMachine: ' + 'finished');
         printConsole('Finished!');
-        stopTransfer();
+        endTransfer();
       }
 
       function onclickStop(){
         printConsole('Button Cancel');
         statemachine = states.canceled;
         printConsole('StateMachine: ' + 'canceled');
-        stopTransfer();
+        endTransfer();
       }
 
-      function stopTransfer(){
+      function startTransfer(){
+        $('startbutton').disabled = true;
+        $('stopbutton').disabled = false;
+      }
+
+      function endTransfer(){
         $('startbutton').disabled = false;
         $('stopbutton').disabled = true;
       }

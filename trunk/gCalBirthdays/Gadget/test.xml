@@ -59,7 +59,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.082';
+        var APP_VERSION = '2.083';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -140,14 +140,14 @@
           printConsole('Button Cancel');
           statemachine = states.canceled;
           printConsole('StateMachine: ' + 'canceled');
-          stopTransfer();
+          endTransfer();
         }
 
         function onfinishedSync(){
           statemachine = states.finished;
           printConsole('StateMachine: ' + 'finished');
           printConsole('Finished!');
-          stopTransfer();
+          endTransfer();
         }
 
         function startTransfer(){
@@ -156,7 +156,7 @@
           showOneSection('progress');
         }
 
-        function stopTransfer(){
+        function endTransfer(){
           showOneSection('main');
         }
 
