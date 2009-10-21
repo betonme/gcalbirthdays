@@ -59,7 +59,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.078';
+        var APP_VERSION = '2.079';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -123,7 +123,13 @@
         function onclickSave() {
           setPreferences();
           gadgets.window.adjustHeight();
-          //showOneSection('main');
+          showOneSection('main');
+        }
+
+        function onclickSync() {
+          setPreferences();
+          gadgets.window.adjustHeight();
+          showOneSection('progress');
         }
 
         function onclickCancel() {
@@ -255,6 +261,7 @@
                 </td>
               </tr>
             </table>
+            <input id="sync" type="button" value="Manual Sync" onclick="onclickSync()">
             <input id="save" type="button" value="Save" onclick="onclickSave()">
             <input id="cancel" type="button" value="Cancel" onclick="onclickCancel()">
           </div>
