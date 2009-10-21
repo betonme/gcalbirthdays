@@ -59,7 +59,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.083';
+        var APP_VERSION = '2.084';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -230,6 +230,10 @@
         }
 
         select {
+          font-size: 11px;
+        }
+
+        span {
           font-size: 11px;
         }
       </style>
