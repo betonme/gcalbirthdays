@@ -1,6 +1,6 @@
 /*  gCalBirthdays.js
  *
- *  This is version: 1.16
+ *  This is version: 1.17
  *
  *  Shared JavaScript functions for HTML and Gadget Version of gCalBirthdays
  *
@@ -566,7 +566,7 @@
           printConsole('Cancel no birthdays');
           statemachine = states.canceled;
           printConsole('StateMachine: ' + 'canceled');
-          stopTransfer();
+          endTransfer();
           return;
         }
 
@@ -826,7 +826,7 @@
 
       // Create a Reminder object that will be attached to the
       var reminderObj = new google.gdata.Reminder();
-      reminderObj.setDays(reminder);
+      reminderObj.setDays(getReminder());
       reminderObj.setMethod(google.gdata.Reminder.METHOD_ALERT);
       eventEntry.addReminder(reminderObj);
 
