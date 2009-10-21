@@ -61,7 +61,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.085';
+        var APP_VERSION = '2.086';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -120,16 +120,17 @@
           showOneSection('busyloader');
           getPreferences();
           queryGroupsAndCalendars();
-          getPreferences();
         }
 
         function onclickSave() {
+          printConsole('Button Save');
           setPreferences();
-          gadgets.window.adjustHeight();
+          //gadgets.window.adjustHeight();
           showOneSection('main');
         }
 
         function onclickCancel() {
+          printConsole('Button Cancel');
           showOneSection('main');
         }
 
@@ -140,7 +141,7 @@
         }
 
         function onclickStop(){
-          printConsole('Button Cancel');
+          printConsole('Button Stop');
           statemachine = states.canceled;
           printConsole('StateMachine: ' + 'canceled');
           endTransfer();
@@ -155,7 +156,7 @@
 
         function startTransfer(){
           setPreferences();
-          gadgets.window.adjustHeight();
+          //gadgets.window.adjustHeight();
           showOneSection('progress');
         }
 
@@ -184,6 +185,9 @@
             var el = $(s);
             if (s === toshow) {
               el.style.display = "block";
+              if (s === 'settings') {
+                getPreferences();
+              }
             } else {
               el.style.display = "none";
             }
