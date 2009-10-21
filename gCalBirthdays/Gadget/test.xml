@@ -59,7 +59,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.081';
+        var APP_VERSION = '2.082';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -131,9 +131,8 @@
         }
 
         function onclickSync() {
-          setPreferences();
-          gadgets.window.adjustHeight();
-          showOneSection('progress');
+          printConsole('Button Manual Sync');
+          startTransfer();
           queryContactsAndEvents();
         }
 
@@ -141,13 +140,23 @@
           printConsole('Button Cancel');
           statemachine = states.canceled;
           printConsole('StateMachine: ' + 'canceled');
-          showOneSection('main');
+          stopTransfer();
         }
 
         function onfinishedSync(){
           statemachine = states.finished;
           printConsole('StateMachine: ' + 'finished');
           printConsole('Finished!');
+          stopTransfer();
+        }
+
+        function startTransfer(){
+          setPreferences();
+          gadgets.window.adjustHeight();
+          showOneSection('progress');
+        }
+
+        function stopTransfer(){
           showOneSection('main');
         }
 
@@ -163,6 +172,7 @@
 
         function showOneSection(toshow) {
           var sections = [ 'main', 'approval', 'waiting', 'busyloader', 'settings', 'progress' ];
+          printConsole('Show section: ' + toshow);
           for (var i=0; i < sections.length; ++i) {
             var s = sections[i];
             var el = $(s);
