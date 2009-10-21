@@ -20,6 +20,8 @@
     </OAuth>
   </ModulePrefs>
   <UserPref name="PrefsReminderDays" default_value="14" datatype="hidden"/>
+  <UserPref name="PrefsGroup" default_value="0" datatype="hidden"/>
+  <UserPref name="PrefsCalendar" default_value="0" datatype="hidden"/>
   <Content type="html">
     <![CDATA[
 
@@ -59,7 +61,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.084';
+        var APP_VERSION = '2.085';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -118,6 +120,7 @@
           showOneSection('busyloader');
           getPreferences();
           queryGroupsAndCalendars();
+          getPreferences();
         }
 
         function onclickSave() {
@@ -163,11 +166,14 @@
         function getPreferences() {
           var prefs = new gadgets.Prefs();
           setReminder(prefs.getInt("PrefsReminderDays"));
+          selectSetSelectedIndex('groupselect', prefs.getInt("PrefsGroup"));
+          selectSetSelectedIndex('calendarselect', prefs.getInt("PrefsCalendar"));
         }
 
         function setPreferences() {
           var prefs =  new gadgets.Prefs();
-          prefs.set("PrefsReminderDays", getReminder());
+          prefs.set("PrefsGroup", $('groupselect').selectedIndex);
+          prefs.set("PrefsCalendar", $('calendarselect').selectedIndex);
         }
 
         function showOneSection(toshow) {
