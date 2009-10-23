@@ -19,9 +19,9 @@
       </Service>
     </OAuth>
   </ModulePrefs>
-  <UserPref name="PrefsReminderDays" default_value="14" datatype="hidden"/>
-  <UserPref name="PrefsGroup" default_value="0" datatype="hidden"/>
-  <UserPref name="PrefsCalendar" default_value="0" datatype="hidden"/>
+  <UserPref name="PrefsReminderDays" default_value="14"/>
+  <UserPref name="PrefsGroup" default_value="0"/>
+  <UserPref name="PrefsCalendar" default_value="0"/>
   <Content type="html">
     <![CDATA[
 
@@ -61,7 +61,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.089';
+        var APP_VERSION = '2.090';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
