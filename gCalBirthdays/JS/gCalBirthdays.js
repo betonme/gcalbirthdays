@@ -1,6 +1,6 @@
 /*  gCalBirthdays.js
  *
- *  This is version: 1.18
+ *  This is version: 1.19
  *
  *  Shared JavaScript functions for HTML and Gadget Version of gCalBirthdays
  *
@@ -859,7 +859,7 @@
       var elSel = $(id);
       var elSelIds = new Array();
       if (undefined != elSel) {
-        var len = elSelGroup.length;
+        var len = elSel.length;
         for (var sId=0,elSelId=0; elSelId < len; elSelId++) {
           if (elSel.options[elSelId].selected) {
             elSelIds[sId++] = elSel.options[elSelId].selected;
