@@ -61,7 +61,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.100';
+        var APP_VERSION = '2.101';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -162,26 +162,28 @@
           showOneSection('main');
         }
 
+    function selectSetSelected(id, selId){
+      var elSel = $(id);
+      elSel.options[selId>0 ? selId : 0].selected = true;
+    }
+
         function getPreferences() {
           var prefs = new gadgets.Prefs();
           setReminder(prefs.getInt("PrefsReminderDays"));
           var gro = prefs.getInt("PrefsGroup");
-          selectSetSelectedIndex('groupselect', gro);
+          //selectSetSelectedIndex('groupselect', gro);
+          selectSetSelected('groupselect', 1);
+          selectSetSelected('groupselect', 3);
+          selectSetSelected('groupselect', 5);
           selectSetSelectedIndex('calendarselect', prefs.getInt("PrefsCalendar"));
         }
 
         function setPreferences() {
           var prefs =  new gadgets.Prefs();
+          // User Prefs has to be set as strings (+'')
           prefs.set("PrefsReminderDays", getReminder(),
                     "PrefsGroup", selectGetSelectedIndex('groupselect')+'',
                     "PrefsCalendar", selectGetSelectedIndex('calendarselect')+'');
-
-          var gro = selectGetSelectedIndex('groupselect');
-          //prefs.set("Prefs_Group", selectGetSelectedIndex('groupselect'));
-          //prefs.set("Prefs_Group", 5);
-
-          //prefs.set("Prefs_Calendar", selectGetSelectedIndex('calendarselect'));
-          //prefs.set("Prefs_Calendar", "2");
         }
 
         function showOneSection(toshow) {
