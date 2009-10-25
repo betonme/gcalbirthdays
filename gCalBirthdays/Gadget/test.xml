@@ -61,7 +61,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.093';
+        var APP_VERSION = '2.094';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -165,14 +165,19 @@
         function getPreferences() {
           var prefs = new gadgets.Prefs();
           setReminder(prefs.getInt("PrefsReminderDays"));
-          selectSetSelectedIndex('groupselect', prefs.getInt("PrefsGroup"));
+          var gro = prefs.getInt("PrefsGroup");
+          selectSetSelectedIndex('groupselect', gro);
           selectSetSelectedIndex('calendarselect', prefs.getInt("PrefsCalendar"));
         }
 
         function setPreferences() {
           var prefs =  new gadgets.Prefs();
           prefs.set("PrefsReminderDays", getReminder());
-          prefs.set("PrefsGroup", selectGetSelectedIndex('groupselect'));
+
+          var gro = selectGetSelectedIndex('groupselect');
+          //prefs.set("PrefsGroup", selectGetSelectedIndex('groupselect'));
+          prefs.set("PrefsGroup", gro);
+
           prefs.set("PrefsCalendar", selectGetSelectedIndex('calendarselect'));
         }
 
