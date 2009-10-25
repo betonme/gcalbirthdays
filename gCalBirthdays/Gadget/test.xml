@@ -20,8 +20,8 @@
     </OAuth>
   </ModulePrefs>
   <UserPref name="PrefsReminderDays" default_value="14" datatype="hidden"/>
-  <UserPref name="Prefs_Group" default_value="0" datatype="hidden"/>
-  <UserPref name="Prefs_Calendar" default_value="0" datatype="hidden"/>
+  <UserPref name="PrefsGroup" default_value="0" datatype="hidden"/>
+  <UserPref name="PrefsCalendar" default_value="0" datatype="hidden"/>
   <Content type="html">
     <![CDATA[
 
@@ -61,7 +61,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.098';
+        var APP_VERSION = '2.099';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -165,21 +165,23 @@
         function getPreferences() {
           var prefs = new gadgets.Prefs();
           setReminder(prefs.getInt("PrefsReminderDays"));
-          var gro = prefs.getInt("Prefs_Group");
+          var gro = prefs.getInt("PrefsGroup");
           selectSetSelectedIndex('groupselect', gro);
-          selectSetSelectedIndex('calendarselect', prefs.getInt("Prefs_Calendar"));
+          selectSetSelectedIndex('calendarselect', prefs.getInt("PrefsCalendar"));
         }
 
         function setPreferences() {
           var prefs =  new gadgets.Prefs();
-          prefs.set("PrefsReminderDays", getReminder());
+          prefs.set("PrefsReminderDays", getReminder(),
+                    "PrefsGroup", selectGetSelectedIndex('groupselect'),
+                    "PrefsCalendar", selectGetSelectedIndex('calendarselect'));
 
           var gro = selectGetSelectedIndex('groupselect');
           //prefs.set("Prefs_Group", selectGetSelectedIndex('groupselect'));
-          prefs.set("Prefs_Group", 5);
+          //prefs.set("Prefs_Group", 5);
 
           //prefs.set("Prefs_Calendar", selectGetSelectedIndex('calendarselect'));
-          prefs.set("Prefs_Calendar", "2");
+          //prefs.set("Prefs_Calendar", "2");
         }
 
         function showOneSection(toshow) {
