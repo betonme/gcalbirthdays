@@ -61,7 +61,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.104';
+        var APP_VERSION = '2.105';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -163,11 +163,13 @@
         function getPreferences() {
           var prefs = new gadgets.Prefs();
           setReminder(prefs.getInt("PrefsReminderDays"));
-          var gro = prefs.getInt("PrefsGroup");
-          //selectSetSelectedIndex('groupselect', gro);
-          selectSetSelected('groupselect', 1);
-          selectSetSelected('groupselect', 3);
-          selectSetSelected('groupselect', 5);
+          var groupIds = new Array();
+          groupIds = prefs.getString("PrefsGroup").split(GROUP_SEPARATOR);
+          selectSetSelectedIndex('groupselect', groupIds[0]);
+          var len = groupIds.length;
+          for (var gId=0; gId < len; gId++) {
+            selectSetSelected('groupselect', groupIds[gId]);
+          }
           selectSetSelectedIndex('calendarselect', prefs.getInt("PrefsCalendar"));
         }
 
@@ -175,7 +177,7 @@
           var prefs =  new gadgets.Prefs();
           // User Prefs has to be set as strings (+'')
           prefs.set("PrefsReminderDays", getReminder(),
-                    "PrefsGroup", selectGetSelectedIndex('groupselect')+'',
+                    "PrefsGroup", selectGetSelected('groupselect').join(GROUP_SEPARATOR),
                     "PrefsCalendar", selectGetSelectedIndex('calendarselect')+'');
         }
 
