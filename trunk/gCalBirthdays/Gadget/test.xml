@@ -62,7 +62,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.106';
+        var APP_VERSION = '2.107';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -166,7 +166,7 @@
         }
 
         function setAutoSync(as) {
-          $('autosyncinput').chacked = as;
+          $('autosyncinput').checked = as;
         }
 
         function getPreferences() {
