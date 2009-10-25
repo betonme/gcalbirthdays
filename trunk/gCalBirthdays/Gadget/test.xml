@@ -19,6 +19,7 @@
       </Service>
     </OAuth>
   </ModulePrefs>
+  <UserPref name="PrefsAutoSync" default_value="false" datatype="bool"/>
   <UserPref name="PrefsReminderDays" default_value="14" datatype="hidden"/>
   <UserPref name="PrefsGroup" default_value="0" datatype="hidden"/>
   <UserPref name="PrefsCalendar" default_value="0" datatype="hidden"/>
@@ -61,7 +62,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.105';
+        var APP_VERSION = '2.106';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -160,8 +161,17 @@
           showOneSection('main');
         }
 
+        function getAutoSync() {
+           return $('autosyncinput').checked;
+        }
+
+        function setAutoSync(as) {
+          $('autosyncinput').chacked = as;
+        }
+
         function getPreferences() {
           var prefs = new gadgets.Prefs();
+          setAutoSync(prefs.getBool("PrefsAutoSync"));
           setReminder(prefs.getInt("PrefsReminderDays"));
           var groupIds = new Array();
           groupIds = prefs.getString("PrefsGroup").split(GROUP_SEPARATOR);
@@ -176,7 +186,8 @@
         function setPreferences() {
           var prefs =  new gadgets.Prefs();
           // User Prefs has to be set as strings (+'')
-          prefs.set("PrefsReminderDays", getReminder(),
+          prefs.set("PrefsAutoSync", getAutoSync(),
+                    "PrefsReminderDays", getReminder(),
                     "PrefsGroup", selectGetSelected('groupselect').join(GROUP_SEPARATOR),
                     "PrefsCalendar", selectGetSelectedIndex('calendarselect')+'');
         }
@@ -278,6 +289,14 @@
 
           <div id="settings" style="display:none">
             <table>
+              <tr>
+                <td id="text">Auto Sync:</td>
+              </tr>
+              <tr>
+                <td id="text">
+                  <input id="autosyncinput" type="checkbox"/>
+                </td>
+              </tr>
               <tr>
                 <td id="text">Set Reminder:</td>
               </tr>
