@@ -19,9 +19,9 @@
       </Service>
     </OAuth>
   </ModulePrefs>
-  <UserPref name="PrefsReminderDays" default_value="14"/>
-  <UserPref name="PrefsGroup" default_value="0"/>
-  <UserPref name="PrefsCalendar" default_value="0"/>
+  <UserPref name="PrefsReminderDays" default_value="14" required="true"/>
+  <UserPref name="PrefsGroup" default_value="1" required="true"/>
+  <UserPref name="PrefsCalendar" default_value="1" required="true"/>
   <Content type="html">
     <![CDATA[
 
@@ -61,7 +61,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.091';
+        var APP_VERSION = '2.092';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -166,8 +166,7 @@
           var prefs = new gadgets.Prefs();
           setReminder(prefs.getInt("PrefsReminderDays"));
           selectSetSelectedIndex('groupselect', prefs.getInt("PrefsGroup"));
-          //selectSetSelectedIndex('calendarselect', prefs.getInt("PrefsCalendar"));
-          selectSetSelectedIndex('calendarselect', 4);
+          selectSetSelectedIndex('calendarselect', prefs.getInt("PrefsCalendar"));
         }
 
         function setPreferences() {
