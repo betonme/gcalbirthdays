@@ -848,7 +848,25 @@
 
     function selectSetSelected(id, selId){
       var elSel = $(id);
-      elSel.options[selId].selected = true;
+      if (undefined != elSel) {
+        if (elSel.length > selId) {
+          elSel.options[selId].selected = true;
+        }
+      }
+    }
+
+    function selectGetSelected(id){
+      var elSel = $(id);
+      var elSelIds = new Array();
+      if (undefined != elSel) {
+        var len = elSelGroup.length;
+        for (var sId=0,elSelId=0; elSelId < len; elSelId++) {
+          if (elSel.options[elSelId].selected) {
+            elSelIds[sId++] = elSel.options[elSelId].selected;
+          }
+        }
+      }
+      return elSelIds;
     }
 
     function selectSetSizeOptions(id, selSize){
