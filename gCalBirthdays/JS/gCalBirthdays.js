@@ -846,6 +846,11 @@
       return elSel.selectedIndex;
     }
 
+    function selectSetSelected(id, selId){
+      var elSel = $(id);
+      elSel.options[selId].selected = true;
+    }
+
     function selectSetSizeOptions(id, selSize){
       var elSel = $(id);
       if ( null == selSize ) {

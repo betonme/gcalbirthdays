@@ -61,7 +61,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.102';
+        var APP_VERSION = '2.103';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -161,11 +161,6 @@
         function endTransfer(){
           showOneSection('main');
         }
-
-    function selectSetSelected(id, selId){
-      var elSel = $(id);
-      elSel.options[selId].selected = true;
-    }
 
         function getPreferences() {
           var prefs = new gadgets.Prefs();
