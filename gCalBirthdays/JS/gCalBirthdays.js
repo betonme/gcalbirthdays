@@ -862,7 +862,7 @@
         var len = elSel.length;
         for (var sId=0,elSelId=0; elSelId < len; elSelId++) {
           if (elSel.options[elSelId].selected) {
-            elSelIds[sId++] = elSel.options[elSelId].selected;
+            elSelIds[sId++] = elSelId;
           }
         }
       }
