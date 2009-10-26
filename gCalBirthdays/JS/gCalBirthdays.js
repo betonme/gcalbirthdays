@@ -1,6 +1,6 @@
 /*  gCalBirthdays.js
  *
- *  This is version: 1.19
+ *  This is version: 1.20
  *
  *  Shared JavaScript functions for HTML and Gadget Version of gCalBirthdays
  *
@@ -981,8 +981,7 @@
      * @return {number} The height of that element.
      */
     function nodeHeight(element) {
-      var doc = element.ownerDocument;
-      if (doc) {
+      if (element.ownerDocument) {
         var box = element.getBoundingClientRect();
         return box.height;
       } else {
