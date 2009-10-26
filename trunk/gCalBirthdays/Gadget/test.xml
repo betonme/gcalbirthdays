@@ -62,7 +62,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.109';
+        var APP_VERSION = '2.110';
         var MAX_HEIGHT = 300;
         var AUTOSYNC_DELAY = 10000;
 
@@ -176,7 +176,7 @@
         function autoSync() {
           if (prefs.getBool("PrefsAutoSync")) {
             // auto sync is set - run delayed
-            SetTimeout("queryGroupsAndCalendars()", AUTOSYNC_DELAY);
+            setTimeout("queryGroupsAndCalendars()", AUTOSYNC_DELAY);
           }
         }
 
