@@ -62,7 +62,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.112';
+        var APP_VERSION = '2.113';
         var MAX_HEIGHT = 300;
         var AUTOSYNC_DELAY = 10000;
         var AUTOSYNC = false;
@@ -122,6 +122,7 @@
         }
 
         function showSettings(){
+          AUTOSYNC = false;
           showOneSection('busyloader');
           queryGroupsAndCalendars();
         }
@@ -217,8 +218,13 @@
                 getPreferences();
                 if (AUTOSYNC) {
                   startTransfer();
+                  return;
+                }
+              }
+              if (s === 'progress') {
+                if (AUTOSYNC) {
                   AUTOSYNC = false;
-                  //return;
+                  return;
                 }
               }
               el.style.display = "block";
