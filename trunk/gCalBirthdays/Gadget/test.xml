@@ -62,7 +62,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.114';
+        var APP_VERSION = '3.00';
         var MAX_HEIGHT = 300;
         var AUTOSYNC_DELAY = 10000;
         var AUTOSYNC = false;
