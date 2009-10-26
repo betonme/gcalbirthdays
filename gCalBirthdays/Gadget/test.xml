@@ -62,7 +62,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.113';
+        var APP_VERSION = '2.114';
         var MAX_HEIGHT = 300;
         var AUTOSYNC_DELAY = 10000;
         var AUTOSYNC = false;
@@ -210,22 +210,28 @@
         function showOneSection(toshow){
           var sections = [ 'main', 'approval', 'waiting', 'busyloader', 'settings', 'progress' ];
           printConsole('Show section: ' + toshow);
+
+          // auto sync handling
+          if (AUTOSYNC) {
+            if (toshow === 'settings') {
+              // after loading groups and calendars
+              getPreferences();
+              startTransfer();
+            }
+            if (toshow === 'progress') {
+              // disable autosync flag
+              AUTOSYNC = false;
+            }
+            return;
+          }
+
           for (var i=0; i < sections.length; ++i) {
             var s = sections[i];
             var el = $(s);
             if (s === toshow) {
               if (s === 'settings') {
+                // load always preferences before showing settings
                 getPreferences();
-                if (AUTOSYNC) {
-                  startTransfer();
-                  return;
-                }
-              }
-              if (s === 'progress') {
-                if (AUTOSYNC) {
-                  AUTOSYNC = false;
-                  return;
-                }
               }
               el.style.display = "block";
             } else {
