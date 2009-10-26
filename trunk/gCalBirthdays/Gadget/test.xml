@@ -62,9 +62,10 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.111';
+        var APP_VERSION = '2.112';
         var MAX_HEIGHT = 300;
         var AUTOSYNC_DELAY = 10000;
+        var AUTOSYNC = false;
 
         // The gadget containers request that we do NOT run any JS inline.
         // Instead, register a callback handler.
@@ -120,26 +121,25 @@
           showOneSection('approval');
         }
 
-        function showSettings() {
+        function showSettings(){
           showOneSection('busyloader');
           queryGroupsAndCalendars();
         }
 
-        function onclickSave() {
+        function onclickSave(){
           printConsole('Button Save');
           setPreferences();
           showOneSection('main');
         }
 
-        function onclickCancel() {
+        function onclickCancel(){
           printConsole('Button Cancel');
           showOneSection('main');
         }
 
-        function onclickSync() {
+        function onclickSync(){
           printConsole('Button Manual Sync');
           startTransfer();
-          queryContactsAndEvents();
         }
 
         function onclickStop(){
@@ -159,6 +159,7 @@
         function startTransfer(){
           setPreferences();
           showOneSection('progress');
+          queryContactsAndEvents();
         }
 
         function endTransfer(){
@@ -169,19 +170,20 @@
            return $('autosyncinput').checked;
         }
 
-        function setAutoSync(as) {
+        function setAutoSync(as){
           $('autosyncinput').checked = as;
         }
 
-        function autoSync() {
+        function autoSync(){
           var prefs = new gadgets.Prefs();
           if (prefs.getBool("PrefsAutoSync")) {
             // auto sync is set - run delayed
+            AUTOSYNC = true;
             setTimeout("queryGroupsAndCalendars()", AUTOSYNC_DELAY);
           }
         }
 
-        function getPreferences() {
+        function getPreferences(){
           var prefs = new gadgets.Prefs();
           setAutoSync(prefs.getBool("PrefsAutoSync"));
           setReminder(prefs.getInt("PrefsReminderDays"));
@@ -195,7 +197,7 @@
           selectSetSelectedIndex('calendarselect', prefs.getInt("PrefsCalendar"));
         }
 
-        function setPreferences() {
+        function setPreferences(){
           var prefs =  new gadgets.Prefs();
           // User Prefs has to be set as strings (+'')
           prefs.set("PrefsAutoSync", getAutoSync()+'',
@@ -204,7 +206,7 @@
                     "PrefsCalendar", selectGetSelectedIndex('calendarselect')+'');
         }
 
-        function showOneSection(toshow) {
+        function showOneSection(toshow){
           var sections = [ 'main', 'approval', 'waiting', 'busyloader', 'settings', 'progress' ];
           printConsole('Show section: ' + toshow);
           for (var i=0; i < sections.length; ++i) {
@@ -213,6 +215,11 @@
             if (s === toshow) {
               if (s === 'settings') {
                 getPreferences();
+                if (AUTOSYNC) {
+                  startTransfer();
+                  AUTOSYNC = false;
+                  //return;
+                }
               }
               el.style.display = "block";
             } else {
