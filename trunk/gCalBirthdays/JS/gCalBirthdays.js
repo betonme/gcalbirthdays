@@ -982,8 +982,8 @@
      */
     function nodeHeight(element) {
       var doc = element.ownerDocument;
-      if (doc && doc.getBoxObjectFor) {
-        var box = doc.getBoxObjectFor(element);
+      if (doc) {
+        var box = doc.getBoundingClientRect();
         return box.height;
       } else {
         return element.offsetHeight;
