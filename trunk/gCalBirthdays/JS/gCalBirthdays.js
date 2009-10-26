@@ -983,7 +983,7 @@
     function nodeHeight(element) {
       var doc = element.ownerDocument;
       if (doc) {
-        var box = doc.getBoundingClientRect();
+        var box = element.getBoundingClientRect();
         return box.height;
       } else {
         return element.offsetHeight;
