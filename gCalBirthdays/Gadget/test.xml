@@ -62,7 +62,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '2.107';
+        var APP_VERSION = '2.108';
         var MAX_HEIGHT = 300;
 
         // The gadget containers request that we do NOT run any JS inline.
@@ -186,7 +186,7 @@
         function setPreferences() {
           var prefs =  new gadgets.Prefs();
           // User Prefs has to be set as strings (+'')
-          prefs.set("PrefsAutoSync", getAutoSync(),
+          prefs.set("PrefsAutoSync", getAutoSync()+'',
                     "PrefsReminderDays", getReminder(),
                     "PrefsGroup", selectGetSelected('groupselect').join(GROUP_SEPARATOR),
                     "PrefsCalendar", selectGetSelectedIndex('calendarselect')+'');
@@ -239,25 +239,20 @@
           float: right;
           padding: 0 3px 0 3px;
         }
-
         #text {
           font-size: 11px;
           padding: 0 3px 0 3px;
         }
-
         div {
           font-size: 11px;
           padding: 0 3px 0 3px;
         }
-
         input {
           font-size: 11px;
         }
-
         select {
           font-size: 11px;
         }
-
         span {
           font-size: 11px;
         }
