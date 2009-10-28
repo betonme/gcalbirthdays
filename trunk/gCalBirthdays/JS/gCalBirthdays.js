@@ -1,6 +1,6 @@
 /*  gCalBirthdays.js
  *
- *  This is version: 1.20
+ *  This is version: 1.21
  *
  *  Shared JavaScript functions for HTML and Gadget Version of gCalBirthdays
  *
@@ -827,7 +827,11 @@
       // Create a Reminder object that will be attached to the
       var reminderObj = new google.gdata.Reminder();
       reminderObj.setDays(getReminder());
+
       reminderObj.setMethod(google.gdata.Reminder.METHOD_ALERT);
+      eventEntry.addReminder(reminderObj);
+
+      reminderObj.setMethod(google.gdata.Reminder.METHOD_EMAIL);
       eventEntry.addReminder(reminderObj);
 
       return eventEntry;
@@ -992,12 +996,28 @@
     /**
      * Set Get Reminder functions.
      */
+    function getReminder(){
+      return $('reminderinput').value;
+    }
+
     function setReminder(rem){
       $('reminderinput').value = rem;
     }
 
-    function getReminder(){
-      return $('reminderinput').value;
+    function getReminderPopup() {
+      return $('popupinput').checked;
+    }
+
+    function setReminderPopup(rp){
+      $('popupinput').checked = rp;
+    }
+
+    function getReminderEmail() {
+       return $('emailinput').checked;
+    }
+
+    function setReminderEmail(re){
+      $('emailinput').checked = re;
     }
 
     /**
