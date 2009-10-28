@@ -20,6 +20,8 @@
     </OAuth>
   </ModulePrefs>
   <UserPref name="PrefsAutoSync" default_value="false" datatype="bool"/>
+  <UserPref name="PrefsReminderPopup" default_value="true" datatype="bool"/>
+  <UserPref name="PrefsReminderEmail" default_value="false" datatype="bool"/>
   <UserPref name="PrefsReminderDays" default_value="14" datatype="hidden"/>
   <UserPref name="PrefsGroup" default_value="0" datatype="hidden"/>
   <UserPref name="PrefsCalendar" default_value="0" datatype="hidden"/>
@@ -62,7 +64,7 @@
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '3.00';
+        var APP_VERSION = '3.01';
         var MAX_HEIGHT = 300;
         var AUTOSYNC_DELAY = 10000;
         var AUTOSYNC = false;
@@ -121,6 +123,15 @@
           showOneSection('approval');
         }
 
+        function autoSync(){
+          var prefs = new gadgets.Prefs();
+          if (prefs.getBool("PrefsAutoSync")) {
+            // auto sync is set - run delayed
+            AUTOSYNC = true;
+            setTimeout("queryGroupsAndCalendars()", AUTOSYNC_DELAY);
+          }
+        }
+
         function showSettings(){
           AUTOSYNC = false;
           showOneSection('busyloader');
@@ -175,18 +186,11 @@
           $('autosyncinput').checked = as;
         }
 
-        function autoSync(){
-          var prefs = new gadgets.Prefs();
-          if (prefs.getBool("PrefsAutoSync")) {
-            // auto sync is set - run delayed
-            AUTOSYNC = true;
-            setTimeout("queryGroupsAndCalendars()", AUTOSYNC_DELAY);
-          }
-        }
-
         function getPreferences(){
           var prefs = new gadgets.Prefs();
           setAutoSync(prefs.getBool("PrefsAutoSync"));
+          setReminderPopup(prefs.getBool("PrefsReminderPopup"));
+          setReminderEmail(prefs.getBool("PrefsReminderEmail"));
           setReminder(prefs.getInt("PrefsReminderDays"));
           var groupIds = new Array();
           groupIds = prefs.getString("PrefsGroup").split(GROUP_SEPARATOR);
@@ -202,6 +206,8 @@
           var prefs =  new gadgets.Prefs();
           // User Prefs has to be set as strings (+'')
           prefs.set("PrefsAutoSync", getAutoSync()+'',
+                    "PrefsReminderPopup", setReminderPopup()+'',
+                    "PrefsReminderEmail", setReminderEmail()+'',
                     "PrefsReminderDays", getReminder(),
                     "PrefsGroup", selectGetSelected('groupselect').join(GROUP_SEPARATOR),
                     "PrefsCalendar", selectGetSelectedIndex('calendarselect')+'');
@@ -330,6 +336,18 @@
                 <td id="text">
                   <input id="reminderinput" maxlength="2" style="width:30px" onkeypress="return isNumberKey(event)"/>
                   day(s)
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <input id="popupinput" type="checkbox" checked="checked"/>
+                  Pop-up
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <input id="emailinput" type="checkbox"/>
+                  E-Mail
                 </td>
               </tr>
               <tr>
