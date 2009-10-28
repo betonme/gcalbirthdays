@@ -206,8 +206,8 @@
           var prefs =  new gadgets.Prefs();
           // User Prefs has to be set as strings (+'')
           prefs.set("PrefsAutoSync", getAutoSync()+'',
-                    "PrefsReminderPopup", setReminderPopup()+'',
-                    "PrefsReminderEmail", setReminderEmail()+'',
+                    "PrefsReminderPopup", getReminderPopup()+'',
+                    "PrefsReminderEmail", getReminderEmail()+'',
                     "PrefsReminderDays", getReminder(),
                     "PrefsGroup", selectGetSelected('groupselect').join(GROUP_SEPARATOR),
                     "PrefsCalendar", selectGetSelectedIndex('calendarselect')+'');
