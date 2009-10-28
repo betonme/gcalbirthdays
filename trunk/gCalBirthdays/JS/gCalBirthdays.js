@@ -531,7 +531,7 @@
             if (undefined != contact.title.$t) {
               // Push only if contact has a birthday
               if (undefined != contact.gContact$birthday) {
-                // Complete push is not necessary becasue we need only the title and birthday
+                // Complete push is not necessary because we need only the title and birthday
                 contactList[idl++] = { title: html_entity_decode(contact.title.$t), birthday: contact.gContact$birthday.when };
               }
             }
