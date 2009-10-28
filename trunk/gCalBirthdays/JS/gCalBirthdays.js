@@ -824,15 +824,21 @@
       recurrenceObj.setValue(recurrenceString);
       eventEntry.setRecurrence(recurrenceObj);
 
-      // Create a Reminder object that will be attached to the
-      var reminderObj = new google.gdata.Reminder();
-      reminderObj.setDays(getReminder());
+      // Set up the Popup Reminder details
+      if (getReminderPopup()){
+        var reminderObjAlert = new google.gdata.Reminder();
+        reminderObjAlert.setDays(getReminder());
+        reminderObjAlert.setMethod(google.gdata.Reminder.METHOD_ALERT);
+        eventEntry.addReminder(reminderObjAlert);
+      }
 
-      reminderObj.setMethod(google.gdata.Reminder.METHOD_ALERT);
-      eventEntry.addReminder(reminderObj);
-
-      reminderObj.setMethod(google.gdata.Reminder.METHOD_EMAIL);
-      eventEntry.addReminder(reminderObj);
+      // Set up the Email Reminder details
+      if (getReminderEmail()){
+        var reminderObjEmail = new google.gdata.Reminder();
+        reminderObjEmail.setDays(getReminder());
+        reminderObjEmail.setMethod(google.gdata.Reminder.METHOD_EMAIL);
+        eventEntry.addReminder(reminderObjEmail);
+      }
 
       return eventEntry;
     }
