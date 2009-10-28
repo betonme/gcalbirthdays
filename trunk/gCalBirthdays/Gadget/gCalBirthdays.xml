@@ -339,13 +339,13 @@
                 </td>
               </tr>
               <tr>
-                <td>
+                <td id="text">
                   <input id="popupinput" type="checkbox" checked="checked"/>
                   Pop-up
                 </td>
               </tr>
               <tr>
-                <td>
+                <td id="text">
                   <input id="emailinput" type="checkbox"/>
                   E-Mail
                 </td>
