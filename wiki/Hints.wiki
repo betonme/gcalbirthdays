@@ -1,0 +1,41 @@
+=Hints=
+
+==Google Calendar Gadget==
+
+Relating: gCalBirthdays V3
+
+Problem: After adding the gadget, the Login or the settings can not 
+
+Cause: With the provided URL, the Google Login is not working.
+
+Solution: 
+ * Add the Gadget: http://www.google.com/calendar/render?gadgeturl=http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/Gadget/gCalBirthdays.xml
+ * Reload Google Calendar: www.google.com/calendar
+ * Login
+ * Open settings
+
+<br>
+
+==Firefox and NoScript==
+
+Relating: gCalBirthdays V2 and V3
+
+Problem: Login hangs
+
+Cause: NoScript blocks the CSS
+
+Solution: 
+Disable NoScript 
+or
+change NoScript Settings - Advanced - Cross-Site-Scripting -
+Append:
+*{{{^http://gcalbirthdays.googlecode.com\.*}}}*
+
+<br>
+
+==Problem Reporting==
+If there is still a problem:
+ * Use the Issues tab for reporting
+To investigate the problem, it is easier if You can provide the Log
+ * Install Firebug: http://getfirebug.com/
+ * Provide the log file (Maybe You should delete the Names and )
