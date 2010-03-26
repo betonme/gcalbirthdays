@@ -1,6 +1,6 @@
 =Hints=
 
-==Google Calendar Gadget==
+==Google Calendar Gadget Setup==
 
 Relating: gCalBirthdays V3
 
