@@ -1,4 +1,4 @@
-#labels Featured
+#labels Featured,Phase-Deploy,Phase-Support
 =Hints=
 
 ==Google Calendar Gadget Setup==
