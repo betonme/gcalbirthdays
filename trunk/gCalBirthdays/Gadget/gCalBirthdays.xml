@@ -5,6 +5,7 @@
     title_url="http://gcalbirthdays.googlecode.com"
     author="Frank Glaser"
     author_email="GlaserFrank@gmail.com"
+    description="Add the birthdays of Your Google Contacts to Your Google Calendar."
     height="100"
     scrolling="true">
     <Require feature="dynamic-height"/>
