@@ -40,7 +40,7 @@
       <!--http://code.google.com/intl/de-DE/apis/ajaxlibs/-->
       <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.1.0/prototype.js"></script>
       <!--adjustheight workaround: http://code.google.com/p/opensocial-resources/issues/detail?id=104-->
-      <!--script type="text/javascript">Array.prototype.toJSON = null;</script-->
+      <script type="text/javascript">Array.prototype.toJSON = null;</script>
 
       <!--http://www.bram.us/projects/js_bramus/jsprogressbarhandler/-->
       <!--V0.3.3-->
