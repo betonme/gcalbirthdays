@@ -25,6 +25,8 @@
   <UserPref name="PrefsReminderEmail" default_value="false" datatype="bool"/>
   <UserPref name="PrefsReminderNumber" default_value="14" datatype="hidden"/>
   <UserPref name="PrefsReminderType" default_value="day(s)" datatype="hidden"/>
+  <UserPref name="PrefsTitleText" default_value="" datatype="hidden"/>
+  <UserPref name="PrefsSummaryText" default_value="" datatype="hidden"/>
   <UserPref name="PrefsGroup" default_value="0" datatype="hidden"/>
   <UserPref name="PrefsCalendar" default_value="0" datatype="hidden"/>
   <Content type="html">
@@ -59,16 +61,16 @@
       <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/popup.js"></script>
 
       <!--gCalBirthay Javascript functions for HTML and Gadget Version-->
-      <!--V1.22-->
+      <!--V1.23-->
       <!--script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/gCalBirthdays.js"></script-->
-      <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn-history/r447/trunk/gCalBirthdays/JS/gCalBirthdays.js" charset="utf-8"></script>
+      <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn-history/r462/trunk/gCalBirthdays/JS/gCalBirthdays.js" charset="utf-8"></script>
 
       <!--gCalBirthay Gadget specific Javascript functions-->
       <script type="text/javascript">
 
         //IE JScript 5.6 Compatibility
         // Constants
-        var APP_VERSION = '3.02';
+        var APP_VERSION = '3.03';
         var MAX_HEIGHT = 300;
         var AUTOSYNC_DELAY = 10000;
         var AUTOSYNC = false;
@@ -197,6 +199,8 @@
           setReminderEmail(prefs.getBool("PrefsReminderEmail"));
           setReminderNumber(prefs.getInt("PrefsReminderNumber"));
           setReminderType(prefs.getString("PrefsReminderType"));
+          setTitleText(prefs.getString("PrefsTitleText"));
+          setSummaryText(prefs.getString("PrefsSummaryText"));
           var groupIds = new Array();
           groupIds = prefs.getString("PrefsGroup").split(GROUP_SEPARATOR);
           selectSetSelectedIndex('groupselect', groupIds[0]);
@@ -214,8 +218,10 @@
                     "PrefsReminderPopup", getReminderPopup()+'',
                     "PrefsReminderEmail", getReminderEmail()+'',
                     "PrefsReminderNumber", getReminderNumber()+'',
-                    "PrefsReminderType", getReminderType(),
-                    "PrefsGroup", selectGetSelected('groupselect').join(GROUP_SEPARATOR),
+                    "PrefsReminderType", getReminderType()+'',
+                    "PrefsTitleText", getTitleText()+'',
+                    "PrefsSummaryText", getSummaryText()+'',
+                    "PrefsGroup", selectGetSelected('groupselect').join(GROUP_SEPARATOR)+'',
                     "PrefsCalendar", selectGetSelectedIndex('calendarselect')+'');
         }
 
@@ -336,11 +342,31 @@
                 </td>
               </tr>
               <tr>
+                <td>
+                  Title:
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <input id="titleinput" style="width:163px"/>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Summary:
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <input id="summaryinput" style="width:163px"/>
+                </td>
+              </tr>
+              <tr>
                 <td id="text">Set Reminder:</td>
               </tr>
               <tr>
                 <td id="text">
-                  <input id="reminderinput" maxlength="2" style="width:30px" onkeypress="return isNumberKey(event)"/>
+                  <input id="reminderinput" maxlength="2" style="width:30px" onkeypress="onkeypressReminder(event)" onchange="onchangeReminder(this.id)"/>
                   <select id="reminderselect">
                     <option>hour(s)</option>
                     <option>day(s)</option>
