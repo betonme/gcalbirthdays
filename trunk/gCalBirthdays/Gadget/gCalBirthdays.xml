@@ -344,6 +344,7 @@
               <tr>
                 <td id="text">
                   Title:
+                    (<a href="http://code.google.com/p/gcalbirthdays/wiki/Placeholders" target="_blank">Wiki</a>)
                 </td>
               </tr>
               <tr>
@@ -354,11 +355,12 @@
               <tr>
                 <td id="text">
                   Summary:
+                    (<a href="http://code.google.com/p/gcalbirthdays/wiki/Placeholders" target="_blank">Wiki</a>)
                 </td>
               </tr>
               <tr>
                 <td>
-                  <input id="summaryinput" style="width:130px"/>
+                  <input id="summaryinput" style="width:120px"/>
                 </td>
               </tr>
               <tr>
@@ -366,7 +368,7 @@
               </tr>
               <tr>
                 <td id="text">
-                  <input id="reminderinput" maxlength="2" style="width:30px" onkeypress="onkeypressReminder(event)" onchange="onchangeReminder(this.id)"/>
+                  <input id="reminderinput" maxlength="2" style="width:30px" onkeypress="return onkeypressReminder(event);" onchange="return onchangeReminder(this.id);"/>
                   <select id="reminderselect">
                     <option>hour(s)</option>
                     <option>day(s)</option>
