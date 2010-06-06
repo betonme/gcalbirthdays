@@ -21,11 +21,16 @@
     <!--http://www.bram.us/demo/projects/jsprogressbarhandler/js/bramus/jsProgressBarHandler.js-->
     <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/jsProgressBarHandler.js"></script>
 
+    <!--http://phpjs.org/packages/view/396/name:7d67fb58ff9ab58f4d0e4e55221b50e7/-->
+    <!--V3.1.3-->
+    <!--http://phpjs.org/packages/download/396/name:html_funcs.min.js-->
+    <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/html_funcs.min.js"></script>
+
     <!--gCalBirthay Javascript functions for HTML and Gadget Version-->
-    <!--V1.22-->
-    <!--script type="text/javascript" src="gCalBirthdays_gdata200" charset="utf-8"></script-->
+    <!--V1.23-->
+    <!--script type="text/javascript" src="gCalBirthdays.js" charset="utf-8"></script-->
     <!--script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/gCalBirthdays.js" charset="utf-8"></script-->
-    <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn-history/r447/trunk/gCalBirthdays/JS/gCalBirthdays.js" charset="utf-8"></script>
+    <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn-history/r460/trunk/gCalBirthdays/JS/gCalBirthdays.js" charset="utf-8"></script>
 
     <!--gCalBirthay HTML specific Javascript functions-->
     <script type="text/javascript">
@@ -53,7 +58,7 @@
 
       //IE JScript 5.6 Compatibility
       // Constants
-      var APP_VERSION = '2.07';
+      var APP_VERSION = '2.08';
 
       // Tells the google JS lib to call the init function once loaded
       google.setOnLoadCallback(setupHTML);
@@ -194,11 +199,33 @@
       <form id="settings" style="display:none">
         <table cellspacing="0" cellpadding="5">
           <tr>
+            <td colspan="2">
+              Title:
+                (<a href="http://code.google.com/p/gcalbirthdays/wiki/Placeholders" target="_blank">Wiki</a>)
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <input id="titleinput" style="width:300px"/>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              Summary / Description:
+                (<a href="http://code.google.com/p/gcalbirthdays/wiki/Placeholders" target="_blank">Wiki</a>)
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <input id="summaryinput" style="width:300px"/>
+            </td>
+          </tr>
+          <tr>
             <td style="padding-right: 30px">Set Reminder:</td>
           </tr>
           <tr>
             <td>
-              <input id="reminderinput" maxlength="2" style="width:30px" onkeypress="return isNumberKey(event)"/>
+              <input id="reminderinput" maxlength="2" style="width:30px" onkeypress="return onkeypressReminder(event);" onchange="return onchangeReminder(this.id);"/>
               <select id="reminderselect">
                 <option>hour(s)</option>
                 <option>day(s)</option>
