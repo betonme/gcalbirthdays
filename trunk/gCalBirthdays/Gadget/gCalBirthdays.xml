@@ -25,8 +25,8 @@
   <UserPref name="PrefsReminderEmail" default_value="false" datatype="bool"/>
   <UserPref name="PrefsReminderNumber" default_value="14" datatype="hidden"/>
   <UserPref name="PrefsReminderType" default_value="day(s)" datatype="hidden"/>
-  <UserPref name="PrefsTitleText" default_value="" datatype="hidden"/>
-  <UserPref name="PrefsSummaryText" default_value="" datatype="hidden"/>
+  <UserPref name="PrefsTitleText" default_value="{TITLE} Birthday Celebration (Born {BIRTHDAY})" datatype="hidden"/>
+  <UserPref name="PrefsSummaryText" default_value="Created by gCalBirthdays" datatype="hidden"/>
   <UserPref name="PrefsGroup" default_value="0" datatype="hidden"/>
   <UserPref name="PrefsCalendar" default_value="0" datatype="hidden"/>
   <Content type="html">
@@ -342,23 +342,23 @@
                 </td>
               </tr>
               <tr>
-                <td>
+                <td id="text">
                   Title:
                 </td>
               </tr>
               <tr>
                 <td>
-                  <input id="titleinput" style="width:163px"/>
+                  <input id="titleinput" style="width:120px"/>
                 </td>
               </tr>
               <tr>
-                <td>
+                <td id="text">
                   Summary:
                 </td>
               </tr>
               <tr>
                 <td>
-                  <input id="summaryinput" style="width:163px"/>
+                  <input id="summaryinput" style="width:130px"/>
                 </td>
               </tr>
               <tr>
