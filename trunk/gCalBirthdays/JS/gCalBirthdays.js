@@ -87,6 +87,8 @@
     var reminderType;
     var reminderPopup;
     var reminderEmail;
+    var titleText;
+    var summaryText;
 
     // Arrays
     var groupList = new Array();
@@ -781,6 +783,8 @@
         reminderType = getReminderType();
         reminderPopup = getReminderPopup();
         reminderEmail = getReminderEmail();
+        titleText = getTitleText();
+        summaryText = getSummaryText();
 
         var exists = false;
         // IE JScript 5.6 Compatibility
@@ -893,12 +897,12 @@
         printInfo('Date: No year specified - set to 1970!');
       }
 
-      var evttitle = getTitleText();
+      var evttitle = titleText;
       evttitle = evttitle.replace(EVENT_TEMPLATE_TITLE, contact.title);
       evttitle = evttitle.replace(EVENT_TEMPLATE_BIRTHDAY, stringDate);
       eventEntry.setTitle(google.gdata.atom.Text.create(htmlentities(evttitle)));
 
-      var evtsummary = getSummaryText();
+      var evtsummary = summaryText;
       evtsummary = evtsummary.replace(EVENT_TEMPLATE_TITLE, contact.title);
       evtsummary = evtsummary.replace(EVENT_TEMPLATE_BIRTHDAY, stringDate);
       eventEntry.setContent(google.gdata.atom.Text.create(htmlentities(evtsummary)));
@@ -1105,7 +1109,7 @@
      * Set Get Reminder functions.
      */
     function getReminderNumber(){
-      return parseInt(($('reminderinput').value, 10));
+      return parseInt($('reminderinput').value, 10);
     }
 
     function setReminderNumber(rn){
