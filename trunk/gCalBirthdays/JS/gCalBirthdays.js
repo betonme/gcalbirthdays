@@ -1,6 +1,6 @@
 /*  gCalBirthdays.js
  *
- *  This is version: 1.22
+ *  This is version: 1.23
  *
  *  Shared JavaScript functions for HTML and Gadget Version of gCalBirthdays
  *
@@ -51,8 +51,6 @@
     var CALENDAR_SUMMARY = 'This calendar contains the birthdays of Your Google Contacts.';
     var CALENDAR_COLOR = '#A32929'; // red "#A32929", blue "#2952A3" and green "#0D7813"
 
-    var EVENT_TITLE_SUFFIX = ' Birthday Celebration';
-    var EVENT_SUMMARY_SUFFIX = 'Created by gCalBirthdays';
 
     var CALENDAR_HIDDEN = false;
     var CALENDAR_SELECTED = true;
@@ -65,6 +63,13 @@
 
     var GROUP_SEPARATOR = ',';
     var MAX_RESULT = 10;
+
+    var EVENT_TEMPLATE_TITLE = '{TITLE}';
+    var EVENT_TEMPLATE_BIRTHDAY = '{BIRTHDAY}';
+
+    var EVENT_TITLE_DEFAULT = EVENT_TEMPLATE_TITLE + ' Birthday Celebration (Born ' + EVENT_TEMPLATE_BIRTHDAY + ')';
+    var EVENT_SUMMARY_DEFAULT = 'Created by gCalBirthdays';
+
     var REMINDER_DAYS_DEFAULT = 14;
     var ICAL_BREAK = '\r\n'; // '\n'
 
@@ -145,6 +150,8 @@
       );
 
       setReminderNumber(REMINDER_DAYS_DEFAULT);
+      setTitleText(EVENT_TITLE_DEFAULT);
+      setSummaryText(EVENT_SUMMARY_DEFAULT);
     }
 
     /**
@@ -225,7 +232,7 @@
         // IE JScript 5.6 Compatibility
         var len = groupList.length;
         for (var ie = 0; ie < len; ie++) {
-          groupList[ie].title = groupList[ie].title.replace(/System Group/gi, id++);
+          groupList[ie].title = html_entity_decode(groupList[ie].title.replace(/System Group/gi, id++));
         }
 
         // Sort groups
@@ -310,7 +317,7 @@
         var len = calendars.length;
         for (var ie = 0; ie < len; ie++) {
           var calendar = calendars[ie];
-          calendarList[idl++] = { title: calendar.getTitle().getText(), url: calendar.getLink().getHref() };
+          calendarList[idl++] = { title: html_entity_decode(calendar.getTitle().getText()), url: calendar.getLink().getHref() };
         }
 
         // Sort calendars
@@ -381,14 +388,33 @@
     }
 
     /**
-     * Only numbers are allowed for the reminder.
+     * Only numbers are allowed for the reminder input.
      */
-    function isNumberKey(evt)
+    function onkeypressReminder(e)
     {
-       var charCode = (evt.which) ? evt.which : evt.keyCode
-       if (charCode > 31 && (charCode < 48 || charCode > 57))
-          return false;
-       return true;
+      e = e || window.event;
+      var keynum = e.keyCode || e.which;
+
+      // alert (keynum + ", " + e.shiftKey + ", ");
+
+      // Check if key is control character
+      if(keynum<48 && !e.shiftKey && !e.altKey && !e.ctrlKey)
+      {
+        return true;
+      }
+
+      // alert (keynum + ", " + e.shiftKey + ", " + keychar);
+
+      // Check if key is digit
+      var keychar = String.fromCharCode(keynum);
+      var keycharcheck = /\d/;
+      return keycharcheck.test(keychar);
+    }
+
+    function onchangeReminder(x)
+    {
+      var y=document.getElementById(x).value;
+      document.getElementById(x).value=parseInt(y);
     }
 
     /**
@@ -415,10 +441,10 @@
       var calendarEntry = new google.gdata.calendar.CalendarEntry();
 
       // Set the calendar title
-      calendarEntry.setTitle(google.gdata.atom.Text.create(calendarName));
+      calendarEntry.setTitle(google.gdata.atom.Text.create(htmlentities(calendarName)));
 
       // Set the calendar summary
-      calendarEntry.setSummary(google.gdata.atom.Text.create(CALENDAR_SUMMARY));
+      calendarEntry.setSummary(google.gdata.atom.Text.create(htmlentities(CALENDAR_SUMMARY)));
 
       // Set the calendar timezone
       /*var timeZone = new google.gdata.calendar.TimeZoneProperty();
@@ -450,7 +476,7 @@
       // The callback method that will be called after a
       // successful insertion from insertEntry()
       var insertCalendarCallback = function(result){
-        printConsole('Calendar added: ' + result.entry.getTitle().getText());
+        printConsole('Calendar added: ' + html_entity_decode(result.entry.getTitle().getText()));
 
         //verify name
         if (0 != result.entry.getTitle().getText().search(calendarName))
@@ -583,7 +609,7 @@
               if (undefined != contact.getBirthday()) {
                 // Complete push is not necessary because we need only the title and birthday
                 //contactList.push(contact);
-                contactList[idl++] = { title: contact.getTitle().getText(), birthday: contact.getBirthday().getWhen() };
+                contactList[idl++] = { title: html_entity_decode(contact.getTitle().getText()), birthday: contact.getBirthday().getWhen() };
               }
             }
           }
@@ -681,6 +707,7 @@
                 // Push only if event is created by us
                 if (-1 != event.getContent().getText().search(APP_NAME)) {
                   // Complete push is necessary because we need the whole event content
+                  event.setTitle(google.gdata.atom.Text.create(html_entity_decode(event.getTitle().getText())));
                   eventList.push(event);
                 }
               }
@@ -828,7 +855,7 @@
       // The callback method that will be called after a
       // successful insertion from insertEntry()
       var insertEventCallback = function(result){
-        printConsole('Event added: ' + result.entry.getTitle().getText());
+        printConsole('Event added: ' + html_entity_decode(result.entry.getTitle().getText()));
       }
       calendarService.insertEntry(postURL, eventEntry, insertEventCallback, handleError, google.gdata.calendar.CalendarEventEntry);
     }
@@ -839,7 +866,7 @@
       // The callback method that will be called after a
       // successful update from updateEntry()
       var updateEventCallback = function(result){
-        printConsole('Event updated: ' + result.entry.getTitle().getText());
+        printConsole('Event updated: ' + html_entity_decode(result.entry.getTitle().getText()));
       }
       eventEntry.updateEntry(updateEventCallback, handleError)
     }
@@ -866,9 +893,15 @@
         printInfo('Date: No year specified - set to 1970!');
       }
 
-      eventEntry.setTitle(google.gdata.atom.Text.create(contact.title + EVENT_TITLE_SUFFIX + ' (Born ' + stringDate + ')'));
+      var evttitle = getTitleText();
+      evttitle = evttitle.replace(EVENT_TEMPLATE_TITLE, contact.title);
+      evttitle = evttitle.replace(EVENT_TEMPLATE_BIRTHDAY, stringDate);
+      eventEntry.setTitle(google.gdata.atom.Text.create(htmlentities(evttitle)));
 
-      eventEntry.setContent(google.gdata.atom.Text.create(EVENT_SUMMARY_SUFFIX));
+      var evtsummary = getSummaryText();
+      evtsummary = evtsummary.replace(EVENT_TEMPLATE_TITLE, contact.title);
+      evtsummary = evtsummary.replace(EVENT_TEMPLATE_BIRTHDAY, stringDate);
+      eventEntry.setContent(google.gdata.atom.Text.create(htmlentities(evtsummary)));
 
       // Set the calendar time zone
       // Set the calendar location
@@ -1072,11 +1105,11 @@
      * Set Get Reminder functions.
      */
     function getReminderNumber(){
-      return $('reminderinput').value;
+      return parseInt(($('reminderinput').value, 10));
     }
 
     function setReminderNumber(rn){
-      $('reminderinput').value = rn;
+      $('reminderinput').value = parseInt(rn, 10);
     }
 
     function getReminderType(){
@@ -1102,6 +1135,23 @@
     function setReminderEmail(re){
       $('emailinput').checked = re;
     }
+
+    function getTitleText(){
+      return $('titleinput').value;
+    }
+
+    function setTitleText(tt){
+      $('titleinput').value = tt;
+    }
+
+    function getSummaryText(){
+      return $('summaryinput').value;
+    }
+
+    function setSummaryText(st){
+      $('summaryinput').value = st;
+    }
+
 
     /**
      * This function is called if an error is encountered while
