@@ -1,4 +1,5 @@
 #summary Supported placeholders
+#labels Featured
 
 = Supported placeholders =
 
