@@ -31,16 +31,3 @@ or
 change NoScript Settings - Advanced - Cross-Site-Scripting -
 Append:
 *{{{^http://gcalbirthdays.googlecode.com\.*}}}*
-
-<br>
-
-==Problem Reporting==
-If there is still a problem:
- * Use the Issues tab for reporting
-To investigate the problem, it is easier if You can provide the Log
- * Install Firebug: http://getfirebug.com/
- * Restart Firefox
- * Open gCalBirthdays 
- * Open Firebugs Console Tab
- * Try to reproduce Your problem
- * Provide the log file (Maybe You should delete the Names and Birthdays)
