@@ -1,0 +1,14 @@
+# HowTo Problem Reporting
+
+==Problem Reporting==
+If there is still a problem:
+ * Use the Issues tab for reporting
+
+To investigate the problem, it is easier if You can provide the Log
+ * Install Firebug: http://getfirebug.com/
+ * Restart Firefox
+ * Open gCalBirthdays 
+ * Open Firebugs F12
+ * Open the Firebug Console Tab (Maybe You have to activate it)
+ * Run gCalBirthdays and try to reproduce Your problem
+ * Provide the log file (Maybe You should delete the Names and Birthdays)
