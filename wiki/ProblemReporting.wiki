@@ -1,4 +1,5 @@
 #summary HowTo Problem Reporting
+#labels Featured
 
 If there is still a problem:
  * Use the Issues tab for reporting
