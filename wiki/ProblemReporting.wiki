@@ -5,7 +5,7 @@ If there is still a problem:
  * Use the Issues tab for reporting
 
 To investigate the problem, it is easier if You can provide the Log
- * Add the Firebug Lite bookmarklet to Your bookmarks http://getfirebug.com/firebuglite#Stable
+ * Add the Firebug Lite bookmarklet from the following page to Your bookmarks http://getfirebug.com/firebuglite#Stable
   * or install the Firebug AddOn: http://getfirebug.com/
  * Open [http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/HTML/gCalBirthdays.html gCalBirthdays]
  * Open Firebug 
