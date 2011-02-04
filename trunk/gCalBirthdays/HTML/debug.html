@@ -11,20 +11,32 @@
 			/* Create iFrame */
 			function createIFrame() {
 				var iframe = document.createElement('iframe');
-				iframe.src = 'gcalbirthdays.html';
+				iframe.src = 'gCalBirthdays.html';
 				iframe.width = '100%';
 				iframe.height = '50%';
+				iframe.marginheight = '0px';
+				iframe.marginwidth = '0px';
 				iframe.frameBorder = 'no';
+				iframe.scrolling = 'auto';
 				iframe.onload = function () {
+					injectCSS(this.contentDocument);
 					injectScript(this.contentDocument);
 				};
 				document.body.appendChild(iframe);
 			}
 			
+			/* Inject CSS */
+			function injectCSS(o) {
+				var css = document.createElement('style');
+				css.type = 'text/css';
+				css.innerHTML='body { margin: 0px; 	}; .indent { margin: 0px 0px 0px 0px; };';
+				o.body.appendChild(css);
+			}
+			
 			/* Inject script */
 			function injectScript(o) {
 				var el = document.createElement('script');
-				el.innerHTML="console=parent.console;";
+				el.innerHTML = 'console = parent.console;';
 				o.body.appendChild(el);
 			}		
 		</script>
@@ -34,16 +46,16 @@
 		<h1>gCalBirthdays Debug</h1>
 		
 		<!--Google Analytics-->
-    <script type="text/javascript">
-      var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-    </script>
-    <script type="text/javascript">
-      try {
-        var pageTracker = _gat._getTracker("UA-9798979-1");
-        pageTracker._trackPageview();
-      }
-      catch(err) {}
-    </script>				
+		<script type="text/javascript">
+			var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+			document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+		</script>
+		<script type="text/javascript">
+			try {
+				var pageTracker = _gat._getTracker("UA-9798979-1");
+				pageTracker._trackPageview();
+			}
+			catch(err) {}
+		</script>
 	</body>
 </html>
