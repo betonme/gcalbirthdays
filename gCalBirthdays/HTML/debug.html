@@ -6,20 +6,27 @@
 		
 		<style type="text/css">
 			body {
-				margin: 10px 0px 0px 10px;
+				margin: 0px;
 			}
 		</style>		
 		
 		<!--http://getfirebug.com/firebuglite-->
-		<script type="text/javascript" src="https://getfirebug.com/firebug-lite.js#startOpened=true,disableWhenFirebugActive=false,overrideConsole=true"></script>
+		<script type="text/javascript" src="https://getfirebug.com/firebug-lite-debug.js#startOpened=true,disableWhenFirebugActive=false,overrideConsole=true"></script>
 		
 		<script>
+			/* Load Page */
+			function loadPage() {
+				createIFrame();
+				hideFirebugElements();
+			}
+			
 			/* Create iFrame */
 			function createIFrame() {
 				var iframe = document.createElement('iframe');
+				iframe.id = 'gCalBirthdaysDebugIFrame';
 				iframe.src = 'gCalBirthdays.html';
 				iframe.width = '100%';
-				iframe.height = '55%';
+				iframe.height = window.innerHeight - 250;
 				iframe.marginheight = '0px';
 				iframe.marginwidth = '0px';
 				iframe.frameBorder = 'no';
@@ -27,16 +34,46 @@
 				iframe.onload = function () {
 					injectCSS(this.contentDocument);
 					injectScript(this.contentDocument);
+					injectHTML(this.contentDocument);
 				};
 				document.body.appendChild(iframe);
 			}
 			
+			/* Hide Firebug Elements */		
+			function hideFirebugElements() {
+				try {
+					var fb = document.getElementById('FirebugUI');
+					/* Hide Firebug Buttons */
+					var el = document.createElement('style');
+					el.type = 'text/css';
+					el.innerHTML='#fbFirebugButton { visibility:hidden; } \
+												#fbChrome_btInspect { visibility:hidden; } \
+												#fbConsole_btClear { visibility:hidden; } \
+												#fbWindow_btClose { visibility:hidden; } \
+												#fbWindow_btDetach { visibility:hidden; } \
+												#fbWindow_btDeactivate { visibility:hidden; } \
+												#fbHTMLTab { visibility:hidden; } \
+												#fbstylesheetTab { visibility:hidden; } \
+												#fbScriptTab { visibility:hidden; } \
+												#fbDOMTab { visibility:hidden; } \
+												#fbTraceTab { visibility:hidden; } \
+												#fbCommand { visibility:hidden; } ';
+					fb.contentDocument.body.appendChild(el);
+					/* Avoid resizing*/
+					var elsp = fb.contentDocument.getElementById('fbHSplitter');
+					elsp.id = 'fbHSplitterCust';
+				}
+				catch(err) {
+					setTimeout('hideFirebugElements()', 100);
+				}
+			}
+			
 			/* Inject CSS */
 			function injectCSS(o) {
-				var css = document.createElement('style');
-				css.type = 'text/css';
-				css.innerHTML='body { margin: 0px; 	};';
-				o.body.appendChild(css);
+				var el = document.createElement('style');
+				el.type = 'text/css';
+				el.innerHTML='body { margin: 0px; };';
+				o.body.appendChild(el);
 			}
 			
 			/* Inject script */
@@ -45,12 +82,28 @@
 				el.innerHTML = 'console = parent.console;';
 				o.body.appendChild(el);
 			}		
+			
+			/* Inject HTML */
+			function injectHTML(o) {
+				var el = document.createElement('H1');
+				var at = document.createAttribute('style');
+				at.nodeValue ='margin-left: 10px; margin-top: 10px;';
+				el.setAttributeNode(at);
+				el.innerHTML=' gCalBirthdays DEBUG';
+				o.body.insertBefore(el, o.body.firstChild); 
+				var el2 = el.cloneNode(true);
+				o.body.appendChild(el2);
+			}
+			
+			/* Resize iFrame */
+			function resizeIFrame() {
+				var ifr = document.getElementById('gCalBirthdaysDebugIFrame');
+				/* There are problems detecting the correct firebug hight use default height */
+				//if (firebug) { ifr.height = window.innerHeight - firebug.env.height; }
+				ifr.height = window.innerHeight - 250;
+			}
 		</script>
-	</head>
-	
-	<body onLoad="createIFrame();">
-		<h1>gCalBirthdays Debug</h1>
-		
+
 		<!--Google Analytics-->
 		<script type="text/javascript">
 			var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
@@ -63,5 +116,9 @@
 			}
 			catch(err) {}
 		</script>
+	</head>
+	
+	<body onLoad="loadPage();" onResize="resizeIFrame();">	
 	</body>
+	
 </html>
