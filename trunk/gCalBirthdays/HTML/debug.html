@@ -10,15 +10,38 @@
 			}
 		</style>		
 		
-		<!--http://getfirebug.com/firebuglite-->
-    <!--V1.3.1-->
-    <script type="text/javascript" src="https://getfirebug.com/firebug-lite-debug.js#startOpened=true,disableWhenFirebugActive=false,overrideConsole=true"></script>
+		<!--http://log4javascript.org-->
+		<!--V1.4.1-->
+		<script type="text/javascript" src="http://log4javascript.org/js/log4javascript_uncompressed.js"></script>
+		
+		<script type="text/javascript">
+			// <![CDATA[
+			var log = log4javascript.getLogger('main');
+			var appender = new log4javascript.InPageAppender('log', false, false);
+			var logAppenderHeight = 250;
+			var logAppenderBorder = 2;
+			appender.setWidth(appender.getWidth()-logAppenderBorder);
+			appender.setHeight(logAppenderHeight-logAppenderBorder);
+			appender.setMaxMessages(null);
+			appender.setInitiallyMinimized(false);
+			appender.setShowCommandLine(false);
+			log.addAppender(appender);
+			log.debug('gCalBirthdays Debug');
+			// ]]>
+		</script>
 		
 		<script>
+			/* Log4Javascript is using the onLoad event - Append our onLoad function */
+			var logLoad = window.onload;
+				window.onload = function() {
+				logLoad();
+				loadPage();
+			}
+			
 			/* Load Page */
 			function loadPage() {
 				createIFrame();
-				hideFirebugElements();
+				hideLog4JavascriptElements();
 			}
 			
 			/* Create iFrame */
@@ -27,7 +50,7 @@
 				iframe.id = 'gCalBirthdaysDebugIFrame';
 				iframe.src = 'gCalBirthdays.html';
 				iframe.width = '100%';
-				iframe.height = window.innerHeight - 250;
+				iframe.height = window.innerHeight - logAppenderHeight;
 				iframe.marginheight = '0px';
 				iframe.marginwidth = '0px';
 				iframe.frameBorder = 'no';
@@ -37,35 +60,21 @@
 					injectScript(this.contentDocument);
 					injectHTML(this.contentDocument);
 				};
-				document.body.appendChild(iframe);
+				document.body.replaceChild(iframe, document.getElementById("iframe"));
 			}
 			
-			/* Hide Firebug Elements */		
-			function hideFirebugElements() {
+			/* Hide Log4Javascript Elements */		
+			function hideLog4JavascriptElements() {
 				try {
-					var fb = document.getElementById('FirebugUI');
-					/* Hide Firebug Buttons */
+					var l4js = document.getElementById('log');
+					/* Hide Log4Javascript Toolbar */
 					var el = document.createElement('style');
 					el.type = 'text/css';
-					el.innerHTML='#fbFirebugButton { visibility:hidden; } \
-												#fbChrome_btInspect { visibility:hidden; } \
-												#fbConsole_btClear { visibility:hidden; } \
-												#fbWindow_btClose { visibility:hidden; } \
-												#fbWindow_btDetach { visibility:hidden; } \
-												#fbWindow_btDeactivate { visibility:hidden; } \
-												#fbHTMLTab { visibility:hidden; } \
-												#fbstylesheetTab { visibility:hidden; } \
-												#fbScriptTab { visibility:hidden; } \
-												#fbDOMTab { visibility:hidden; } \
-												#fbTraceTab { visibility:hidden; } \
-												#fbCommand { visibility:hidden; } ';
-					fb.contentDocument.body.appendChild(el);
-					/* Avoid resizing*/
-					var elsp = fb.contentDocument.getElementById('fbHSplitter');
-					elsp.id = 'fbHSplitterCust';
+					el.innerHTML = '#switchesContainer { visibility:hidden; height: 0px } ';
+					l4js.firstChild.firstChild.contentDocument.body.appendChild(el);
 				}
 				catch(err) {
-					setTimeout('hideFirebugElements()', 100);
+					setTimeout('hideLog4JavascriptElements()', 100);
 				}
 			}
 			
@@ -80,9 +89,10 @@
 			/* Inject script */
 			function injectScript(o) {
 				var el = document.createElement('script');
-				el.innerHTML = 'console = parent.console;';
+				el.innerHTML = 'console = parent.log; \
+												function printLog(text) { parent.log.debug(text); };';
 				o.body.appendChild(el);
-			}		
+			}
 			
 			/* Inject HTML */
 			function injectHTML(o) {
@@ -98,13 +108,22 @@
 			
 			/* Resize iFrame */
 			function resizeIFrame() {
-				var ifr = document.getElementById('gCalBirthdaysDebugIFrame');
-				/* There are problems detecting the correct firebug hight use default height */
-				//if (firebug) { ifr.height = window.innerHeight - firebug.env.height; }
-				ifr.height = window.innerHeight - 250;
+ 				try {
+					var ifr = document.getElementById('gCalBirthdaysDebugIFrame');
+					/* There are problems detecting the correct firebug hight use default height */
+					//if (firebug) { ifr.height = window.innerHeight - firebug.env.height; }
+					ifr.height = window.innerHeight - logAppenderHeight;
+				}
+				catch(err) {
+					setTimeout('hideLog4JavascriptElements()', 100);
+				}
+			}
+			
+			function onClickBtn() {
+				log.debug("test");
 			}
 		</script>
-
+		
 		<!--Google Analytics-->
 		<script type="text/javascript">
 			var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
@@ -119,7 +138,9 @@
 		</script>
 	</head>
 	
-	<body onLoad="loadPage();" onResize="resizeIFrame();">	
+	<body onResize="resizeIFrame();">
+		<iframe id="iframe"></iframe>
+		<div id="log"></div>
 	</body>
 	
 </html>
