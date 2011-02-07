@@ -16,7 +16,6 @@
 		<script type="text/javascript" src="http://log4javascript.org/js/log4javascript_uncompressed.js"></script>
 		
 		<script type="text/javascript">
-			// <![CDATA[
 			var log = log4javascript.getLogger('main');
 			var appender = new log4javascript.InPageAppender(null, false, false);
 			appender.setMaxMessages(null);
@@ -24,7 +23,6 @@
 			appender.setShowCommandLine(false);
 			log.addAppender(appender);
 			log.debug('gCalBirthdays Debug');
-			// ]]>
 		</script>
 		
 		<script>
@@ -50,26 +48,15 @@
 				iframe.id = 'gCBDIFrame';
 				iframe.src = 'gCalBirthdays.html';
 				iframe.width = '100%';
-				iframe.marginheight = '0px';
-				iframe.marginwidth = '0px';
 				iframe.frameBorder = 'no';
 				iframe.scrolling = 'auto';
 				iframe.onload = function () {
-					injectCSS(this.contentDocument);
 					injectScript(this.contentDocument);
 					injectHTML(this.contentDocument);
 				};
 				document.body.appendChild(iframe);
 				/* Adjust size */
 				resizeIFrame();
-			}
-			
-			/* Inject CSS */
-			function injectCSS(o) {
-				var el = document.createElement('style');
-				el.type = 'text/css';
-				el.innerHTML='body { margin: 0px; };';
-				o.body.appendChild(el);
 			}
 			
 			/* Inject script */
@@ -83,9 +70,6 @@
 			/* Inject HTML */
 			function injectHTML(o) {
 				var el = document.createElement('H1');
-				var at = document.createAttribute('style');
-				at.nodeValue ='margin-left: 10px; margin-top: 10px;';
-				el.setAttributeNode(at);
 				el.innerHTML=' gCalBirthdays DEBUG';
 				o.body.insertBefore(el, o.body.firstChild); 
 				var el2 = el.cloneNode(true);
