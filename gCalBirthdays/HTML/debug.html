@@ -5,10 +5,11 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 		
 		<style type="text/css">
+			/* Sets the iFrame scrollbars close to the browsers border */
 			body {
 				margin: 0px;
 			}
-		</style>		
+		</style>
 		
 		<!--http://log4javascript.org-->
 		<!--V1.4.1-->
@@ -17,11 +18,7 @@
 		<script type="text/javascript">
 			// <![CDATA[
 			var log = log4javascript.getLogger('main');
-			var appender = new log4javascript.InPageAppender('log', false, false);
-			var logAppenderHeight = 250;
-			var logAppenderBorder = 2;
-			appender.setWidth(appender.getWidth()-logAppenderBorder);
-			appender.setHeight(logAppenderHeight-logAppenderBorder);
+			var appender = new log4javascript.InPageAppender(null, false, false);
 			appender.setMaxMessages(null);
 			appender.setInitiallyMinimized(false);
 			appender.setShowCommandLine(false);
@@ -31,15 +28,18 @@
 		</script>
 		
 		<script>
-			/* Log4Javascript is using the onLoad event - Append our onLoad function */
-			var logLoad = window.onload;
-				window.onload = function() {
-				logLoad();
-				loadPage();
+			/* Log4Javascript is using the body events - Append our custom functions */
+			var loadLog = window.onload;
+			window.onload = function() {
+				loadLog();
+				loadIFrame();
+			}
+			window.onresize = function(e) {		
+				resizeIFrame();
 			}
 			
 			/* Load Page */
-			function loadPage() {
+			function loadIFrame() {
 				createIFrame();
 				hideLog4JavascriptElements();
 			}
@@ -47,10 +47,9 @@
 			/* Create iFrame */
 			function createIFrame() {
 				var iframe = document.createElement('iframe');
-				iframe.id = 'gCalBirthdaysDebugIFrame';
+				iframe.id = 'gCBDIFrame';
 				iframe.src = 'gCalBirthdays.html';
 				iframe.width = '100%';
-				iframe.height = window.innerHeight - logAppenderHeight;
 				iframe.marginheight = '0px';
 				iframe.marginwidth = '0px';
 				iframe.frameBorder = 'no';
@@ -60,22 +59,9 @@
 					injectScript(this.contentDocument);
 					injectHTML(this.contentDocument);
 				};
-				document.body.replaceChild(iframe, document.getElementById("iframe"));
-			}
-			
-			/* Hide Log4Javascript Elements */		
-			function hideLog4JavascriptElements() {
-				try {
-					var l4js = document.getElementById('log');
-					/* Hide Log4Javascript Toolbar */
-					var el = document.createElement('style');
-					el.type = 'text/css';
-					el.innerHTML = '#switchesContainer { visibility:hidden; height: 0px } ';
-					l4js.firstChild.firstChild.contentDocument.body.appendChild(el);
-				}
-				catch(err) {
-					setTimeout('hideLog4JavascriptElements()', 100);
-				}
+				document.body.appendChild(iframe);
+				/* Adjust size */
+				resizeIFrame();
 			}
 			
 			/* Inject CSS */
@@ -106,21 +92,29 @@
 				o.body.appendChild(el2);
 			}
 			
-			/* Resize iFrame */
-			function resizeIFrame() {
- 				try {
-					var ifr = document.getElementById('gCalBirthdaysDebugIFrame');
-					/* There are problems detecting the correct firebug hight use default height */
-					//if (firebug) { ifr.height = window.innerHeight - firebug.env.height; }
-					ifr.height = window.innerHeight - logAppenderHeight;
+			/* Hide Log4Javascript Elements */		
+			function hideLog4JavascriptElements() {
+				try {
+					/* Hide Log4Javascript Toolbar Level Search Options */
+					var el = document.createElement('style');
+					el.type = 'text/css';
+					el.innerHTML = '#switches { visibility:hidden; height: 0px } ';
+					appender.getConsoleWindow().document.body.appendChild(el);
 				}
 				catch(err) {
-					setTimeout('hideLog4JavascriptElements()', 100);
+					setTimeout(hideLog4JavascriptElements, 100);
 				}
 			}
 			
-			function onClickBtn() {
-				log.debug("test");
+			/* Resize iFrame */
+			function resizeIFrame() {
+				try {
+					/* Resize gCalBirthdays iFrame: BrowserWindow -  LoggerWindow - LoggerBorder */
+					document.getElementById('gCBDIFrame').height = window.innerHeight - parseInt(appender.getHeight()) - 1;
+				}
+				catch(err) {
+					setTimeout(resizeIFrame, 100);
+				}
 			}
 		</script>
 		
@@ -138,9 +132,7 @@
 		</script>
 	</head>
 	
-	<body onResize="resizeIFrame();">
-		<iframe id="iframe"></iframe>
-		<div id="log"></div>
+	<body>
 	</body>
 	
 </html>
