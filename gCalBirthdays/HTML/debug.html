@@ -21,26 +21,58 @@
 			appender.setMaxMessages(null);
 			appender.setInitiallyMinimized(false);
 			appender.setShowCommandLine(false);
+			appender.setThreshold(log4javascript.Level.ALL);
 			log.addAppender(appender);
+			log.setLevel(log4javascript.Level.ALL);
 			log.debug('gCalBirthdays Debug');
+			log4javascript.setShowStackTraces(true);
 		</script>
 		
 		<script>
+			/* Events */
+			
 			/* Log4Javascript is using the body events - Append our custom functions */
 			var loadLog = window.onload;
 			window.onload = function() {
 				loadLog();
 				loadIFrame();
 			}
-			window.onresize = function(e) {		
+			window.onresize = function() {
 				resizeIFrame();
 			}
+			window.onerror = function(msg, url, linenumber){
+				handleError(msg, url, linenumber);
+			}
+			
+			/* Event functions */
 			
 			/* Load Page */
 			function loadIFrame() {
 				createIFrame();
 				hideLog4JavascriptElements();
 			}
+			
+			/* Resize iFrame */
+			function resizeIFrame() {
+				try {
+					/* Resize gCalBirthdays iFrame: BrowserWindow -  LoggerWindow - LoggerBorder */
+					var ifr = document.getElementById('gCBDIFrame');
+					ifr.style.height = window.innerHeight - parseInt(appender.getHeight()) - 1;
+				}
+				catch(err) {
+					setTimeout(resizeIFrame, 100);
+				}
+			}
+			
+			/* Log unhandled javascript errors */
+			function handleError(msg, url, linenumber) {
+				log.error(msg+'\n\t URL: '+url+'\n\t Line Number: '+linenumber);
+				try {
+					console.error(msg+'\n\t URL: '+url+'\n\t Line Number: '+linenumber);
+				} catch(err) {}
+			}
+			
+			/* Subfunctions */
 			
 			/* Create iFrame */
 			function createIFrame() {
@@ -62,8 +94,17 @@
 			/* Inject script */
 			function injectScript(o) {
 				var el = document.createElement('script');
-				el.innerHTML = 'console = parent.log; \
-												function printLog(text) { parent.log.debug(text); };';
+				/* If Firebug is active, overwriting console results in error: */
+				/* Error: setting a property that has only a getter */
+				el.innerHTML = 'try { \
+													console = parent.log; \
+													function printLog(text) { parent.log.trace(text); } \
+													window.onerror = parent.handleError; \
+												} catch(err) { \
+													function printDebug(text) { parent.log.debug(text); } \
+													function printLog(text) { parent.log.trace(text); } \
+													window.onerror = parent.handleError; \
+												};';
 				o.body.appendChild(el);
 			}
 			
@@ -76,7 +117,7 @@
 				o.body.appendChild(el2);
 			}
 			
-			/* Hide Log4Javascript Elements */		
+			/* Hide Log4Javascript Elements */
 			function hideLog4JavascriptElements() {
 				try {
 					/* Hide Log4Javascript Toolbar Level Search Options */
@@ -87,17 +128,6 @@
 				}
 				catch(err) {
 					setTimeout(hideLog4JavascriptElements, 100);
-				}
-			}
-			
-			/* Resize iFrame */
-			function resizeIFrame() {
-				try {
-					/* Resize gCalBirthdays iFrame: BrowserWindow -  LoggerWindow - LoggerBorder */
-					document.getElementById('gCBDIFrame').height = window.innerHeight - parseInt(appender.getHeight()) - 1;
-				}
-				catch(err) {
-					setTimeout(resizeIFrame, 100);
 				}
 			}
 		</script>
