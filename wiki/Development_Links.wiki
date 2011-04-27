@@ -17,7 +17,11 @@
   * Reference Guide (JSdoc) http://code.google.com/intl/de-DE/apis/gdata/jsdoc/
   * Group http://groups.google.com/group/google-data-javascript-client
   * Google AJAX Libraries API http://code.google.com/intl/de-DE/apis/ajaxlibs/
- * PHP functions in JavaScript http://phpjs.org
+ * Prototypejs.org prototype.js http://code.google.com/intl/de-DE/apis/ajaxlibs/
+ * PHPjs.org html_funcs.min.js in JavaScript http://phpjs.org
+ * Bram.us jsProgressBarHandler.js http://www.bram.us/projects/js_bramus/jsprogressbarhandler/
+ * Google oauth popup handling code http://code.google.com/p/gdata-samples/source/browse/trunk/gadgets/popup.js
+ * log4javascript.org http://log4javascript.org
  * Only for gCalBirthdays V1:
   * google-collections http://code.google.com/p/google-collections/
   * gdata-java-client http://code.google.com/p/gdata-java-client/
