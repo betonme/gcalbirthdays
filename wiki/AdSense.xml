@@ -3,6 +3,8 @@
   <ModulePrefs description="I love adsense" height="60" title="Adsense"/>
   <Content type="html">
         <![CDATA[
+          <!--AdSense keywords-->
+          <div display:none>Calendar Birthday Synchronise</div>
 					<script type="text/javascript"><!--
 						google_ad_client = "ca-pub-3727478741117936";
 						/* gCalBirthdays Banner */
