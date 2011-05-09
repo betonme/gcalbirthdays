@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Module>
-  <ModulePrefs description="I love adsense" height="60" title="Adsense"/>
-  <Content type="html">
-        <![CDATA[
-          <!--AdSense keywords-->
-          <div display:none>Calendar Birthday Synchronise</div>
-					<script type="text/javascript"><!--
-						google_ad_client = "ca-pub-3727478741117936";
-						/* gCalBirthdays Banner */
-						google_ad_slot = "8148541845";
-						google_ad_width = 468;
-						google_ad_height = 60;
-						//-->
-						</script>
-						<script type="text/javascript"
-						src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-					</script>
-        ]]>
-  </Content>
+	<ModulePrefs description="I love adsense" height="60" title="Adsense"/>
+	<Content type="html">
+		<![CDATA[
+			<!--AdSense keywords-->
+			<div style="display:none">Calendar Birthday Synchronise</div>
+			<script type="text/javascript"><!--
+				google_ad_client = "ca-pub-3727478741117936";
+				/* gCalBirthdays Banner */
+				google_ad_slot = "8148541845";
+				google_ad_width = 468;
+				google_ad_height = 60;
+				//-->
+			</script>
+			<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+			</script>
+		]]>
+	</Content>
 </Module>
