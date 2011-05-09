@@ -19,7 +19,7 @@
  * View Dependencies 0.3.3.0 https://addons.mozilla.org/en-US/firefox/addon/2214
 
 = Tested with =
- * Firefox 3.5.5
+ * Firefox 4.x 3.x
  * IE 8
- * Chromium 4.0.264.0
- * Opera 9.x.
+ * Chrome 9.x
+ * Opera 9.x. 
