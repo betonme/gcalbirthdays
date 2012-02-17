@@ -341,7 +341,7 @@
 
       // Set max results per query / items per page
       //TODO
-      query.setMaxResults(MAX_RESULT);
+      //query.setMaxResults(MAX_RESULT);
 
       // Submit the request using the calendar service object
       calendarService.getOwnCalendarsFeed(query, handleCalendarsFeed, handleError);
@@ -645,7 +645,7 @@
       }
 
       // Set max results per query / items per page
-      query.setParam('max-results', MAX_RESULT);
+      //query.setParam('max-results', MAX_RESULT);
 
       // Submit the request using the contacts service object
       contactService.getContactFeed(query, handleContactsFeed, handleError);
@@ -742,7 +742,8 @@
       query.setParam(VERSION_PARAMETER, CALENDAR_VERSION_NUMBER);
 
       // Set max results per query / items per page
-      query.setMaxResults(MAX_RESULT);
+      //query.setMaxResults(MAX_RESULT);
+      //query.setParam('max-results', MAX_RESULT);
 
       // Submit the request using the calendar service object
       calendarService.getEventsFeed(query, handleEventsFeed, handleError);
