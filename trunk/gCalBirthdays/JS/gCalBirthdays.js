@@ -443,10 +443,10 @@
       var calendarEntry = new google.gdata.calendar.CalendarEntry();
 
       // Set the calendar title
-      calendarEntry.setTitle(google.gdata.atom.Text.create(htmlentities(calendarName)));
+      calendarEntry.setTitle(google.gdata.atom.Text.create(calendarName));
 
       // Set the calendar summary
-      calendarEntry.setSummary(google.gdata.atom.Text.create(htmlentities(CALENDAR_SUMMARY)));
+      calendarEntry.setSummary(google.gdata.atom.Text.create(CALENDAR_SUMMARY));
 
       // Set the calendar timezone
       /*var timeZone = new google.gdata.calendar.TimeZoneProperty();
@@ -900,12 +900,12 @@
       var evttitle = titleText;
       evttitle = evttitle.replace(EVENT_TEMPLATE_TITLE, contact.title);
       evttitle = evttitle.replace(EVENT_TEMPLATE_BIRTHDAY, stringDate);
-      eventEntry.setTitle(google.gdata.atom.Text.create(htmlentities(evttitle)));
+      eventEntry.setTitle(google.gdata.atom.Text.create(evttitle));
 
       var evtsummary = summaryText;
       evtsummary = evtsummary.replace(EVENT_TEMPLATE_TITLE, contact.title);
       evtsummary = evtsummary.replace(EVENT_TEMPLATE_BIRTHDAY, stringDate);
-      eventEntry.setContent(google.gdata.atom.Text.create(htmlentities(evtsummary)));
+      eventEntry.setContent(google.gdata.atom.Text.create(evtsummary));
 
       // Set the calendar time zone
       // Set the calendar location
