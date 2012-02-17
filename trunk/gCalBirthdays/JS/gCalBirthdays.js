@@ -54,7 +54,6 @@
     var CALENDAR_SUMMARY = 'This calendar contains the birthdays of Your Google Contacts.';
     var CALENDAR_COLOR = '#A32929'; // red "#A32929", blue "#2952A3" and green "#0D7813"
 
-
     var CALENDAR_HIDDEN = false;
     var CALENDAR_SELECTED = true;
 
@@ -248,9 +247,10 @@
         }
 
         // Set progress
+        var results = (undefined != groupFeed.getTotalResults()) ? groupFeed.getTotalResults().getValue() : handleGroupsFeed.progress;
         //TODO
         //setProgressContacts(calcProgress(handleContactsFeed.progress, parseInt(conFeed.getTotalResults().getValue())));
-        printConsole('Group(s) query progress: ' + handleGroupsFeed.progress + ' / ' + groupFeed.getTotalResults().getValue());
+        printConsole('Group(s) query progress: ' + handleGroupsFeed.progress + ' / ' + results);
 
         // Check statemachine
         //TODO
@@ -372,9 +372,10 @@
         }
 
         // Set progress
+        var results = (undefined != calFeed.getTotalResults()) ? calFeed.getTotalResults().getValue() : handleCalendarsFeed.progress;
         //TODO
         //setProgressEvents(calcProgress(handleEventsFeed.progress, parseInt(eventFeed.getTotalResults().getValue())));
-        printConsole('Calendar(s) query progress: ' + handleCalendarsFeed.progress + ' / ' + calFeed.getTotalResults().getValue());
+        printConsole('Calendar(s) query progress: ' + handleCalendarsFeed.progress + ' / ' + results);
 
         // Check statemachine
         //TODO
@@ -684,8 +685,9 @@
         }
 
         // Set progress
-        setProgressContacts(calcProgress(handleContactsFeed.progress, parseInt(conFeed.getTotalResults().getValue())));
-        printConsole('Contact(s) query progress: ' + handleContactsFeed.progress + ' / ' + conFeed.getTotalResults().getValue());
+        var results = (undefined != conFeed.getTotalResults()) ? conFeed.getTotalResults().getValue() : handleContactsFeed.progress;
+        setProgressContacts(calcProgress(handleContactsFeed.progress, parseInt(results)));
+        printConsole('Contact(s) query progress: ' + handleContactsFeed.progress + ' / ' + results);
 
         // Check statemachine
         if (states.canceled == statemachine) {
@@ -785,8 +787,9 @@
         }
 
         // Set progress
-        setProgressEvents(calcProgress(handleEventsFeed.progress, parseInt(eventFeed.getTotalResults().getValue())));
-        printConsole('Event(s) query progress: ' + handleEventsFeed.progress + ' / ' + eventFeed.getTotalResults().getValue());
+        var results = (undefined != eventFeed.getTotalResults()) ? eventFeed.getTotalResults().getValue() : handleEventsFeed.progress;
+        setProgressEvents(calcProgress(handleEventsFeed.progress, parseInt(results)));
+        printConsole('Event(s) query progress: ' + handleEventsFeed.progress + ' / ' + results);
 
         // Check statemachine
         if (states.canceled == statemachine) {
