@@ -40,6 +40,7 @@
 //TEST
 //var feedUri = 'http://www.google.com/calendar/feeds/default/allcalendars/full';
     var CALENDAR_FEED_URL_FULL = 'http://www.google.com/calendar/feeds/default/owncalendars/full';
+    var CALENDAR_FEED_URL_THIN = 'http://www.google.com/calendar/feeds/default/owncalendars/thin';
 
     var CONTACTS_FEED_URL_THIN = 'http://www.google.com/m8/feeds/contacts/default/thin';
     var CONTACTS_FEED_URL_FULL = 'http://www.google.com/m8/feeds/contacts/default/full'; //not used
@@ -334,7 +335,7 @@
       // Query for all calendars
       //var query = new google.gdata.client.Query(CALENDAR_FEED_URL_FULL);
       //TEST
-      var query = new google.gdata.client.Query(CALENDAR_FEED_URL_FULL);
+      var query = new google.gdata.client.Query(CALENDAR_FEED_URL_THIN);
 
       // Use query parameter to set the google contacts version
       query.setParam(VERSION_PARAMETER, CALENDAR_VERSION_NUMBER);
@@ -342,6 +343,7 @@
       // Set max results per query / items per page
       //TODO
       //query.setMaxResults(MAX_RESULT);
+      query.setParam('max-results', 10);
 
       // Submit the request using the calendar service object
       calendarService.getOwnCalendarsFeed(query, handleCalendarsFeed, handleError);
@@ -385,7 +387,7 @@
 
         // Get next page if it exists
         if (undefined != calFeed.getNextLink()) {
-          return getCalendars(eventFeed.getNextLink().getHref());
+          return getCalendars(calFeed.getNextLink().getHref());
         }
 
         // Sort calendars
