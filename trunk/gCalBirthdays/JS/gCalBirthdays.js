@@ -332,10 +332,8 @@
     function queryCalendars(){
       printConsole('Query Calendars');
 
-      // Query for all calendars
-      //var query = new google.gdata.client.Query(CALENDAR_FEED_URL_FULL);
-      //TEST
-      var query = new google.gdata.client.Query(CALENDAR_FEED_URL_THIN);
+      // Query for own calendars
+      var query = new google.gdata.client.Query(CALENDAR_FEED_URL_FULL);
 
       // Use query parameter to set the google contacts version
       query.setParam(VERSION_PARAMETER, CALENDAR_VERSION_NUMBER);
