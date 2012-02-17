@@ -37,6 +37,8 @@
     var GROUP_FEED_URL_THIN = 'http://www.google.com/m8/feeds/groups/default/thin';
     var GROUP_FEED_URL_FULL = 'http://www.google.com/m8/feeds/groups/default/full'; //not used
 
+//TEST
+//var feedUri = 'http://www.google.com/calendar/feeds/default/allcalendars/full';
     var CALENDAR_FEED_URL_FULL = 'http://www.google.com/calendar/feeds/default/owncalendars/full';
 
     var CONTACTS_FEED_URL_THIN = 'http://www.google.com/m8/feeds/contacts/default/thin';
@@ -197,20 +199,25 @@
       printConsole('Query Groups');
 
       // Query for all the contacts entry with this contact group
-      var query = new google.gdata.contacts.ContactQuery(GROUP_FEED_URL_THIN);
+      //TEST
+      //var query = new google.gdata.contacts.ContactQuery(GROUP_FEED_URL_THIN);
+      var query = new google.gdata.client.Query(GROUP_FEED_URL_THIN);
 
       // Use query parameter to set the google contacts version
       query.setParam(VERSION_PARAMETER, CONTACTS_VERSION_NUMBER);
+
+      // Set max results per query / items per page
+      //TODO
+      //query.setParam('max-results', MAX_RESULT);
 
       // Submit the request using the contacts service object
       contactService.getContactGroupFeed(query, handleGroupsFeed, handleError);
     }
 
-    /*
     function getGroups(groupURL){
       // Submit the request using the contacts service object
       contactService.getContactGroupFeed(groupURL, handleGroupsFeed, handleError);
-    }*/
+    }
 
     function handleGroupsFeed(response){
       if (response.oauthApprovalUrl) {
@@ -219,6 +226,8 @@
       else {
         var groupFeed = response.feed;
         var groups = groupFeed.entry;
+        var groupsLen = (undefined != groups) ? groups.length : 0;
+        handleGroupsFeed.progress = handleGroupsFeed.progress + groupsLen;
 
         // Iterate through the array of contact groups, and add them to drop down box
         var idl = groupList.length;
@@ -237,6 +246,28 @@
           groupList[ie].title = html_entity_decode(groupList[ie].title.replace(/System Group/gi, id++));
         }
 
+        // Set progress
+        //TODO
+        //setProgressContacts(calcProgress(handleContactsFeed.progress, parseInt(conFeed.getTotalResults().getValue())));
+        printConsole('Group(s) query progress: ' + handleGroupsFeed.progress + ' / ' + groupFeed.getTotalResults().getValue());
+
+        // Check statemachine
+        //TODO
+        //if (states.canceled == statemachine) {
+        //  printConsole('handleContactsFeed: ' + 'canceled');
+        //  return;
+        //}
+        
+        // Get next page if it exists
+        // link[5|6].rel = 'next'
+        var len = groupFeed.link.length;
+        for (var il = 0; il < len; il++) {
+          var link = groupFeed.link[il];
+          if ( 'next' == link.rel ) {
+            return getGroups(link.getHref());
+          }
+        }
+
         // Sort groups
         groupList.sort(compareListEntries);
 
@@ -249,6 +280,17 @@
 
         printConsole ('Group(s): ' + groupList.length);
         printGroups();
+        //TODO
+//         if (0 == contactList.length) {
+//           setProgressContacts(100, true);
+//           setProgressEvents(100, true);
+//           setProgressTransfer(100, true);
+//           printConsole('Cancel no birthdays');
+//           statemachine = states.canceled;
+//           printConsole('StateMachine: ' + 'canceled');
+//           endTransfer();
+//           return;
+//         }
 
         // Next step: show groups
         showGroups(0);
@@ -290,20 +332,25 @@
       printConsole('Query Calendars');
 
       // Query for all calendars
+      //var query = new google.gdata.client.Query(CALENDAR_FEED_URL_FULL);
+      //TEST
       var query = new google.gdata.client.Query(CALENDAR_FEED_URL_FULL);
 
       // Use query parameter to set the google contacts version
       query.setParam(VERSION_PARAMETER, CALENDAR_VERSION_NUMBER);
 
+      // Set max results per query / items per page
+      //TODO
+      query.setMaxResults(MAX_RESULT);
+
       // Submit the request using the calendar service object
       calendarService.getOwnCalendarsFeed(query, handleCalendarsFeed, handleError);
     }
 
-    /*
     function getCalendars(calendarURL){
       // Submit the request using the calendar service object
       calendarService.getOwnCalendarsFeed(calendarURL, handleCalendarsFeed, handleError);
-    }*/
+    }
 
     function handleCalendarsFeed(response){
       if (response.oauthApprovalUrl) {
@@ -312,6 +359,8 @@
       else {
         var calFeed = response.feed;
         var calendars = calFeed.getEntries();
+        var calendarsLen = calendars.length;
+        handleCalendarsFeed.progress = handleCalendarsFeed.progress + calendarsLen;
 
         // Iterate through the array of calendars, and add them to drop down box
         // IE JScript 5.6 Compatibility
@@ -322,10 +371,27 @@
           calendarList[idl++] = { title: html_entity_decode(calendar.getTitle().getText()), url: calendar.getLink().getHref() };
         }
 
+        // Set progress
+        //TODO
+        //setProgressEvents(calcProgress(handleEventsFeed.progress, parseInt(eventFeed.getTotalResults().getValue())));
+        printConsole('Calendar(s) query progress: ' + handleCalendarsFeed.progress + ' / ' + calFeed.getTotalResults().getValue());
+
+        // Check statemachine
+        //TODO
+//         if (states.canceled == statemachine) {
+//           printConsole('handleEventsFeed: ' + 'canceled');
+//           return;
+//         }
+
+        // Get next page if it exists
+        if (undefined != calFeed.getNextLink()) {
+          return getCalendars(eventFeed.getNextLink().getHref());
+        }
+
         // Sort calendars
         calendarList.sort(compareListEntries);
 
-        // Select first calendar which contains [Birthdays|Geburtstag]
+        // Select first calendar which contains [Birthday|Geburtstag]
         var selId = -1;
         // IE JScript 5.6 Compatibility
         var len = calendarList.length;
