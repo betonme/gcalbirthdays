@@ -261,7 +261,7 @@
 
         // Get next page if it exists
         if ('undefined' != typeof(groupFeed.getNextLink)) {
-          return getGroups(calFeed.getNextLink().getHref());
+          return getGroups(groupFeed.getNextLink().getHref());
         }
 
         // Sort groups
@@ -788,7 +788,7 @@
         }
 
         // Get next page if it exists
-        if ('undefined' != typeof(calFeed.getNextLink)) {
+        if ('undefined' != typeof(eventFeed.getNextLink)) {
           return getEvents(eventFeed.getNextLink().getHref());
         }
 
