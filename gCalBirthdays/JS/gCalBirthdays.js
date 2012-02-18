@@ -385,7 +385,14 @@
 //         }
 
         // Get next page if it exists
-        if (undefined != calFeed.getNextLink()) {
+        var len = calFeed.link.length;
+        for (var il = 0; il < len; il++) {
+          var link = calFeed.link[il];
+          if ( 'next' == link.rel ) {
+            return getCalendars(link.getHref());
+          }
+        }
+        if ('undefined' != typeof(calFeed.getNextLink)) {
           return getCalendars(calFeed.getNextLink().getHref());
         }
 
@@ -798,7 +805,7 @@
         }
 
         // Get next page if it exists
-        if (undefined != eventFeed.getNextLink()) {
+        if ('undefined' != typeof(calFeed.getNextLink)) {
           return getEvents(eventFeed.getNextLink().getHref());
         }
 
