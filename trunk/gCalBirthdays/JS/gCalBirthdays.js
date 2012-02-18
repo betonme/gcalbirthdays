@@ -258,15 +258,10 @@
         //  printConsole('handleContactsFeed: ' + 'canceled');
         //  return;
         //}
-        
+
         // Get next page if it exists
-        // link[5|6].rel = 'next'
-        var len = groupFeed.link.length;
-        for (var il = 0; il < len; il++) {
-          var link = groupFeed.link[il];
-          if ( 'next' == link.rel ) {
-            return getGroups(link.getHref());
-          }
+        if ('undefined' != typeof(groupFeed.getNextLink)) {
+          return getGroups(calFeed.getNextLink().getHref());
         }
 
         // Sort groups
@@ -385,13 +380,6 @@
 //         }
 
         // Get next page if it exists
-        var len = calFeed.link.length;
-        for (var il = 0; il < len; il++) {
-          var link = calFeed.link[il];
-          if ( 'next' == link.rel ) {
-            return getCalendars(link.getHref());
-          }
-        }
         if ('undefined' != typeof(calFeed.getNextLink)) {
           return getCalendars(calFeed.getNextLink().getHref());
         }
@@ -703,13 +691,8 @@
         }
 
         // Get next page if it exists
-        // link[5|6].rel = 'next'
-        var len = conFeed.link.length;
-        for (var il = 0; il < len; il++) {
-          var link = conFeed.link[il];
-          if ( 'next' == link.rel ) {
-            return getContacts(link.getHref());
-          }
+        if ('undefined' != typeof(conFeed.getNextLink)) {
+          return getContacts(conFeed.getNextLink().getHref());
         }
 
         printConsole ('Contact(s) with Birthday: ' + contactList.length);
@@ -1066,7 +1049,13 @@
       if ( null == selSize ) {
         selSize = elSel.length;
       }
-      elSel.size = selSize>0 ? selSize : 0;
+      if (selSize < 0 ) {
+        selSize = 0;
+      }
+      elif if (selSize > 20 ) {
+        selSize = 20;
+      }
+      elSel.size = selSize;
     }
 
     function selectClearOptions(id){
