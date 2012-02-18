@@ -1,6 +1,6 @@
 /*  gCalBirthdays.js
  *
- *  This is version: 1.23
+ *  This is version: 1.24
  *
  *  Shared JavaScript functions for HTML and Gadget Version of gCalBirthdays
  *
@@ -1052,7 +1052,7 @@
       if (selSize < 0 ) {
         selSize = 0;
       }
-      elif if (selSize > 20 ) {
+      else if (selSize > 20 ) {
         selSize = 20;
       }
       elSel.size = selSize;
