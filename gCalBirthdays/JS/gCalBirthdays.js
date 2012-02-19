@@ -557,7 +557,7 @@
         printConsole('Calendar added: ' + result.entry.getTitle().getText());
 
         //verify name
-        if (0 != result.entry.getTitle().getText().search(calendarName))
+        if (0 != result.entry.getTitle().getText().search(escapeRegExp(calendarName)))
         {
           printConsole('Rename calendar');
           updateCalendar(result.entry, calendarName);
@@ -901,12 +901,12 @@
                 }
 
                 // Search for contact title
-                if (-1 != event.getTitle().getText().search(contact.title)) {
+                if (-1 != event.getTitle().getText().search(escapeRegExp(contact.title))) {
                   exists = true;
 
                   // Event found for given contact
                   // Check date
-                  if (-1 != event.getRecurrence().getValue().search(date)) {
+                  if (-1 != event.getRecurrence().getValue().search(escapeRegExp(date))) {
                     // Date correct - do nothing
                     printConsole('Event correct: ' + contact.title);
                     break;
@@ -1139,6 +1139,10 @@
 
     function compareListEntries(a, b){
       return compareStrings(a.title, b.title);
+    }
+
+    function escapeRegExp(text) {
+      return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
     }
 
     /**
