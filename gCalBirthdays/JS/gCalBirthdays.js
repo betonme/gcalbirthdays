@@ -260,8 +260,15 @@
         //}
 
         // Get next page if it exists
-        if ('undefined' != typeof(groupFeed.getNextLink)) {
-          return getGroups(groupFeed.getNextLink().getHref());
+        //if (undefined != groupFeed.getNextLink) {
+        //  return getGroups(groupFeed.getNextLink().getHref());
+        //}
+        var len = groupFeed.link.length;
+        for (var il = 0; il < len; il++) {
+          var link = groupFeed.link[il];
+          if ( 'next' == link.rel ) {
+            return getGroups(link.getHref());
+          }
         }
 
         // Sort groups
@@ -380,8 +387,15 @@
 //         }
 
         // Get next page if it exists
-        if ('undefined' != typeof(calFeed.getNextLink)) {
-          return getCalendars(calFeed.getNextLink().getHref());
+        //if ('undefined' != typeof(calFeed.getNextLink)) {
+        //  return getCalendars(calFeed.getNextLink().getHref());
+        //}
+        var len = calFeed.link.length;
+        for (var il = 0; il < len; il++) {
+          var link = calFeed.link[il];
+          if ( 'next' == link.rel ) {
+            return getCalendars(link.getHref());
+          }
         }
 
         // Sort calendars
@@ -691,8 +705,15 @@
         }
 
         // Get next page if it exists
-        if ('undefined' != typeof(conFeed.getNextLink)) {
-          return getContacts(conFeed.getNextLink().getHref());
+        //if (undefined != conFeed.getNextLink) {
+        //  return getContacts(conFeed.getNextLink().getHref());
+        //}
+        var len = conFeed.link.length;
+        for (var il = 0; il < len; il++) {
+          var link = conFeed.link[il];
+          if ( 'next' == link.rel ) {
+            return getContacts(link.getHref());
+          }
         }
 
         printConsole ('Contact(s) with Birthday: ' + contactList.length);
@@ -788,8 +809,15 @@
         }
 
         // Get next page if it exists
-        if ('undefined' != typeof(eventFeed.getNextLink)) {
-          return getEvents(eventFeed.getNextLink().getHref());
+        //if ('undefined' != typeof(eventFeed.getNextLink)) {
+        //  return getEvents(eventFeed.getNextLink().getHref());
+        //}
+        var len = eventFeed.link.length;
+        for (var il = 0; il < len; il++) {
+          var link = eventFeed.link[il];
+          if ( 'next' == link.rel ) {
+            return getEvents(link.getHref());
+          }
         }
 
         // Get URL to post/add events
