@@ -243,7 +243,7 @@
         // IE JScript 5.6 Compatibility
         var len = groupList.length;
         for (var ie = 0; ie < len; ie++) {
-          groupList[ie].title = html_entity_decode(groupList[ie].title.replace(/System Group/gi, id++));
+          groupList[ie].title = groupList[ie].title.replace(/System Group/gi, id++);
         }
 
         // Set progress
@@ -370,7 +370,7 @@
         var len = calendars.length;
         for (var ie = 0; ie < len; ie++) {
           var calendar = calendars[ie];
-          calendarList[idl++] = { title: html_entity_decode(calendar.getTitle().getText()), url: calendar.getLink().getHref() };
+          calendarList[idl++] = { title: calendar.getTitle().getText(), url: calendar.getLink().getHref() };
         }
 
         // Set progress
@@ -554,7 +554,7 @@
       // The callback method that will be called after a
       // successful insertion from insertEntry()
       var insertCalendarCallback = function(result){
-        printConsole('Calendar added: ' + html_entity_decode(result.entry.getTitle().getText()));
+        printConsole('Calendar added: ' + result.entry.getTitle().getText());
 
         //verify name
         if (0 != result.entry.getTitle().getText().search(calendarName))
@@ -687,7 +687,7 @@
               if (undefined != contact.getBirthday()) {
                 // Complete push is not necessary because we need only the title and birthday
                 //contactList.push(contact);
-                contactList[idl++] = { title: html_entity_decode(contact.getTitle().getText()), birthday: contact.getBirthday().getWhen() };
+                contactList[idl++] = { title: contact.getTitle().getText(), birthday: contact.getBirthday().getWhen() };
               }
             }
           }
@@ -789,7 +789,7 @@
                 // Push only if event is created by us
                 if (-1 != event.getContent().getText().search(APP_NAME)) {
                   // Complete push is necessary because we need the whole event content
-                  event.setTitle(google.gdata.atom.Text.create(html_entity_decode(event.getTitle().getText())));
+                  event.setTitle(google.gdata.atom.Text.create(event.getTitle().getText()));
                   eventList.push(event);
                 }
               }
@@ -947,7 +947,7 @@
       // The callback method that will be called after a
       // successful insertion from insertEntry()
       var insertEventCallback = function(result){
-        printConsole('Event added: ' + html_entity_decode(result.entry.getTitle().getText()));
+        printConsole('Event added: ' + result.entry.getTitle().getText());
       }
       calendarService.insertEntry(postURL, eventEntry, insertEventCallback, handleError, google.gdata.calendar.CalendarEventEntry);
     }
@@ -958,7 +958,7 @@
       // The callback method that will be called after a
       // successful update from updateEntry()
       var updateEventCallback = function(result){
-        printConsole('Event updated: ' + html_entity_decode(result.entry.getTitle().getText()));
+        printConsole('Event updated: ' + result.entry.getTitle().getText());
       }
       eventEntry.updateEntry(updateEventCallback, handleError)
     }
