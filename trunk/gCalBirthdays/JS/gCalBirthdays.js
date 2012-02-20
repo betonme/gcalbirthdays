@@ -82,6 +82,7 @@
     var contactService;
     var calendarService;
     var calendarTimezone = '';
+    var calendarLocation = '';
     var contactsProgressbar;
     var eventsProgressbar;
     var transferProgressbar;
@@ -399,13 +400,20 @@
           }
         }
 
-        // Get timezone of main calendar
-        if (calendarTimezone == ''){
-          calendarTimezone = calendarList[0].getTimeZone().getValue();
+        if (calendars.length > 0){
+          // Get timezone of main calendar
+          if (calendarTimezone == ''){
+            calendarTimezone = calendars[0].getTimeZone().getValue();
+          }
+          // Get location
+          if (calendarLocation == ''){
+            locations = calendars[0].getLocations();
+            if (locations.length > 0){
+              calendarLocation = locations.[0].getValueString();
+            }
+            
+          }
         }
-        // Maybe later get location
-        //calendar.getLocations()[0].getLabel()
-        //calendar.getLocations()[0].getValueString()
 
         // Sort calendars
         calendarList.sort(compareListEntries);
@@ -540,11 +548,13 @@
         calendarEntry.setTimeZone(timeZone);
       }
 
-      // Maybe later set the calendar location
-      /*var where = new google.gdata.Where();
-      where.setLabel('Mountain View, CA');
-      where.setValueString('Mountain View, CA');
-      calendarEntry.addLocation(where);*/
+      // Set the calendar location
+      if (calendarLocation != ''){
+        var where = new google.gdata.Where();
+        where.setLabel(calendarLocation);
+        where.setValueString(calendarLocation);
+        calendarEntry.addLocation(where);
+      }
 
       // Set the color that represent this calendar in the Google
       // Calendar UI
