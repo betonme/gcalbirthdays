@@ -62,8 +62,8 @@
 
       <!--gCalBirthay Javascript functions for HTML and Gadget Version-->
       <!--V1.24-->
-      <!--script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/gCalBirthdays.js"></script-->
-      <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn-history/r533/trunk/gCalBirthdays/JS/gCalBirthdays.js" charset="utf-8"></script>
+      <script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn/trunk/gCalBirthdays/JS/gCalBirthdays.js"></script>
+      <!--script type="text/javascript" src="http://gcalbirthdays.googlecode.com/svn-history/r533/trunk/gCalBirthdays/JS/gCalBirthdays.js" charset="utf-8"></script-->
 
       <!--gCalBirthay Gadget specific Javascript functions-->
       <script type="text/javascript">
