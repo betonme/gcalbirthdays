@@ -903,20 +903,10 @@
                 // Search for contact title
                 if (-1 != event.getTitle().getText().search(escapeRegExp(contact.title))) {
                   exists = true;
-
                   // Event found for given contact
-                  // Check date
-                  if (-1 != event.getRecurrence().getValue().search(escapeRegExp(date))) {
-                    // Date correct - do nothing
-                    printConsole('Event correct: ' + contact.title);
-                    break;
-                  }
-                  else {
-                    // Date not correct - Update event
-                    printConsole('Event to update: ' + contact.title);
-                    updateEvent(event, contact, date);
-                    break;
-                  }
+                  printConsole('Event to update: ' + contact.title);
+                  updateEvent(event, contact, date);
+                  break;
                 }
               }
             }
