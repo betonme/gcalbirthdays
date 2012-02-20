@@ -1170,6 +1170,19 @@
     }
 
     /**
+     * Shos / hide advanced settings
+     */
+    function showhideAdvancedSettings(){
+      elem = $('advancedsettings');
+      if (elem.style.display == "block"){
+        elem.style.display = "none";
+      }
+      else {
+        elem.style.display = "block";
+      }
+    }
+
+    /**
      * Set Get Reminder functions.
      */
     function getReminderNumber(){

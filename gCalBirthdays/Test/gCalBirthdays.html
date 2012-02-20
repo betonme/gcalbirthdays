@@ -84,7 +84,8 @@
           authButton.value = 'Logout';
           setupService();
           useAuthSub();
-          showOneSection('progress');
+          showOneSection('busyloader');
+          //showOneSection('progress');
           queryGroupsAndCalendars();
         }
         else {
@@ -207,6 +208,10 @@
 
       <form id="settings" style="display:none">
         <table cellspacing="0" cellpadding="5">
+
+          <!-- Maybe later Show / Hide advanced settings -->
+          <!--<a href="#" onClick="showhideAdvancedSettings">Advanced Settings</a>-->
+          <table id="advancedsettings" cellspacing="0" cellpadding="5" style="display:none">
           <tr>
             <td colspan="2">
               Title:
@@ -229,6 +234,9 @@
               <input id="summaryinput" style="width:300px"/>
             </td>
           </tr>
+          </table
+          <!--End Maybe later Show / Hide advanced settings -->
+
           <tr>
             <td style="padding-right: 30px">Set Reminder:</td>
           </tr>
@@ -289,9 +297,7 @@
             </th>
           </tr>
         </table>
-        <br>
       </form>
-      <br>
 
       <table id="progress" style="display:none">
         <tr>
