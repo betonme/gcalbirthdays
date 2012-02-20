@@ -145,7 +145,8 @@
 
         function showSettings(){
           AUTOSYNC = false;
-          showOneSection('progress');
+          showOneSection('busyloader');
+          //showOneSection('progress');
           queryGroupsAndCalendars();
         }
 
@@ -350,6 +351,9 @@
                   <input id="autosyncinput" type="checkbox"/>
                 </td>
               </tr>
+
+              <!-- Maybe later Show / Hide advanced settings -->
+              <!--<a href="#" onClick="showhideAdvancedSettings">Advanced Settings</a>-->
               <tr>
                 <td id="text">
                   Title:
@@ -372,6 +376,8 @@
                   <input id="summaryinput" style="width:120px"/>
                 </td>
               </tr>
+              <!-- End Maybe later Show / Hide advanced settings -->
+
               <tr>
                 <td id="text">Set Reminder:</td>
               </tr>
