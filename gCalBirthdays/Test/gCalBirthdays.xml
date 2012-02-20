@@ -351,33 +351,35 @@
                   <input id="autosyncinput" type="checkbox"/>
                 </td>
               </tr>
-
-              <!-- Maybe later Show / Hide advanced settings -->
-              <!--<a href="#" onClick="showhideAdvancedSettings">Advanced Settings</a>-->
               <tr>
-                <td id="text">
-                  Title:
-                    (<a href="http://code.google.com/p/gcalbirthdays/wiki/Placeholders" target="_blank">Wiki</a>)
+                <td colspan="2">
+                  <a href="javascript://" onClick="showhideAdvancedSettings()">Advanced Settings</a>
+                  <table id="advancedsettings" cellspacing="0" cellpadding="5" style="display:none">
+                    <tr>
+                      <td id="text">
+                        Title:
+                          (<a href="http://code.google.com/p/gcalbirthdays/wiki/Placeholders" target="_blank">Wiki</a>)
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input id="titleinput" style="width:120px"/>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td id="text">
+                        Summary:
+                          (<a href="http://code.google.com/p/gcalbirthdays/wiki/Placeholders" target="_blank">Wiki</a>)
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input id="summaryinput" style="width:120px"/>
+                      </td>
+                    </tr>
+                  </table
                 </td>
               </tr>
-              <tr>
-                <td>
-                  <input id="titleinput" style="width:120px"/>
-                </td>
-              </tr>
-              <tr>
-                <td id="text">
-                  Summary:
-                    (<a href="http://code.google.com/p/gcalbirthdays/wiki/Placeholders" target="_blank">Wiki</a>)
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <input id="summaryinput" style="width:120px"/>
-                </td>
-              </tr>
-              <!-- End Maybe later Show / Hide advanced settings -->
-
               <tr>
                 <td id="text">Set Reminder:</td>
               </tr>
