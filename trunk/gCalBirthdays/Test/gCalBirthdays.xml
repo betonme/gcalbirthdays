@@ -295,6 +295,9 @@
           float: right;
           padding: 0 3px 0 3px;
         }
+        #advsettingslink {
+          font-size: 11px;
+        }
         #text {
           font-size: 11px;
           padding: 0 3px 0 3px;
@@ -353,7 +356,7 @@
               </tr>
               <tr>
                 <td colspan="2">
-                  <a href="javascript://" onClick="showhideAdvancedSettings()">Advanced Settings</a>
+                  <a id="advsettingslink" href="javascript://" onClick="showhideAdvancedSettings()">Advanced Settings</a>
                   <table id="advancedsettings" cellspacing="0" cellpadding="5" style="display:none">
                     <tr>
                       <td id="text">
