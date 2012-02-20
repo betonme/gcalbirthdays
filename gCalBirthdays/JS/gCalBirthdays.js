@@ -1252,12 +1252,15 @@
     function handleError(e){
       var warn = false;
 
-      // Warnings
+      
       if (undefined != e.message) {
         if (-1 != e.message.search(/Invalid JSON format/gi)) {
-          // Query is not interrupted!
+          // Warning: Query is not interrupted!
           warn = true;
           printWarn('Warning: ' + e.message);
+        }
+        else if (-1 != e.message.search(/Token invalid/gi)) {
+          reinit();
         }
       }
 

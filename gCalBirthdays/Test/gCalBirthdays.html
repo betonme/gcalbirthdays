@@ -63,6 +63,12 @@
       // Tells the google JS lib to call the init function once loaded
       google.setOnLoadCallback(setupHTML);
 
+      function reinit() {
+        onclickStop();
+        google.accounts.user.logout();
+        setupHTML();
+      }
+
       /**
        * This function checks if the user is logged in, and changes the
        * login button and displayed sections accordingly.
@@ -100,7 +106,6 @@
         if (token) {
           // User is loged in
           google.accounts.user.logout();
-          //TODO
           onclickStop();
         }
         else {
