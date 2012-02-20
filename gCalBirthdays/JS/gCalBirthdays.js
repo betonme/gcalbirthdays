@@ -409,7 +409,7 @@
           if (calendarLocation == ''){
             locations = calendars[0].getLocations();
             if (locations.length > 0){
-              calendarLocation = locations.[0].getValueString();
+              calendarLocation = locations[0].getValueString();
             }
             
           }
