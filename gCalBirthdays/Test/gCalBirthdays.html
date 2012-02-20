@@ -84,7 +84,7 @@
           authButton.value = 'Logout';
           setupService();
           useAuthSub();
-          showOneSection('busyloader');
+          showOneSection('progress');
           queryGroupsAndCalendars();
         }
         else {
@@ -149,7 +149,7 @@
       }
 
       function showOneSection(toshow) {
-        var sections = [ 'loginnotice', 'busyloader', 'settings' ];
+        var sections = [ 'loginnotice', 'busyloader', 'settings', 'progress' ];
         for (var i=0; i < sections.length; ++i) {
           var s = sections[i];
           var el = $(s);
@@ -176,7 +176,10 @@
   <body>
     <!--Main page-->
     <div id="html" class="indent">
-      <img src="gCalBirthdays.gif" alt="gCalBirthdays Logo"> <br>
+      <a href="http://code.google.com/p/gcalbirthdays/" target="_blank">
+        <img src="gCalBirthdays.gif" alt="gCalBirthdays Logo">
+      </a>
+      <br>
 
       <p id="versionID">
           Version:
