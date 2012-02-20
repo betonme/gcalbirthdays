@@ -81,6 +81,7 @@
     // Variables
     var contactService;
     var calendarService;
+    var calendarTimezone = '';
     var contactsProgressbar;
     var eventsProgressbar;
     var transferProgressbar;
@@ -398,6 +399,14 @@
           }
         }
 
+        // Get timezone of main calendar
+        if (calendarTimezone == ''){
+          calendarTimezone = calendarList[0].getTimeZone().getValue();
+        }
+        // Maybe later get location
+        //calendar.getLocations()[0].getLabel()
+        //calendar.getLocations()[0].getValueString()
+
         // Sort calendars
         calendarList.sort(compareListEntries);
 
@@ -525,11 +534,13 @@
       calendarEntry.setSummary(google.gdata.atom.Text.create(CALENDAR_SUMMARY));
 
       // Set the calendar timezone
-      /*var timeZone = new google.gdata.calendar.TimeZoneProperty();
-      timeZone.setValue('America/Los_Angeles');
-      calendarEntry.setTimeZone(timeZone);/*
+      if (calendarTimezone != ''){
+        var timeZone = new google.gdata.calendar.TimeZoneProperty();
+        timeZone.setValue(calendarTimezone);
+        calendarEntry.setTimeZone(timeZone);
+      }
 
-      // Set the calendar location
+      // Maybe later set the calendar location
       /*var where = new google.gdata.Where();
       where.setLabel('Mountain View, CA');
       where.setValueString('Mountain View, CA');
