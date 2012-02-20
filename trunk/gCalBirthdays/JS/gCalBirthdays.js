@@ -208,10 +208,6 @@
       // Use query parameter to set the google contacts version
       query.setParam(VERSION_PARAMETER, CONTACTS_VERSION_NUMBER);
 
-      // Set max results per query / items per page
-      //TODO
-      //query.setParam('max-results', MAX_RESULT);
-
       // Submit the request using the contacts service object
       contactService.getContactGroupFeed(query, handleGroupsFeed, handleError);
     }
@@ -250,21 +246,16 @@
 
         // Set progress
         var results = (undefined != groupFeed.getTotalResults()) ? groupFeed.getTotalResults().getValue() : handleGroupsFeed.progress;
-        //TODO
-        //setProgressContacts(calcProgress(handleContactsFeed.progress, parseInt(conFeed.getTotalResults().getValue())));
+        setProgressContacts(calcProgress(handleGroupsFeed.progress, parseInt(results)));
         printConsole('Group(s) query progress: ' + handleGroupsFeed.progress + ' / ' + results);
 
         // Check statemachine
-        //TODO
-        //if (states.canceled == statemachine) {
-        //  printConsole('handleContactsFeed: ' + 'canceled');
-        //  return;
-        //}
+        if (states.canceled == statemachine) {
+          printConsole('handleGroupsFeed: ' + 'canceled');
+          return;
+        }
 
         // Get next page if it exists
-        //if (undefined != groupFeed.getNextLink) {
-        //  return getGroups(groupFeed.getNextLink().getHref());
-        //}
         var len = groupFeed.link.length;
         for (var il = 0; il < len; il++) {
           var link = groupFeed.link[il];
@@ -285,17 +276,6 @@
 
         printConsole ('Group(s): ' + groupList.length);
         printGroups();
-        //TODO
-//         if (0 == contactList.length) {
-//           setProgressContacts(100, true);
-//           setProgressEvents(100, true);
-//           setProgressTransfer(100, true);
-//           printConsole('Cancel no birthdays');
-//           statemachine = states.canceled;
-//           printConsole('StateMachine: ' + 'canceled');
-//           endTransfer();
-//           return;
-//         }
 
         // Next step: show groups
         showGroups(0);
@@ -342,11 +322,6 @@
       // Use query parameter to set the google contacts version
       query.setParam(VERSION_PARAMETER, CALENDAR_VERSION_NUMBER);
 
-      // Set max results per query / items per page
-      //TODO
-      //query.setMaxResults(MAX_RESULT);
-      query.setParam('max-results', 10);
-
       // Submit the request using the calendar service object
       calendarService.getOwnCalendarsFeed(query, handleCalendarsFeed, handleError);
     }
@@ -377,21 +352,16 @@
 
         // Set progress
         var results = (undefined != calFeed.getTotalResults()) ? calFeed.getTotalResults().getValue() : handleCalendarsFeed.progress;
-        //TODO
-        //setProgressEvents(calcProgress(handleEventsFeed.progress, parseInt(eventFeed.getTotalResults().getValue())));
+        setProgressEvents(calcProgress(handleCalendarsFeed.progress, parseInt(results)));
         printConsole('Calendar(s) query progress: ' + handleCalendarsFeed.progress + ' / ' + results);
 
         // Check statemachine
-        //TODO
-//         if (states.canceled == statemachine) {
-//           printConsole('handleEventsFeed: ' + 'canceled');
-//           return;
-//         }
+        if (states.canceled == statemachine) {
+          printConsole('handleCalendarsFeed: ' + 'canceled');
+          return;
+        }
 
         // Get next page if it exists
-        //if ('undefined' != typeof(calFeed.getNextLink)) {
-        //  return getCalendars(calFeed.getNextLink().getHref());
-        //}
         var len = calFeed.link.length;
         for (var il = 0; il < len; il++) {
           var link = calFeed.link[il];
@@ -675,9 +645,6 @@
         query.setParam('group', groupId);
       }
 
-      // Set max results per query / items per page
-      //query.setParam('max-results', MAX_RESULT);
-
       // Submit the request using the contacts service object
       contactService.getContactFeed(query, handleContactsFeed, handleError);
     }
@@ -726,9 +693,6 @@
         }
 
         // Get next page if it exists
-        //if (undefined != conFeed.getNextLink) {
-        //  return getContacts(conFeed.getNextLink().getHref());
-        //}
         var len = conFeed.link.length;
         for (var il = 0; il < len; il++) {
           var link = conFeed.link[il];
@@ -774,10 +738,6 @@
 
       // Use query parameter to set the google contacts version
       query.setParam(VERSION_PARAMETER, CALENDAR_VERSION_NUMBER);
-
-      // Set max results per query / items per page
-      //query.setMaxResults(MAX_RESULT);
-      //query.setParam('max-results', MAX_RESULT);
 
       // Submit the request using the calendar service object
       calendarService.getEventsFeed(query, handleEventsFeed, handleError);
@@ -830,9 +790,6 @@
         }
 
         // Get next page if it exists
-        //if ('undefined' != typeof(eventFeed.getNextLink)) {
-        //  return getEvents(eventFeed.getNextLink().getHref());
-        //}
         var len = eventFeed.link.length;
         for (var il = 0; il < len; il++) {
           var link = eventFeed.link[il];
@@ -842,9 +799,7 @@
         }
 
         // Get URL to post/add events
-        // link[2].rel = 'http://schemas.google.com/g/2005#post'
         postURL = eventFeed.getEntryPostLink().getHref();
-        //printConsole('Event PostURL: ' + postURL);
 
         printConsole('Event(s) with Birthday: ' + eventList.length);
 
