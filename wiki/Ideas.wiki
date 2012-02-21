@@ -1,7 +1,6 @@
 #summary Collect ideas for future releases.
 
 = General =
- * V4 as Google Apps Script http://code.google.com/intl/de-DE/googleapps/appsscript/
  * AGE in the title of the events (Webcontent calc age with JS -> BirthdayApp)
  * Anniversary sync (new prefs bool checkbox / new replaceholder {TYPE} Birthday Anniversary Other from contacts)
  * Different timer for all reminders
@@ -9,3 +8,7 @@
 = iGoogle =
 
  * Improve size usage (full width)
+
+= Future =
+
+ * V4 as Google Apps Script http://code.google.com/intl/de-DE/googleapps/appsscript/
