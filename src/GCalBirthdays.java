@@ -13,6 +13,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/* VERSION NUMBER: 
+ * 1.00
+ */
  
 /* INSTRUCTION: 
  * This is a command line application. 
@@ -25,7 +29,6 @@
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -56,20 +59,16 @@ public class GCalBirthdays {
 
 	private static final String APP_NAME  = "gCalBirthdays";
 
-	private static String APP_VERSION = "V1.01";
-	
 	private static final String CALENDAR_NAME    = "Birthdays";  //"Geburtstage";
 	private static final String CALENDAR_SUMMARY = "This calendar contains the birthdays of Your Google Contacts.";
 	private static final String CALENDAR_COLOR   = "#A32929";    // red "#A32929", blue "#2952A3" and green "#0D7813"
 	
 	private static final String CONTACTS_FEED_URL  = "http://www.google.com/m8/feeds/contacts/default/full";
-	private static final String CALENDAR_FEED_URL = "http://www.google.com/calendar/feeds/default/owncalendars/full";
+	private static final String CALENDARS_FEED_URL = "http://www.google.com/calendar/feeds/default/owncalendars/full";
 
-	private static final String DATE_FORMAT_GCON_PARSE_YMD = "yyyy-MM-dd";
-	private static final String DATE_FORMAT_GCON_PARSE_MD  = "--MM-dd";
-	private static final String DATE_FORMAT_GCAL_SET_EVENT = "yyyyMMdd";   // If year is not specified 1970 will be set
-	private static final String DATE_FORMAT_GCAL_TEXT_DMY  = "dd.MM.yyyy";
-	private static final String DATE_FORMAT_GCAL_TEXT_DM   = "dd.MM.";
+	private static final String DATE_FORMAT_CONTACTS = "yyyy-MM-dd";
+	private static final String DATE_FORMAT_CALENDAR = "yyyyMMdd";
+	private static final String DATE_FORMAT_YEAR 	 = "yyyy";
 	
 	private static final Integer REMINDER_DAYS = 14;
     
@@ -83,8 +82,7 @@ public class GCalBirthdays {
 	public static void main(String[] args) {
 		
 		try {
-			System.out.println("gCalBirthdays " + APP_VERSION);	
-			
+
 			if ( args.length < 2 ) {
 				System.out.println("Usage: gCalBirthdays username password");	
 				return;
@@ -129,7 +127,7 @@ public class GCalBirthdays {
 			calService.setUserCredentials(userName, userPassword);
 
 			// The URL for the own calendars feed of the specified user
-			URL calUrl = new URL ( CALENDAR_FEED_URL );
+			URL calUrl = new URL ( CALENDARS_FEED_URL );
 
 			// Get Number of calendars	
 			Query calQuery = new Query(calUrl);
@@ -208,31 +206,22 @@ public class GCalBirthdays {
 			for (ContactEntry contact : conFeed.getEntries()) {
 
 				if ( (contact.hasName()) && (contact.hasBirthday()) ) {
-					
+
 					exists = false;
 					update = false;
 					
 					CalendarEventEntry entry = new CalendarEventEntry();
 					
-					SimpleDateFormat sdf = new SimpleDateFormat( DATE_FORMAT_GCON_PARSE_YMD );
-					Date date;
-					String datePattern;
-					try {
-						sdf.applyPattern( DATE_FORMAT_GCON_PARSE_YMD );
-						date = sdf.parse(contact.getBirthday().getWhen());
-						datePattern = DATE_FORMAT_GCAL_TEXT_DMY;
-					} catch (ParseException e) {
-						sdf.applyPattern( DATE_FORMAT_GCON_PARSE_MD );
-						date = sdf.parse(contact.getBirthday().getWhen());
-						datePattern = DATE_FORMAT_GCAL_TEXT_DM;
-					}					
+					SimpleDateFormat sdf = new SimpleDateFormat( DATE_FORMAT_CONTACTS );
+				    Date date = sdf.parse(contact.getBirthday().getWhen());
+				    sdf.applyPattern( DATE_FORMAT_CALENDAR );
 					
 					for ( CalendarEventEntry event : eventFeed.getEntries() ) {
 
 						if ( event.getTitle().getPlainText().contains( contact.getName().getFullName().getValue() ) ) {
 							// found event for given contact
 							// check date
-							sdf.applyPattern( DATE_FORMAT_GCAL_SET_EVENT );
+
 							if ( event.getRecurrence().getValue().contains( sdf.format(date) )) {
 							//if ( event.getRecurrence().getValue().contains( recurData.substring(0, 25) )) {
 								// same date - nothing todo
@@ -251,10 +240,10 @@ public class GCalBirthdays {
 					}
 					if ( exists == false ) {
 						// no event for given contact - add event
-						sdf.applyPattern( datePattern );
+						sdf.applyPattern( DATE_FORMAT_YEAR );
 						entry.setTitle( new PlainTextConstruct( contact.getName().getFullName().getValue() + " " + sdf.format(date) ) );
-						entry.setContent( new PlainTextConstruct( "Birthday Celebration " + contact.getName().getFullName().getValue() + " (" + sdf.format(date) + ")") );
-					    sdf.applyPattern( DATE_FORMAT_GCAL_SET_EVENT );
+						entry.setContent( new PlainTextConstruct( "Birthday Celebration " + contact.getName().getFullName().getValue() + " (Born in " + sdf.format(date) + ")") );
+					    sdf.applyPattern( DATE_FORMAT_CALENDAR );
 						String recurData = "DTSTART;VALUE=DATE:" + sdf.format(date) + "\n"
 					    				 + "DTEND;VALUE=DATE:" + sdf.format(date) + "\n"
 					    				 + "RRULE:FREQ=YEARLY";

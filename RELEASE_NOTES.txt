@@ -1,12 +1,5 @@
 Google Data API - Release Notes
 
-Notes for v1.01
------------------
-July 08, 2009
-o  Added Verion Number
-o  Fixed: Google Contacts Birthday Date Parser
-          Allowed: DD-MM-YYYY and DD-MM 
-   
 Notes for v1.00
 -----------------
 July 03, 2009
