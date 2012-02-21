@@ -1,6 +1,6 @@
 /*  gCalBirthdays.js
  *
- *  This is version: 1.24
+ *  This is version: 1.22
  *
  *  Shared JavaScript functions for HTML and Gadget Version of gCalBirthdays
  *
@@ -37,10 +37,7 @@
     var GROUP_FEED_URL_THIN = 'http://www.google.com/m8/feeds/groups/default/thin';
     var GROUP_FEED_URL_FULL = 'http://www.google.com/m8/feeds/groups/default/full'; //not used
 
-//TEST
-//var feedUri = 'http://www.google.com/calendar/feeds/default/allcalendars/full';
     var CALENDAR_FEED_URL_FULL = 'http://www.google.com/calendar/feeds/default/owncalendars/full';
-    var CALENDAR_FEED_URL_THIN = 'http://www.google.com/calendar/feeds/default/owncalendars/thin';
 
     var CONTACTS_FEED_URL_THIN = 'http://www.google.com/m8/feeds/contacts/default/thin';
     var CONTACTS_FEED_URL_FULL = 'http://www.google.com/m8/feeds/contacts/default/full'; //not used
@@ -54,6 +51,9 @@
     var CALENDAR_SUMMARY = 'This calendar contains the birthdays of Your Google Contacts.';
     var CALENDAR_COLOR = '#A32929'; // red "#A32929", blue "#2952A3" and green "#0D7813"
 
+    var EVENT_TITLE_SUFFIX = ' Birthday Celebration';
+    var EVENT_SUMMARY_SUFFIX = 'Created by gCalBirthdays';
+
     var CALENDAR_HIDDEN = false;
     var CALENDAR_SELECTED = true;
 
@@ -65,13 +65,6 @@
 
     var GROUP_SEPARATOR = ',';
     var MAX_RESULT = 10;
-
-    var EVENT_TEMPLATE_TITLE = '{TITLE}';
-    var EVENT_TEMPLATE_BIRTHDAY = '{BIRTHDAY}';
-
-    var EVENT_TITLE_DEFAULT = EVENT_TEMPLATE_TITLE + ' Birthday Celebration (Born ' + EVENT_TEMPLATE_BIRTHDAY + ')';
-    var EVENT_SUMMARY_DEFAULT = 'Created by gCalBirthdays';
-
     var REMINDER_DAYS_DEFAULT = 14;
     var ICAL_BREAK = '\r\n'; // '\n'
 
@@ -81,8 +74,6 @@
     // Variables
     var contactService;
     var calendarService;
-    var calendarTimezone = '';
-    var calendarLocation = '';
     var contactsProgressbar;
     var eventsProgressbar;
     var transferProgressbar;
@@ -91,8 +82,6 @@
     var reminderType;
     var reminderPopup;
     var reminderEmail;
-    var titleText;
-    var summaryText;
 
     // Arrays
     var groupList = new Array();
@@ -156,8 +145,6 @@
       );
 
       setReminderNumber(REMINDER_DAYS_DEFAULT);
-      setTitleText(EVENT_TITLE_DEFAULT);
-      setSummaryText(EVENT_SUMMARY_DEFAULT);
     }
 
     /**
@@ -201,9 +188,7 @@
       printConsole('Query Groups');
 
       // Query for all the contacts entry with this contact group
-      //TEST
-      //var query = new google.gdata.contacts.ContactQuery(GROUP_FEED_URL_THIN);
-      var query = new google.gdata.client.Query(GROUP_FEED_URL_THIN);
+      var query = new google.gdata.contacts.ContactQuery(GROUP_FEED_URL_THIN);
 
       // Use query parameter to set the google contacts version
       query.setParam(VERSION_PARAMETER, CONTACTS_VERSION_NUMBER);
@@ -212,10 +197,11 @@
       contactService.getContactGroupFeed(query, handleGroupsFeed, handleError);
     }
 
+    /*
     function getGroups(groupURL){
       // Submit the request using the contacts service object
       contactService.getContactGroupFeed(groupURL, handleGroupsFeed, handleError);
-    }
+    }*/
 
     function handleGroupsFeed(response){
       if (response.oauthApprovalUrl) {
@@ -224,8 +210,6 @@
       else {
         var groupFeed = response.feed;
         var groups = groupFeed.entry;
-        var groupsLen = (undefined != groups) ? groups.length : 0;
-        handleGroupsFeed.progress = handleGroupsFeed.progress + groupsLen;
 
         // Iterate through the array of contact groups, and add them to drop down box
         var idl = groupList.length;
@@ -242,26 +226,6 @@
         var len = groupList.length;
         for (var ie = 0; ie < len; ie++) {
           groupList[ie].title = groupList[ie].title.replace(/System Group/gi, id++);
-        }
-
-        // Set progress
-        var results = (undefined != groupFeed.getTotalResults()) ? groupFeed.getTotalResults().getValue() : handleGroupsFeed.progress;
-        setProgressContacts(calcProgress(handleGroupsFeed.progress, parseInt(results)));
-        printConsole('Group(s) query progress: ' + handleGroupsFeed.progress + ' / ' + results);
-
-        // Check statemachine
-        if (states.canceled == statemachine) {
-          printConsole('handleGroupsFeed: ' + 'canceled');
-          return;
-        }
-
-        // Get next page if it exists
-        var len = groupFeed.link.length;
-        for (var il = 0; il < len; il++) {
-          var link = groupFeed.link[il];
-          if ( 'next' == link.rel ) {
-            return getGroups(link.getHref());
-          }
         }
 
         // Sort groups
@@ -316,7 +280,7 @@
     function queryCalendars(){
       printConsole('Query Calendars');
 
-      // Query for own calendars
+      // Query for all calendars
       var query = new google.gdata.client.Query(CALENDAR_FEED_URL_FULL);
 
       // Use query parameter to set the google contacts version
@@ -326,10 +290,11 @@
       calendarService.getOwnCalendarsFeed(query, handleCalendarsFeed, handleError);
     }
 
+    /*
     function getCalendars(calendarURL){
       // Submit the request using the calendar service object
       calendarService.getOwnCalendarsFeed(calendarURL, handleCalendarsFeed, handleError);
-    }
+    }*/
 
     function handleCalendarsFeed(response){
       if (response.oauthApprovalUrl) {
@@ -338,8 +303,6 @@
       else {
         var calFeed = response.feed;
         var calendars = calFeed.getEntries();
-        var calendarsLen = calendars.length;
-        handleCalendarsFeed.progress = handleCalendarsFeed.progress + calendarsLen;
 
         // Iterate through the array of calendars, and add them to drop down box
         // IE JScript 5.6 Compatibility
@@ -350,45 +313,10 @@
           calendarList[idl++] = { title: calendar.getTitle().getText(), url: calendar.getLink().getHref() };
         }
 
-        // Set progress
-        var results = (undefined != calFeed.getTotalResults()) ? calFeed.getTotalResults().getValue() : handleCalendarsFeed.progress;
-        setProgressEvents(calcProgress(handleCalendarsFeed.progress, parseInt(results)));
-        printConsole('Calendar(s) query progress: ' + handleCalendarsFeed.progress + ' / ' + results);
-
-        // Check statemachine
-        if (states.canceled == statemachine) {
-          printConsole('handleCalendarsFeed: ' + 'canceled');
-          return;
-        }
-
-        // Get next page if it exists
-        var len = calFeed.link.length;
-        for (var il = 0; il < len; il++) {
-          var link = calFeed.link[il];
-          if ( 'next' == link.rel ) {
-            return getCalendars(link.getHref());
-          }
-        }
-
-        if (calendars.length > 0){
-          // Get timezone of main calendar
-          if (calendarTimezone == ''){
-            calendarTimezone = calendars[0].getTimeZone().getValue();
-          }
-          // Get location
-          if (calendarLocation == ''){
-            locations = calendars[0].getLocations();
-            if (locations.length > 0){
-              calendarLocation = locations[0].getValueString();
-            }
-            
-          }
-        }
-
         // Sort calendars
         calendarList.sort(compareListEntries);
 
-        // Select first calendar which contains [Birthday|Geburtstag]
+        // Select first calendar which contains [Birthdays|Geburtstag]
         var selId = -1;
         // IE JScript 5.6 Compatibility
         var len = calendarList.length;
@@ -453,33 +381,14 @@
     }
 
     /**
-     * Only numbers are allowed for the reminder input.
+     * Only numbers are allowed for the reminder.
      */
-    function onkeypressReminder(e)
+    function isNumberKey(evt)
     {
-      e = e || window.event;
-      var keynum = e.keyCode || e.which;
-
-      // alert (keynum + ", " + e.shiftKey + ", ");
-
-      // Check if key is control character
-      if(keynum<48 && !e.shiftKey && !e.altKey && !e.ctrlKey)
-      {
-        return true;
-      }
-
-      // alert (keynum + ", " + e.shiftKey + ", " + keychar);
-
-      // Check if key is digit
-      var keychar = String.fromCharCode(keynum);
-      var keycharcheck = /\d/;
-      return keycharcheck.test(keychar);
-    }
-
-    function onchangeReminder(x)
-    {
-      var y=document.getElementById(x).value;
-      document.getElementById(x).value=parseInt(y);
+       var charCode = (evt.which) ? evt.which : evt.keyCode
+       if (charCode > 31 && (charCode < 48 || charCode > 57))
+          return false;
+       return true;
     }
 
     /**
@@ -512,19 +421,15 @@
       calendarEntry.setSummary(google.gdata.atom.Text.create(CALENDAR_SUMMARY));
 
       // Set the calendar timezone
-      if (calendarTimezone != ''){
-        var timeZone = new google.gdata.calendar.TimeZoneProperty();
-        timeZone.setValue(calendarTimezone);
-        calendarEntry.setTimeZone(timeZone);
-      }
+      /*var timeZone = new google.gdata.calendar.TimeZoneProperty();
+      timeZone.setValue('America/Los_Angeles');
+      calendarEntry.setTimeZone(timeZone);/*
 
       // Set the calendar location
-      if (calendarLocation != ''){
-        var where = new google.gdata.Where();
-        where.setLabel(calendarLocation);
-        where.setValueString(calendarLocation);
-        calendarEntry.addLocation(where);
-      }
+      /*var where = new google.gdata.Where();
+      where.setLabel('Mountain View, CA');
+      where.setValueString('Mountain View, CA');
+      calendarEntry.addLocation(where);*/
 
       // Set the color that represent this calendar in the Google
       // Calendar UI
@@ -548,7 +453,7 @@
         printConsole('Calendar added: ' + result.entry.getTitle().getText());
 
         //verify name
-        if (0 != result.entry.getTitle().getText().search(escapeRegExp(calendarName)))
+        if (0 != result.entry.getTitle().getText().search(calendarName))
         {
           printConsole('Rename calendar');
           updateCalendar(result.entry, calendarName);
@@ -645,6 +550,9 @@
         query.setParam('group', groupId);
       }
 
+      // Set max results per query / items per page
+      query.setParam('max-results', MAX_RESULT);
+
       // Submit the request using the contacts service object
       contactService.getContactFeed(query, handleContactsFeed, handleError);
     }
@@ -682,9 +590,8 @@
         }
 
         // Set progress
-        var results = (undefined != conFeed.getTotalResults()) ? conFeed.getTotalResults().getValue() : handleContactsFeed.progress;
-        setProgressContacts(calcProgress(handleContactsFeed.progress, parseInt(results)));
-        printConsole('Contact(s) query progress: ' + handleContactsFeed.progress + ' / ' + results);
+        setProgressContacts(calcProgress(handleContactsFeed.progress, parseInt(conFeed.getTotalResults().getValue())));
+        printConsole('Contact(s) query progress: ' + handleContactsFeed.progress + ' / ' + conFeed.getTotalResults().getValue());
 
         // Check statemachine
         if (states.canceled == statemachine) {
@@ -693,6 +600,7 @@
         }
 
         // Get next page if it exists
+        // link[5|6].rel = 'next'
         var len = conFeed.link.length;
         for (var il = 0; il < len; il++) {
           var link = conFeed.link[il];
@@ -739,6 +647,9 @@
       // Use query parameter to set the google contacts version
       query.setParam(VERSION_PARAMETER, CALENDAR_VERSION_NUMBER);
 
+      // Set max results per query / items per page
+      query.setMaxResults(MAX_RESULT);
+
       // Submit the request using the calendar service object
       calendarService.getEventsFeed(query, handleEventsFeed, handleError);
     }
@@ -770,7 +681,6 @@
                 // Push only if event is created by us
                 if (-1 != event.getContent().getText().search(APP_NAME)) {
                   // Complete push is necessary because we need the whole event content
-                  event.setTitle(google.gdata.atom.Text.create(event.getTitle().getText()));
                   eventList.push(event);
                 }
               }
@@ -779,9 +689,8 @@
         }
 
         // Set progress
-        var results = (undefined != eventFeed.getTotalResults()) ? eventFeed.getTotalResults().getValue() : handleEventsFeed.progress;
-        setProgressEvents(calcProgress(handleEventsFeed.progress, parseInt(results)));
-        printConsole('Event(s) query progress: ' + handleEventsFeed.progress + ' / ' + results);
+        setProgressEvents(calcProgress(handleEventsFeed.progress, parseInt(eventFeed.getTotalResults().getValue())));
+        printConsole('Event(s) query progress: ' + handleEventsFeed.progress + ' / ' + eventFeed.getTotalResults().getValue());
 
         // Check statemachine
         if (states.canceled == statemachine) {
@@ -790,16 +699,14 @@
         }
 
         // Get next page if it exists
-        var len = eventFeed.link.length;
-        for (var il = 0; il < len; il++) {
-          var link = eventFeed.link[il];
-          if ( 'next' == link.rel ) {
-            return getEvents(link.getHref());
-          }
+        if (undefined != eventFeed.getNextLink()) {
+          return getEvents(eventFeed.getNextLink().getHref());
         }
 
         // Get URL to post/add events
+        // link[2].rel = 'http://schemas.google.com/g/2005#post'
         postURL = eventFeed.getEntryPostLink().getHref();
+        //printConsole('Event PostURL: ' + postURL);
 
         printConsole('Event(s) with Birthday: ' + eventList.length);
 
@@ -847,8 +754,6 @@
         reminderType = getReminderType();
         reminderPopup = getReminderPopup();
         reminderEmail = getReminderEmail();
-        titleText = getTitleText();
-        summaryText = getSummaryText();
 
         var exists = false;
         // IE JScript 5.6 Compatibility
@@ -877,12 +782,22 @@
                 }
 
                 // Search for contact title
-                if (-1 != event.getTitle().getText().search(escapeRegExp(contact.title))) {
+                if (-1 != event.getTitle().getText().search(contact.title)) {
                   exists = true;
+
                   // Event found for given contact
-                  printConsole('Event to update: ' + contact.title);
-                  updateEvent(event, contact, date);
-                  break;
+                  // Check date
+                  if (-1 != event.getRecurrence().getValue().search(date)) {
+                    // Date correct - do nothing
+                    printConsole('Event correct: ' + contact.title);
+                    break;
+                  }
+                  else {
+                    // Date not correct - Update event
+                    printConsole('Event to update: ' + contact.title);
+                    updateEvent(event, contact, date);
+                    break;
+                  }
                 }
               }
             }
@@ -951,15 +866,9 @@
         printInfo('Date: No year specified - set to 1970!');
       }
 
-      var evttitle = titleText;
-      evttitle = evttitle.replace(EVENT_TEMPLATE_TITLE, contact.title);
-      evttitle = evttitle.replace(EVENT_TEMPLATE_BIRTHDAY, stringDate);
-      eventEntry.setTitle(google.gdata.atom.Text.create(evttitle));
+      eventEntry.setTitle(google.gdata.atom.Text.create(contact.title + EVENT_TITLE_SUFFIX + ' (Born ' + stringDate + ')'));
 
-      var evtsummary = summaryText;
-      evtsummary = evtsummary.replace(EVENT_TEMPLATE_TITLE, contact.title);
-      evtsummary = evtsummary.replace(EVENT_TEMPLATE_BIRTHDAY, stringDate);
-      eventEntry.setContent(google.gdata.atom.Text.create(evtsummary));
+      eventEntry.setContent(google.gdata.atom.Text.create(EVENT_SUMMARY_SUFFIX));
 
       // Set the calendar time zone
       // Set the calendar location
@@ -1043,13 +952,7 @@
       if ( null == selSize ) {
         selSize = elSel.length;
       }
-      if (selSize < 0 ) {
-        selSize = 0;
-      }
-      else if (selSize > 20 ) {
-        selSize = 20;
-      }
-      elSel.size = selSize;
+      elSel.size = selSize>0 ? selSize : 0;
     }
 
     function selectClearOptions(id){
@@ -1105,10 +1008,6 @@
 
     function compareListEntries(a, b){
       return compareStrings(a.title, b.title);
-    }
-
-    function escapeRegExp(text) {
-      return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
     }
 
     /**
@@ -1170,27 +1069,14 @@
     }
 
     /**
-     * Shos / hide advanced settings
-     */
-    function showhideAdvancedSettings(){
-      elem = $('advancedsettings');
-      if (elem.style.display == "block"){
-        elem.style.display = "none";
-      }
-      else {
-        elem.style.display = "block";
-      }
-    }
-
-    /**
      * Set Get Reminder functions.
      */
     function getReminderNumber(){
-      return parseInt($('reminderinput').value, 10);
+      return $('reminderinput').value;
     }
 
     function setReminderNumber(rn){
-      $('reminderinput').value = parseInt(rn, 10);
+      $('reminderinput').value = rn;
     }
 
     function getReminderType(){
@@ -1217,23 +1103,6 @@
       $('emailinput').checked = re;
     }
 
-    function getTitleText(){
-      return $('titleinput').value;
-    }
-
-    function setTitleText(tt){
-      $('titleinput').value = tt;
-    }
-
-    function getSummaryText(){
-      return $('summaryinput').value;
-    }
-
-    function setSummaryText(st){
-      $('summaryinput').value = st;
-    }
-
-
     /**
      * This function is called if an error is encountered while
      * retrieving a feed or adding an event.
@@ -1241,15 +1110,12 @@
     function handleError(e){
       var warn = false;
 
-      
+      // Warnings
       if (undefined != e.message) {
         if (-1 != e.message.search(/Invalid JSON format/gi)) {
-          // Warning: Query is not interrupted!
+          // Query is not interrupted!
           warn = true;
           printWarn('Warning: ' + e.message);
-        }
-        else if (-1 != e.message.search(/Token invalid/gi)) {
-          reinit();
         }
       }
 
