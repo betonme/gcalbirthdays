@@ -31,3 +31,10 @@ or
 change NoScript Settings - Advanced - Cross-Site-Scripting -
 Append:
 *{{{^http://gcalbirthdays.googlecode.com\.*}}}*
+
+<br>
+
+==Revoce access==
+ * Go to https://accounts.google.com/IssuedAuthSubTokens
+ * Search for gCalBirthdays
+ * Remove it
