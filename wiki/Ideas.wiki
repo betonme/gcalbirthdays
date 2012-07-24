@@ -16,3 +16,4 @@
 = Future =
 
  * V4 as Google Apps Script http://code.google.com/intl/de-DE/googleapps/appsscript/
+ * Google Data API V3 https://developers.google.com/google-apps/contacts/v3/#retrieving_all_contacts
